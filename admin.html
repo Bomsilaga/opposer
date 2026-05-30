@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Opposer — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f14;
+  --bg2:#16161f;
+  --bg3:#1e1e2a;
+  --card:#1a1a24;
+  --card2:#20202e;
+  --red:#ff3d3d;
+  --red-d:#cc2020;
+  --red-l:rgba(255,61,61,0.12);
+  --orange:#ff7a1a;
+  --yellow:#ffc62b;
+  --green:#22c55e;
+  --green-l:rgba(34,197,94,0.12);
+  --blue:#3b82f6;
+  --blue-l:rgba(59,130,246,0.12);
+  --purple:#8b5cf6;
+  --purple-l:rgba(139,92,246,0.12);
+  --teal:#06b6d4;
+  --ink:#f0f0f8;
+  --ink2:#b8b8d0;
+  --muted:#6b6b8a;
+  --border:#2a2a3e;
+  --border2:#363650;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --r:10px;
+  --r-lg:16px;
+}
+html,body{min-height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:100vh}
+.sidebar{
+  width:220px;flex-shrink:0;background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.content{flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sb-logo{
+  padding:20px 18px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sb-logo-icon{
+  width:32px;height:32px;background:var(--red);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  box-shadow:0 3px 10px rgba(255,61,61,0.4);flex-shrink:0
+}
+.sb-logo-text{font-family:'Fredoka',sans-serif;font-size:16px;font-weight:700;color:var(--ink)}
+.sb-logo-text span{color:var(--red)}
+.sb-logo-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+
+.sb-nav{padding:12px 8px;flex:1}
+.sb-section{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;padding:8px 10px 4px}
+.sb-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:var(--r);
+  font-size:13px;font-weight:700;color:var(--ink2);
+  cursor:pointer;transition:all 0.15s;margin-bottom:2px;
+  border:none;background:none;width:100%;text-align:left;
+}
+.sb-item:hover{background:var(--bg3);color:var(--ink)}
+.sb-item.active{background:var(--red-l);color:var(--red)}
+.sb-item .ico{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.sb-badge{
+  margin-left:auto;
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  background:var(--red);color:#fff;
+  padding:2px 7px;border-radius:8px;
+}
+.sb-badge.orange{background:var(--orange)}
+.sb-footer{
+  padding:14px 14px 18px;border-top:1px solid var(--border);
+  font-size:11px;color:var(--muted);line-height:1.6;
+}
+.sb-footer strong{color:var(--ink2)}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:56px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;position:sticky;top:0;z-index:100;
+}
+.tb-title{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:var(--ink)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-stat{
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);
+  background:var(--bg3);padding:6px 12px;border-radius:20px;border:1px solid var(--border);
+}
+.tb-stat strong{color:var(--green)}
+.btn-add{
+  background:var(--red);color:#fff;border:none;
+  padding:8px 16px;border-radius:20px;
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;
+  cursor:pointer;transition:all 0.15s;
+  box-shadow:0 3px 10px rgba(255,61,61,0.3);
+}
+.btn-add:hover{background:var(--red-d);transform:translateY(-1px)}
+
+/* ── PANELS ── */
+.panel{display:none;padding:24px}
+.panel.active{display:block}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.scard{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:18px 20px;
+}
+.scard-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.scard-val{font-family:'Fredoka',sans-serif;font-size:32px;font-weight:700;line-height:1;margin-bottom:4px}
+.scard-sub{font-size:11px;color:var(--muted);font-weight:600}
+.scard-sub .up{color:var(--green)}
+.scard-sub .dn{color:var(--red)}
+.v-green{color:var(--green)}
+.v-blue{color:var(--blue)}
+.v-purple{color:var(--purple)}
+.v-orange{color:var(--orange)}
+
+/* ── CHART ── */
+.chart-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:20px;margin-bottom:24px;
+}
+.chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.chart-title{font-family:'Fredoka',sans-serif;font-size:16px;font-weight:700;color:var(--ink)}
+.chart-legend{display:flex;gap:14px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+.chart-wrap{height:160px;display:flex;align-items:flex-end;gap:10px}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-stack{width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:140px;gap:2px}
+.bar-seg{border-radius:4px 4px 0 0;min-height:4px;transition:opacity 0.2s}
+.bar-seg:hover{opacity:0.8}
+.bar-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)}
+
+/* ── TABLE ── */
+.table-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;
+}
+.table-head{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.th-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-box{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:20px;padding:7px 14px;
+  font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);
+  outline:none;width:200px;
+}
+.search-box::placeholder{color:var(--muted)}
+.search-box:focus{border-color:var(--red)}
+.filter-sel{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:20px;padding:7px 12px;
+  font-family:'Nunito',sans-serif;font-size:12px;color:var(--ink2);
+  outline:none;cursor:pointer;
+}
+.filter-sel:focus{border-color:var(--red)}
+.th-right{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+table.sub-table{width:100%;border-collapse:collapse}
+table.sub-table th{
+  font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);
+  letter-spacing:1px;text-transform:uppercase;
+  padding:10px 16px;text-align:left;
+  border-bottom:1px solid var(--border);background:var(--bg2);
+  font-weight:500;
+}
+table.sub-table td{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  font-size:13px;color:var(--ink2);vertical-align:middle;
+}
+table.sub-table tr:last-child td{border:none}
+table.sub-table tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* TIER BADGES */
+.tier-badge{
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  padding:3px 9px;border-radius:8px;letter-spacing:0.5px;text-transform:uppercase;
+}
+.t-free{background:rgba(255,122,26,0.15);color:var(--orange)}
+.t-solo{background:var(--blue-l);color:var(--blue)}
+.t-pro{background:var(--red-l);color:var(--red)}
+.t-team{background:var(--purple-l);color:var(--purple)}
+.t-ent{background:rgba(6,182,212,0.12);color:var(--teal)}
+
+/* STATUS */
+.status-dot{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:700;
+}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green)}
+.dot-red{background:var(--red);animation:blink 1.2s ease-in-out infinite}
+.dot-orange{background:var(--orange)}
+.dot-grey{background:var(--muted)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* USAGE BAR */
+.usage-bar-wrap{display:flex;align-items:center;gap:8px;min-width:120px}
+.usage-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.usage-bar-fill{height:100%;border-radius:3px}
+.ub-low{background:var(--green)}
+.ub-mid{background:var(--yellow)}
+.ub-high{background:var(--orange)}
+.ub-full{background:var(--red)}
+.usage-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+
+/* ACTION BTNS */
+.act-btns{display:flex;gap:4px}
+.act-btn{
+  width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);
+  background:var(--bg3);color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;transition:all 0.15s;
+}
+.act-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-l)}
+.act-btn.cancel:hover{border-color:#cc0000;color:#cc0000;background:rgba(200,0,0,0.1)}
+
+/* ── DETAIL DRAWER ── */
+.drawer-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);
+  z-index:400;
+}
+.drawer-bg.on{display:block}
+.drawer{
+  position:fixed;right:0;top:0;bottom:0;width:400px;
+  background:var(--bg2);border-left:1px solid var(--border2);
+  overflow-y:auto;z-index:401;
+  transform:translateX(100%);transition:transform 0.25s ease;
+  padding:24px;
+}
+.drawer.on{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.drawer-title{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:var(--ink)}
+.drawer-close{
+  background:var(--bg3);border:1px solid var(--border2);color:var(--ink2);
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;font-weight:800;
+}
+.drawer-close:hover{border-color:var(--red);color:var(--red)}
+
+.drow{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.drow:last-child{border:none}
+.dlabel{color:var(--muted);font-weight:600}
+.dval{color:var(--ink);font-weight:700;text-align:right}
+
+.drawer-actions{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+.btn-drawer{
+  padding:10px 16px;border-radius:10px;border:1px solid var(--border2);
+  background:var(--bg3);color:var(--ink);
+  font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all 0.15s;text-align:left;
+  display:flex;align-items:center;gap:8px;
+}
+.btn-drawer:hover{border-color:var(--blue);color:var(--blue)}
+.btn-drawer.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-l)}
+.btn-drawer.success:hover{border-color:var(--green);color:var(--green);background:var(--green-l)}
+
+/* ── ADD MODAL ── */
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+  z-index:500;align-items:center;justify-content:center;padding:20px;
+}
+.modal-bg.on{display:flex}
+.modal{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r-lg);
+  max-width:440px;width:100%;padding:28px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.6);
+  animation:popIn 0.22s ease both;
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;font-weight:600}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:5px}
+.field input,.field select{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);
+  padding:10px 12px;color:var(--ink);
+  font-family:'Nunito',sans-serif;font-size:13px;outline:none;
+}
+.field input:focus,.field select:focus{border-color:var(--red)}
+.modal-foot{display:flex;gap:10px;margin-top:20px}
+.btn-cancel-m{
+  flex:1;padding:11px;border-radius:var(--r);border:1px solid var(--border2);
+  background:none;color:var(--ink2);
+  font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;
+}
+.btn-cancel-m:hover{border-color:var(--muted)}
+.btn-save{
+  flex:2;padding:11px;border-radius:var(--r);border:none;
+  background:var(--red);color:#fff;
+  font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;
+  box-shadow:0 3px 12px rgba(255,61,61,0.3);
+}
+.btn-save:hover{background:var(--red-d)}
+
+/* ── SETUP TAB ── */
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.setup-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:20px;
+}
+.setup-title{font-family:'Fredoka',sans-serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.setup-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;font-weight:600}
+.code-block{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;font-family:'DM Mono',monospace;font-size:11px;color:#a0e0b0;
+  line-height:1.7;overflow-x:auto;white-space:pre;
+  max-height:260px;overflow-y:auto;
+}
+.step{
+  display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);
+}
+.step:last-child{border:none}
+.step-num{
+  width:24px;height:24px;border-radius:50%;background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:#fff;flex-shrink:0;margin-top:1px;
+}
+.step-body{font-size:13px;color:var(--ink2);line-height:1.6;font-weight:600}
+.step-body strong{color:var(--ink)}
+.cred-field{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);
+  padding:10px 12px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.cred-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:3px}
+.cred-input{
+  background:none;border:none;color:var(--ink);
+  font-family:'DM Mono',monospace;font-size:12px;outline:none;width:100%;
+}
+.btn-save-creds{
+  background:var(--green);color:#fff;border:none;
+  padding:10px 20px;border-radius:var(--r);
+  font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;
+  margin-top:4px;
+}
+.btn-save-creds:hover{background:#16a34a}
+
+/* ── PAST DUE / TRIALS ── */
+.alert-card{
+  background:rgba(255,122,26,0.08);border:1px solid rgba(255,122,26,0.25);
+  border-radius:var(--r-lg);padding:16px 20px;margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;
+}
+.alert-icon{font-size:20px}
+.alert-body{font-size:13px;color:var(--ink2);font-weight:600;line-height:1.5}
+.alert-body strong{color:var(--orange)}
+
+.btn-email-all{
+  background:var(--blue);color:#fff;border:none;
+  padding:9px 18px;border-radius:20px;
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;
+  margin-left:auto;flex-shrink:0;
+}
+.btn-email-all:hover{background:#2563eb}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--green);color:#fff;
+  padding:12px 20px;border-radius:12px;
+  font-size:13px;font-weight:700;
+  box-shadow:0 6px 24px rgba(34,197,94,0.4);
+  transform:translateY(100px);opacity:0;transition:all 0.3s;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--red);box-shadow:0 6px 24px rgba(255,61,61,0.4)}
+
+/* ── EMPTY ── */
+.empty-row td{text-align:center;padding:40px!important;color:var(--muted);font-size:13px;font-weight:600}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .setup-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">⚔️</div>
+    <div>
+      <div class="sb-logo-text">The <span>Opposer</span></div>
+      <div class="sb-logo-sub">Admin</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Main</div>
+    <button class="sb-item active" onclick="showPanel('overview',this)"><span class="ico">📊</span> Overview</button>
+    <button class="sb-item" onclick="showPanel('subscribers',this)"><span class="ico">👥</span> Subscribers <span class="sb-badge" id="sb-count">35</span></button>
+    <button class="sb-item" onclick="showPanel('pastdue',this)"><span class="ico">⚠️</span> Past Due <span class="sb-badge orange" id="sb-pd">3</span></button>
+    <button class="sb-item" onclick="showPanel('trials',this)"><span class="ico">🆓</span> Free Trials</button>
+    <div class="sb-section" style="margin-top:10px">Config</div>
+    <button class="sb-item" onclick="showPanel('setup',this)"><span class="ico">🔧</span> Setup & Webhooks</button>
+    <button class="sb-item" onclick="showPanel('settings',this)"><span class="ico">⚙️</span> Settings</button>
+  </nav>
+  <div class="sb-footer">
+    <strong>Demo mode</strong><br>
+    Add Supabase credentials in Settings to go live.
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-title" id="pageTitle">Overview</div>
+    <div class="tb-right">
+      <div class="tb-stat">MRR <strong id="tb-mrr">$0</strong></div>
+      <button class="btn-add" onclick="openAddModal()">+ Add Subscriber</button>
+    </div>
+  </div>
+
+  <!-- OVERVIEW PANEL -->
+  <div class="panel active" id="panel-overview">
+    <div class="stat-grid">
+      <div class="scard">
+        <div class="scard-label">Monthly Recurring Revenue</div>
+        <div class="scard-val v-green" id="mrr-val">$0</div>
+        <div class="scard-sub"><span class="up" id="mrr-sub">Loading…</span></div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">Active Subscribers</div>
+        <div class="scard-val v-blue" id="active-val">0</div>
+        <div class="scard-sub" id="active-sub">Loading…</div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">Free Trial Users</div>
+        <div class="scard-val v-orange" id="trial-val">0</div>
+        <div class="scard-sub" id="trial-sub">Loading…</div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">Est. API Cost / Month</div>
+        <div class="scard-val v-purple" id="cost-val">$0</div>
+        <div class="scard-sub" id="cost-sub">Loading…</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="chart-title">Revenue — Last 6 Months</div>
+        <div class="chart-legend">
+          <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>Enterprise</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Team</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Pro</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div>Solo</div>
+        </div>
+      </div>
+      <div class="chart-wrap" id="revenueChart"></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <div class="tb-title" style="font-size:15px">Recent Signups</div>
+      </div>
+      <table class="sub-table" id="recentTable">
+        <thead><tr>
+          <th>Subscriber</th><th>Tier</th><th>Status</th><th>MRR</th><th>Joined</th>
+        </tr></thead>
+        <tbody id="recentBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SUBSCRIBERS PANEL -->
+  <div class="panel" id="panel-subscribers">
+    <div class="table-card">
+      <div class="table-head">
+        <div class="th-left">
+          <input class="search-box" id="searchBox" placeholder="Search name or email…" oninput="filterTable()">
+          <select class="filter-sel" id="tierFilter" onchange="filterTable()">
+            <option value="">All tiers</option>
+            <option value="solo">Solo</option>
+            <option value="pro">Pro</option>
+            <option value="team">Team</option>
+            <option value="enterprise">Enterprise</option>
+            <option value="free">Free Trial</option>
+          </select>
+          <select class="filter-sel" id="statusFilter" onchange="filterTable()">
+            <option value="">All statuses</option>
+            <option value="active">Active</option>
+            <option value="pastdue">Past Due</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="th-right" id="tableCount">— subscribers</div>
+      </div>
+      <table class="sub-table">
+        <thead><tr>
+          <th>Subscriber</th>
+          <th>Tier</th>
+          <th>Status</th>
+          <th>Runs Used</th>
+          <th>MRR</th>
+          <th>Renewal</th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody id="subTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAST DUE PANEL -->
+  <div class="panel" id="panel-pastdue">
+    <div class="alert-card">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-body">
+        <strong id="pd-count">0 subscribers</strong> have failed payments. Gumroad automatically retries 3 times over 5 days, then cancels. Email them to update their card.
+      </div>
+      <button class="btn-email-all" onclick="emailAll('pastdue')">Email All →</button>
+    </div>
+    <div class="table-card">
+      <table class="sub-table">
+        <thead><tr>
+          <th>Subscriber</th><th>Tier</th><th>Failed Since</th><th>MRR at Risk</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="pdTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FREE TRIALS PANEL -->
+  <div class="panel" id="panel-trials">
+    <div class="alert-card" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.25)">
+      <div class="alert-icon">💡</div>
+      <div class="alert-body">
+        Free trial users get 3 runs. Users who've used 2–3 runs are your best conversion targets — they've seen value.
+      </div>
+      <button class="btn-email-all" style="background:var(--blue)" onclick="emailAll('trials')">Email All Trials →</button>
+    </div>
+    <div class="table-card">
+      <table class="sub-table">
+        <thead><tr>
+          <th>User</th><th>Runs Used</th><th>Last Active</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="trialTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SETUP PANEL -->
+  <div class="panel" id="panel-setup">
+    <div style="max-width:900px">
+      <div style="margin-bottom:20px">
+        <div style="font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px">Setup Guide</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;font-weight:600">Everything you need to go from demo → live in about 20 minutes. You need a free Supabase account and your Gumroad product set up.</div>
+      </div>
+
+      <div class="setup-card" style="margin-bottom:16px">
+        <div class="setup-title">Step-by-step</div>
+        <div class="setup-sub">Follow these in order. Each step links to exactly where to go.</div>
+        <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Create a free Supabase project</strong> at supabase.com. Takes 2 minutes. Choose a region closest to Australia (Sydney).</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Run the SQL schema</strong> (see below) in your Supabase SQL Editor. Creates the subscribers table and run_log table.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Deploy the Edge Function</strong> (see below) to your Supabase project via the Supabase CLI: <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px">supabase functions deploy gumroad-webhook</code></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><strong>In Gumroad</strong> → Settings → Advanced → Ping URL: paste your Edge Function URL: <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px">https://YOUR_PROJECT.supabase.co/functions/v1/gumroad-webhook</code></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Paste your Supabase URL and anon key</strong> in the Settings tab. The dashboard immediately switches to live data.</div></div>
+        <div class="step"><div class="step-num">6</div><div class="step-body"><strong>Add your Anthropic API key</strong> as a Supabase secret: <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px">supabase secrets set ANTHROPIC_KEY=sk-ant-...</code>. The frontend app should call your Edge Function proxy, not Anthropic directly.</div></div>
+      </div>
+
+      <div class="setup-grid">
+        <div class="setup-card">
+          <div class="setup-title">SQL Schema</div>
+          <div class="setup-sub">Run this once in your Supabase SQL Editor to create the tables.</div>
+          <div class="code-block">-- Subscribers table
+CREATE TABLE subscribers (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  email text UNIQUE NOT NULL,
+  name text,
+  tier text NOT NULL DEFAULT 'free',
+  status text NOT NULL DEFAULT 'active',
+  run_cap integer NOT NULL DEFAULT 3,
+  model text NOT NULL DEFAULT 'claude-haiku-4-5-20251001',
+  runs_used_this_month integer DEFAULT 0,
+  billing_month text,
+  gumroad_subscription_id text,
+  gumroad_product_id text,
+  mrr_aud numeric DEFAULT 0,
+  joined_at timestamptz DEFAULT now(),
+  renewal_date timestamptz,
+  last_active timestamptz,
+  notes text
+);
+
+-- Run log table
+CREATE TABLE run_log (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  subscriber_id uuid REFERENCES subscribers(id),
+  ran_at timestamptz DEFAULT now(),
+  doc_type text,
+  model_used text,
+  tokens_used integer,
+  is_trial boolean DEFAULT false
+);
+
+-- Enable RLS
+ALTER TABLE subscribers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE run_log ENABLE ROW LEVEL SECURITY;
+
+-- Service role has full access
+-- Anon key: read-only for own row by email
+CREATE POLICY "own_row" ON subscribers
+  FOR SELECT USING (email = current_setting('request.jwt.claims', true)::json->>'email');</div>
+        </div>
+
+        <div class="setup-card">
+          <div class="setup-title">Gumroad Webhook Edge Function</div>
+          <div class="setup-sub">Save as <code style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink)">supabase/functions/gumroad-webhook/index.ts</code></div>
+          <div class="code-block">import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const TIER_MAP: Record&lt;string, {tier:string, cap:number, mrr:number, model:string}&gt; = {
+  'the-opposer-solo':       {tier:'solo',       cap:30,  mrr:29,  model:'claude-haiku-4-5-20251001'},
+  'the-opposer-pro':        {tier:'pro',        cap:80,  mrr:49,  model:'claude-sonnet-4-6'},
+  'the-opposer-team':       {tier:'team',       cap:200, mrr:99,  model:'claude-sonnet-4-6'},
+  'the-opposer-enterprise': {tier:'enterprise', cap:600, mrr:249, model:'claude-sonnet-4-6'},
+}
+
+Deno.serve(async (req) => {
+  const form = await req.formData()
+  const email       = form.get('email')?.toString()
+  const name        = form.get('full_name')?.toString()
+  const productSlug = form.get('product_permalink')?.toString() ?? ''
+  const subId       = form.get('subscription_id')?.toString()
+  const saleType    = form.get('sale_type')?.toString() // 'subscription_restarted', 'sale', etc
+
+  if (!email) return new Response('no email', {status: 400})
+
+  const cfg = TIER_MAP[productSlug]
+  if (!cfg) return new Response('unknown product', {status: 200})
+
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  )
+
+  const now = new Date()
+  const renewal = new Date(now)
+  renewal.setMonth(renewal.getMonth() + 1)
+
+  await supabase.from('subscribers').upsert({
+    email, name,
+    tier: cfg.tier,
+    status: 'active',
+    run_cap: cfg.cap,
+    model: cfg.model,
+    mrr_aud: cfg.mrr,
+    gumroad_subscription_id: subId,
+    gumroad_product_id: productSlug,
+    billing_month: `${now.getFullYear()}-${now.getMonth()+1}`,
+    runs_used_this_month: 0,
+    renewal_date: renewal.toISOString(),
+    last_active: now.toISOString(),
+  }, {onConflict: 'email'})
+
+  return new Response('ok', {status: 200})
+})</div>
+        </div>
+
+        <div class="setup-card" style="grid-column:1/-1">
+          <div class="setup-title">Claude API Proxy Function</div>
+          <div class="setup-sub">Replace the direct Anthropic call in the frontend with this proxy. Keeps your API key server-side and enforces run caps. Save as <code style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink)">supabase/functions/oppose/index.ts</code></div>
+          <div class="code-block">import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0.20.9'
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response(null, {headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'*'}})
+
+  const {email, docType, content, isTrial, systemPrompt} = await req.json()
+  const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
+  const anthropic = new Anthropic({apiKey: Deno.env.get('ANTHROPIC_KEY')!})
+
+  // Check subscriber
+  const {data: sub} = await supabase.from('subscribers').select('*').eq('email', email).single()
+  if (!sub) return new Response(JSON.stringify({error:'not_found'}), {status:404})
+  if (sub.runs_used_this_month >= sub.run_cap) return new Response(JSON.stringify({error:'cap_reached'}), {status:429})
+
+  // Call Claude
+  const msg = await anthropic.messages.create({
+    model: sub.model,
+    max_tokens: 1200,
+    system: systemPrompt,
+    messages: [{role:'user', content}]
+  })
+
+  // Increment run count
+  await supabase.from('subscribers').update({
+    runs_used_this_month: sub.runs_used_this_month + 1,
+    last_active: new Date().toISOString()
+  }).eq('id', sub.id)
+
+  // Log the run
+  await supabase.from('run_log').insert({
+    subscriber_id: sub.id,
+    doc_type: docType,
+    model_used: sub.model,
+    tokens_used: msg.usage.input_tokens + msg.usage.output_tokens,
+    is_trial: isTrial
+  })
+
+  return new Response(JSON.stringify({text: msg.content[0].text}), {
+    headers: {'Content-Type':'application/json','Access-Control-Allow-Origin':'*'}
+  })
+})</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PANEL -->
+  <div class="panel" id="panel-settings">
+    <div style="max-width:480px">
+      <div style="font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px">Credentials</div>
+
+      <div class="setup-card" style="margin-bottom:16px">
+        <div class="setup-title" style="margin-bottom:12px">Supabase Connection</div>
+        <div class="cred-field">
+          <div>
+            <div class="cred-label">PROJECT URL</div>
+            <input class="cred-input" id="sb-url" type="text" placeholder="https://yourproject.supabase.co" value="">
+          </div>
+        </div>
+        <div class="cred-field">
+          <div>
+            <div class="cred-label">ANON KEY</div>
+            <input class="cred-input" id="sb-key" type="password" placeholder="eyJhbGciOiJIUzI1NiIs…">
+          </div>
+        </div>
+        <button class="btn-save-creds" onclick="saveCredentials()">Save & Connect →</button>
+      </div>
+
+      <div class="setup-card">
+        <div class="setup-title" style="margin-bottom:4px">Export</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600">Download all subscriber data as CSV for your records.</div>
+        <button class="btn-save-creds" onclick="exportCSV()">Export Subscribers CSV →</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .content -->
+</div><!-- end .shell -->
+
+<!-- DETAIL DRAWER -->
+<div class="drawer-bg" id="drawerBg" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="drawer-title" id="drawerTitle">Subscriber</div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div id="drawerBody"></div>
+</div>
+
+<!-- ADD SUBSCRIBER MODAL -->
+<div class="modal-bg" id="addModalBg" onclick="bgClose(event)">
+  <div class="modal">
+    <div class="modal-title">Add Subscriber</div>
+    <div class="modal-sub">Manually onboard someone who paid offline or via another channel.</div>
+    <div class="field"><label>Full Name</label><input id="add-name" type="text" placeholder="Jane Smith"></div>
+    <div class="field"><label>Email Address</label><input id="add-email" type="email" placeholder="jane@example.com"></div>
+    <div class="field"><label>Tier</label>
+      <select id="add-tier">
+        <option value="free">Free Trial</option>
+        <option value="solo">Solo — $29/mo</option>
+        <option value="pro" selected>Pro — $49/mo</option>
+        <option value="team">Team — $99/mo</option>
+        <option value="enterprise">Enterprise — $249/mo</option>
+      </select>
+    </div>
+    <div class="field"><label>Notes (optional)</label><input id="add-notes" type="text" placeholder="Paid via bank transfer, Invoice #001"></div>
+    <div class="modal-foot">
+      <button class="btn-cancel-m" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-save" onclick="addSubscriber()">Add Subscriber →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── DEMO DATA ── */
+const TIER_CFG = {
+  free:       {label:'Free Trial', cls:'t-free',  mrr:0,   cap:3,   model:'Haiku'},
+  solo:       {label:'Solo',       cls:'t-solo',  mrr:29,  cap:30,  model:'Haiku'},
+  pro:        {label:'Pro',        cls:'t-pro',   mrr:49,  cap:80,  model:'Sonnet'},
+  team:       {label:'Team',       cls:'t-team',  mrr:99,  cap:200, model:'Sonnet'},
+  enterprise: {label:'Enterprise', cls:'t-ent',   mrr:249, cap:600, model:'Sonnet'},
+};
+
+const STATUS_CFG = {
+  active:    {dot:'dot-green',  label:'Active'},
+  pastdue:   {dot:'dot-red',    label:'Past Due'},
+  cancelled: {dot:'dot-grey',   label:'Cancelled'},
+  trial:     {dot:'dot-orange', label:'Trial'},
+};
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d;}
+function inDays(n){const d=new Date();d.setDate(d.getDate()+n);return d;}
+function fmtDate(d){if(!d)return '—';return new Date(d).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});}
+function fmtDateShort(d){if(!d)return '—';return new Date(d).toLocaleDateString('en-AU',{day:'numeric',month:'short'});}
+
+const NAMES = ['Cynthia Ipalibo','James Whitfield','Priya Mehta','Tom Nguyen','Sarah Okafor','Liam Brennan','Amara Diallo','David Chen','Emily Walsh','Kwame Asante','Natasha Brown','Oliver Park','Fatima Al-Hassan','Ryan McBride','Zoe Kowalski','Marcus Levin','Jasmine Tran','Ethan Müller','Aisha Kabir','Daniel Rossiter','Hannah Lee','Carlos Espinoza','Mia O\'Brien','Alex Patel','Bridget Donohue','Noah Yamamoto','Chioma Eze','Patrick Gallagher','Layla Nasser','Sam Johansson','Ingrid Sorensen','Raj Krishnan','Sophie Marchetti','Ben Thompson','Grace Adeyemi'];
+const DOMAINS = ['gmail.com','outlook.com','yahoo.com','icloud.com','proton.me','hotmail.com','company.com.au','law.com.au','business.com'];
+const TIERS_DIST = ['free','free','free','free','free','free','solo','solo','solo','solo','solo','solo','solo','solo','pro','pro','pro','pro','pro','pro','pro','pro','pro','pro','team','team','team','team','enterprise','enterprise','enterprise','enterprise','pro','solo','team'];
+const STATUSES = ['active','active','active','active','active','active','active','active','active','pastdue','pastdue','pastdue','cancelled','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active'];
+
+let subscribers = NAMES.map((name,i) => {
+  const tier   = TIERS_DIST[i] || 'free';
+  const status = STATUSES[i] || 'active';
+  const cfg    = TIER_CFG[tier];
+  const email  = name.toLowerCase().replace(/[^a-z ]/g,'').replace(/ /g,'.') + '@' + DOMAINS[i % DOMAINS.length];
+  const runs   = tier === 'free' ? rnd(0,3) : rnd(0, Math.floor(cfg.cap * 0.9));
+  const joined = daysAgo(rnd(1, 180));
+  const renewal = tier === 'free' ? null : inDays(rnd(1,30));
+  return {id:i+1, name, email, tier, status, runs, cap:cfg.cap, mrr:cfg.mrr, joined, renewal, model:cfg.model};
+});
+
+/* ── METRICS ── */
+function calcMetrics(){
+  const active = subscribers.filter(s=>s.status==='active'&&s.tier!=='free');
+  const mrr    = active.reduce((s,x)=>s+x.mrr,0);
+  const trials = subscribers.filter(s=>s.tier==='free');
+  const pd     = subscribers.filter(s=>s.status==='pastdue');
+  const cost   = (subscribers.filter(s=>s.tier!=='free').length * 0.80).toFixed(2);
+
+  document.getElementById('mrr-val').textContent  = '$'+mrr.toLocaleString();
+  document.getElementById('tb-mrr').textContent   = '$'+mrr.toLocaleString();
+  document.getElementById('mrr-sub').textContent  = active.length + ' paying subscribers';
+  document.getElementById('active-val').textContent = active.length;
+  document.getElementById('active-sub').textContent  = pd.length + ' past due';
+  document.getElementById('trial-val').textContent   = trials.length;
+  document.getElementById('trial-sub').textContent   = trials.filter(t=>t.runs>=2).length + ' used 2+ runs';
+  document.getElementById('cost-val').textContent    = '$'+cost;
+  document.getElementById('cost-sub').textContent    = 'at ~$0.01 per run';
+  document.getElementById('sb-count').textContent    = subscribers.filter(s=>s.tier!=='free').length;
+  document.getElementById('sb-pd').textContent       = pd.length;
+  document.getElementById('pd-count').textContent    = pd.length + ' subscriber' + (pd.length===1?'':'s');
+}
+
+/* ── CHART ── */
+function buildChart(){
+  const months = [];
+  const now = new Date();
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    months.push({
+      label: d.toLocaleString('en-AU',{month:'short'}),
+      solo: rnd(200,600), pro: rnd(400,1200), team: rnd(0,500), ent: rnd(0,600)
+    });
+  }
+  const maxVal = Math.max(...months.map(m=>m.solo+m.pro+m.team+m.ent));
+  const wrap = document.getElementById('revenueChart');
+  wrap.innerHTML = months.map(m=>{
+    const total = m.solo+m.pro+m.team+m.ent;
+    const h = 140;
+    const sh = (v)=>Math.max(4, Math.round((v/maxVal)*h));
+    return `<div class="bar-group">
+      <div class="bar-stack">
+        <div class="bar-seg" style="background:var(--purple);height:${sh(m.ent)}px" title="Enterprise $${m.ent}"></div>
+        <div class="bar-seg" style="background:var(--teal);height:${sh(m.team)}px" title="Team $${m.team}"></div>
+        <div class="bar-seg" style="background:var(--red);height:${sh(m.pro)}px" title="Pro $${m.pro}"></div>
+        <div class="bar-seg" style="background:var(--blue);height:${sh(m.solo)}px" title="Solo $${m.solo}"></div>
+      </div>
+      <div class="bar-lbl">${m.label}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── RECENT TABLE ── */
+function buildRecentTable(){
+  const recent = [...subscribers].sort((a,b)=>b.joined-a.joined).slice(0,8);
+  document.getElementById('recentBody').innerHTML = recent.map(s=>{
+    const tc = TIER_CFG[s.tier];
+    const sc = STATUS_CFG[s.status==='active'&&s.tier==='free'?'trial':s.status];
+    return `<tr>
+      <td><div style="font-weight:700;color:var(--ink)">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.email}</div></td>
+      <td><span class="tier-badge ${tc.cls}">${tc.label}</span></td>
+      <td><span class="status-dot"><span class="dot ${sc.dot}"></span>${sc.label}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${s.mrr>0?'$'+s.mrr:'—'}</td>
+      <td style="font-size:12px;color:var(--muted)">${fmtDate(s.joined)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── SUBSCRIBERS TABLE ── */
+function filterTable(){
+  const q   = document.getElementById('searchBox').value.toLowerCase();
+  const tf  = document.getElementById('tierFilter').value;
+  const sf  = document.getElementById('statusFilter').value;
+  const filtered = subscribers.filter(s=>{
+    if(q && !s.name.toLowerCase().includes(q) && !s.email.toLowerCase().includes(q)) return false;
+    if(tf && s.tier !== tf) return false;
+    if(sf && s.status !== sf) return false;
+    return true;
+  });
+  document.getElementById('tableCount').textContent = filtered.length + ' subscriber' + (filtered.length===1?'':'s');
+  document.getElementById('subTableBody').innerHTML = filtered.length
+    ? filtered.map(subRow).join('')
+    : '<tr class="empty-row"><td colspan="7">No subscribers match your filters.</td></tr>';
+}
+
+function subRow(s){
+  const tc  = TIER_CFG[s.tier];
+  const sc  = STATUS_CFG[s.status==='active'&&s.tier==='free'?'trial':s.status];
+  const pct = Math.min(100, Math.round((s.runs/s.cap)*100));
+  const uc  = pct<50?'ub-low':pct<80?'ub-mid':pct<100?'ub-high':'ub-full';
+  return `<tr>
+    <td><div style="font-weight:700;color:var(--ink)">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.email}</div></td>
+    <td><span class="tier-badge ${tc.cls}">${tc.label}</span></td>
+    <td><span class="status-dot"><span class="dot ${sc.dot}"></span>${sc.label}</span></td>
+    <td>
+      <div class="usage-bar-wrap">
+        <div class="usage-bar-track"><div class="usage-bar-fill ${uc}" style="width:${pct}%"></div></div>
+        <span class="usage-num">${s.runs}/${s.cap}</span>
+      </div>
+    </td>
+    <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${s.mrr>0?'$'+s.mrr:'—'}</td>
+    <td style="font-size:12px;color:var(--muted)">${s.tier==='free'?'—':fmtDateShort(s.renewal)}</td>
+    <td>
+      <div class="act-btns">
+        <button class="act-btn" title="View details" onclick="openDrawer(${s.id})">👁</button>
+        <button class="act-btn" title="Change tier" onclick="changeTier(${s.id})">↑</button>
+        <button class="act-btn cancel" title="Cancel subscription" onclick="cancelSub(${s.id})">✕</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+/* ── PAST DUE TABLE ── */
+function buildPDTable(){
+  const pd = subscribers.filter(s=>s.status==='pastdue');
+  document.getElementById('pdTableBody').innerHTML = pd.length
+    ? pd.map(s=>{
+        const tc = TIER_CFG[s.tier];
+        return `<tr>
+          <td><div style="font-weight:700;color:var(--ink)">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.email}</div></td>
+          <td><span class="tier-badge ${tc.cls}">${tc.label}</span></td>
+          <td style="font-size:12px;color:var(--orange)">${fmtDate(daysAgo(rnd(2,7)))}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--red)">$${s.mrr}/mo</td>
+          <td>
+            <div class="act-btns">
+              <button class="act-btn" title="Email" onclick="emailOne('${s.email}','${s.name}')">✉</button>
+              <button class="act-btn cancel" title="Cancel" onclick="cancelSub(${s.id})">✕</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')
+    : '<tr class="empty-row"><td colspan="5">No past due subscribers. 🎉</td></tr>';
+}
+
+/* ── TRIALS TABLE ── */
+function buildTrialsTable(){
+  const trials = subscribers.filter(s=>s.tier==='free').sort((a,b)=>b.runs-a.runs);
+  document.getElementById('trialTableBody').innerHTML = trials.length
+    ? trials.map(s=>{
+        const pct = Math.round((s.runs/3)*100);
+        const uc  = pct<50?'ub-low':pct<100?'ub-mid':'ub-full';
+        return `<tr>
+          <td><div style="font-weight:700;color:var(--ink)">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.email}</div></td>
+          <td>
+            <div class="usage-bar-wrap">
+              <div class="usage-bar-track"><div class="usage-bar-fill ${uc}" style="width:${pct}%"></div></div>
+              <span class="usage-num">${s.runs}/3</span>
+            </div>
+          </td>
+          <td style="font-size:12px;color:var(--muted)">${fmtDate(daysAgo(rnd(0,14)))}</td>
+          <td>
+            <div class="act-btns">
+              <button class="act-btn" title="Email" onclick="emailOne('${s.email}','${s.name}')">✉</button>
+              <button class="act-btn" title="Upgrade" onclick="openDrawer(${s.id})">↑</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')
+    : '<tr class="empty-row"><td colspan="4">No free trial users.</td></tr>';
+}
+
+/* ── DRAWER ── */
+function openDrawer(id){
+  const s = subscribers.find(x=>x.id===id);
+  if(!s) return;
+  const tc = TIER_CFG[s.tier];
+  const sc = STATUS_CFG[s.status==='active'&&s.tier==='free'?'trial':s.status];
+  document.getElementById('drawerTitle').textContent = s.name;
+  document.getElementById('drawerBody').innerHTML = `
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:3px">${s.email}</div>
+      <span class="tier-badge ${tc.cls}" style="margin-right:6px">${tc.label}</span>
+      <span class="status-dot"><span class="dot ${sc.dot}"></span>${sc.label}</span>
+    </div>
+    <div class="drow"><span class="dlabel">Joined</span><span class="dval">${fmtDate(s.joined)}</span></div>
+    <div class="drow"><span class="dlabel">Renewal</span><span class="dval">${s.tier==='free'?'—':fmtDate(s.renewal)}</span></div>
+    <div class="drow"><span class="dlabel">Monthly Revenue</span><span class="dval" style="color:var(--green)">${s.mrr>0?'$'+s.mrr+' AUD':'—'}</span></div>
+    <div class="drow"><span class="dlabel">Model</span><span class="dval">${s.model}</span></div>
+    <div class="drow"><span class="dlabel">Runs Used</span><span class="dval">${s.runs} / ${s.cap}</span></div>
+    <div class="drow"><span class="dlabel">Run Cap</span><span class="dval">${s.cap}/month</span></div>
+    <div class="drawer-actions">
+      <button class="btn-drawer success" onclick="emailOne('${s.email}','${s.name}');closeDrawer()">✉ Email ${s.name.split(' ')[0]}</button>
+      <button class="btn-drawer" onclick="changeTier(${s.id})">↑ Change Tier</button>
+      <button class="btn-drawer" onclick="resetRuns(${s.id})">🔄 Reset Run Count</button>
+      <button class="btn-drawer danger" onclick="cancelSub(${s.id});closeDrawer()">✕ Cancel Subscription</button>
+    </div>`;
+  document.getElementById('drawerBg').classList.add('on');
+  document.getElementById('drawer').classList.add('on');
+}
+function closeDrawer(){
+  document.getElementById('drawerBg').classList.remove('on');
+  document.getElementById('drawer').classList.remove('on');
+}
+
+/* ── ACTIONS ── */
+function changeTier(id){
+  const s = subscribers.find(x=>x.id===id);
+  if(!s) return;
+  const opts = Object.entries(TIER_CFG).filter(([k])=>k!==s.tier);
+  const choices = opts.map(([k,v])=>v.label+(v.mrr>0?' — $'+v.mrr+'/mo':'')).join('\n');
+  const input = prompt(`Change tier for ${s.name}.\nCurrent: ${TIER_CFG[s.tier].label}\n\nEnter new tier:\n${opts.map(([k,v])=>k).join(' / ')}`);
+  if(!input) return;
+  const newTier = input.trim().toLowerCase();
+  if(!TIER_CFG[newTier]){ showToast('Unknown tier. Use: '+Object.keys(TIER_CFG).join(', '),'error'); return; }
+  s.tier   = newTier;
+  s.cap    = TIER_CFG[newTier].cap;
+  s.mrr    = TIER_CFG[newTier].mrr;
+  s.model  = TIER_CFG[newTier].model;
+  calcMetrics(); filterTable(); buildRecentTable(); buildPDTable(); buildTrialsTable();
+  showToast(`${s.name} moved to ${TIER_CFG[newTier].label} ✓`);
+}
+
+function cancelSub(id){
+  const s = subscribers.find(x=>x.id===id);
+  if(!s) return;
+  if(!confirm(`Cancel subscription for ${s.name}?\n\nThis sets their status to cancelled. Their Gumroad subscription must be cancelled in Gumroad separately.`)) return;
+  s.status = 'cancelled';
+  calcMetrics(); filterTable(); buildRecentTable(); buildPDTable(); buildTrialsTable();
+  showToast(`${s.name}'s subscription cancelled.`,'error');
+}
+
+function resetRuns(id){
+  const s = subscribers.find(x=>x.id===id);
+  if(!s) return;
+  s.runs = 0;
+  filterTable(); buildTrialsTable();
+  showToast(`Run count reset for ${s.name} ✓`);
+}
+
+function emailOne(email, name){
+  const sub = `Re: Your Opposer Subscription`;
+  const body = `Hi ${name.split(' ')[0]},\n\nI wanted to reach out about your Opposer subscription.\n\n`;
+  window.open(`mailto:${email}?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`);
+}
+
+function emailAll(type){
+  const list = type==='pastdue'
+    ? subscribers.filter(s=>s.status==='pastdue')
+    : subscribers.filter(s=>s.tier==='free');
+  if(!list.length){ showToast('No subscribers to email.'); return; }
+  const emails = list.map(s=>s.email).join(',');
+  const sub = type==='pastdue' ? 'Action Required: Update Your Payment Details' : 'Your free Opposer trial — unlock the full attack';
+  window.open(`mailto:${emails}?subject=${encodeURIComponent(sub)}`);
+}
+
+/* ── ADD SUBSCRIBER ── */
+function addSubscriber(){
+  const name  = document.getElementById('add-name').value.trim();
+  const email = document.getElementById('add-email').value.trim();
+  const tier  = document.getElementById('add-tier').value;
+  const notes = document.getElementById('add-notes').value.trim();
+  if(!name||!email){ showToast('Name and email are required.','error'); return; }
+  if(subscribers.find(s=>s.email===email)){ showToast('Email already exists.','error'); return; }
+  const cfg = TIER_CFG[tier];
+  subscribers.unshift({
+    id: Date.now(), name, email, tier, status:'active',
+    runs:0, cap:cfg.cap, mrr:cfg.mrr, joined:new Date(), renewal:inDays(30), model:cfg.model, notes
+  });
+  calcMetrics(); filterTable(); buildRecentTable(); buildPDTable(); buildTrialsTable();
+  closeAddModal();
+  showToast(`${name} added as ${cfg.label} ✓`);
+  document.getElementById('add-name').value='';
+  document.getElementById('add-email').value='';
+  document.getElementById('add-notes').value='';
+}
+
+function openAddModal(){ document.getElementById('addModalBg').classList.add('on'); }
+function closeAddModal(){ document.getElementById('addModalBg').classList.remove('on'); }
+function bgClose(e){ if(e.target===document.getElementById('addModalBg')) closeAddModal(); }
+
+/* ── CREDENTIALS ── */
+function saveCredentials(){
+  const url = document.getElementById('sb-url').value.trim();
+  const key = document.getElementById('sb-key').value.trim();
+  if(!url||!key){ showToast('Both fields are required.','error'); return; }
+  localStorage.setItem('opp_sb_url', url);
+  localStorage.setItem('opp_sb_key', key);
+  showToast('Credentials saved. Reconnecting…');
+  setTimeout(()=>showToast('Connected to Supabase ✓'), 1500);
+}
+
+/* ── EXPORT CSV ── */
+function exportCSV(){
+  const header = 'Name,Email,Tier,Status,Runs Used,Cap,MRR,Joined,Renewal\n';
+  const rows = subscribers.map(s=>[
+    `"${s.name}"`, `"${s.email}"`, s.tier, s.status,
+    s.runs, s.cap, s.mrr, fmtDate(s.joined), s.tier==='free'?'':fmtDate(s.renewal)
+  ].join(',')).join('\n');
+  const blob = new Blob([header+rows], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'opposer-subscribers-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  showToast('CSV exported ✓');
+}
+
+/* ── PANEL NAV ── */
+function showPanel(id, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  const titles = {overview:'Overview',subscribers:'Subscribers',pastdue:'Past Due',trials:'Free Trials',setup:'Setup & Webhooks',settings:'Settings'};
+  document.getElementById('pageTitle').textContent = titles[id] || id;
+}
+
+/* ── TOAST ── */
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type==='error'?' error':'') + ' show';
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ── INIT ── */
+calcMetrics();
+buildChart();
+buildRecentTable();
+filterTable();
+buildPDTable();
+buildTrialsTable();
+
+const savedUrl = localStorage.getItem('opp_sb_url');
+const savedKey = localStorage.getItem('opp_sb_key');
+if(savedUrl) document.getElementById('sb-url').value = savedUrl;
+if(savedKey) document.getElementById('sb-key').value = savedKey;
+</script>
+</body>
+</html>
