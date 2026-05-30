@@ -804,13 +804,16 @@ Deno.serve(async (req) => {
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── DEMO DATA ── */
+/* ── CONFIG ── */
+const SB_URL = 'https://mrhekpgvfcwfnzmipjis.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yaGVrcGd2ZmN3Zm56bWlwamlzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDEzNDExNCwiZXhwIjoyMDk1NzEwMTE0fQ.1NSJl421BeQfwCKXlP1grUINa4pgTmH4ka6V-KYt3Ek';
+
 const TIER_CFG = {
   free:    {label:'Free Trial', cls:'t-free',    mrr:0,     cap:3,   model:'Haiku'},
-  student: {label:'Student',   cls:'t-student',  mrr:9.99,  cap:20,  model:'Sonnet'},
-  solo:    {label:'Solo',      cls:'t-solo',     mrr:19.99, cap:30,  model:'Haiku'},
-  pro:     {label:'Pro',       cls:'t-pro',      mrr:39.99, cap:80,  model:'Sonnet'},
-  team:    {label:'Team',      cls:'t-team',     mrr:89.99, cap:200, model:'Sonnet'},
+  student: {label:'Student',    cls:'t-student', mrr:9.99,  cap:20,  model:'Sonnet'},
+  solo:    {label:'Solo',       cls:'t-solo',    mrr:19.99, cap:30,  model:'Haiku'},
+  pro:     {label:'Pro',        cls:'t-pro',     mrr:39.99, cap:80,  model:'Sonnet'},
+  team:    {label:'Team',       cls:'t-team',    mrr:89.99, cap:200, model:'Sonnet'},
 };
 
 const STATUS_CFG = {
@@ -820,27 +823,79 @@ const STATUS_CFG = {
   trial:     {dot:'dot-orange', label:'Trial'},
 };
 
-function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d;}
+function fmtDate(d){if(!d)return '—';return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+function fmtDateShort(d){if(!d)return '—';return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
 function inDays(n){const d=new Date();d.setDate(d.getDate()+n);return d;}
-function fmtDate(d){if(!d)return '—';return new Date(d).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});}
-function fmtDateShort(d){if(!d)return '—';return new Date(d).toLocaleDateString('en-AU',{day:'numeric',month:'short'});}
 
-const NAMES = ['Cynthia Ipalibo','James Whitfield','Priya Mehta','Tom Nguyen','Sarah Okafor','Liam Brennan','Amara Diallo','David Chen','Emily Walsh','Kwame Asante','Natasha Brown','Oliver Park','Fatima Al-Hassan','Ryan McBride','Zoe Kowalski','Marcus Levin','Jasmine Tran','Ethan Müller','Aisha Kabir','Daniel Rossiter','Hannah Lee','Carlos Espinoza','Mia O\'Brien','Alex Patel','Bridget Donohue','Noah Yamamoto','Chioma Eze','Patrick Gallagher','Layla Nasser','Sam Johansson','Ingrid Sorensen','Raj Krishnan','Sophie Marchetti','Ben Thompson','Grace Adeyemi'];
-const DOMAINS = ['gmail.com','outlook.com','yahoo.com','icloud.com','proton.me','hotmail.com','company.com.au','law.com.au','business.com'];
-const TIERS_DIST = ['free','free','free','free','free','free','student','student','student','student','solo','solo','solo','solo','pro','pro','pro','pro','pro','pro','pro','pro','pro','pro','team','team','team','team','pro','solo','team','student','pro','solo','team'];
-const STATUSES = ['active','active','active','active','active','active','active','active','active','pastdue','pastdue','pastdue','cancelled','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active'];
+let subscribers = [];
+let liveMode = false;
 
-let subscribers = NAMES.map((name,i) => {
-  const tier   = TIERS_DIST[i] || 'free';
-  const status = STATUSES[i] || 'active';
-  const cfg    = TIER_CFG[tier];
-  const email  = name.toLowerCase().replace(/[^a-z ]/g,'').replace(/ /g,'.') + '@' + DOMAINS[i % DOMAINS.length];
-  const runs   = tier === 'free' ? rnd(0,3) : rnd(0, Math.floor(cfg.cap * 0.9));
-  const joined = daysAgo(rnd(1, 180));
-  const renewal = tier === 'free' ? null : inDays(rnd(1,30));
-  return {id:i+1, name, email, tier, status, runs, cap:cfg.cap, mrr:cfg.mrr, joined, renewal, model:cfg.model};
-});
+/* ── SUPABASE FETCH ── */
+async function sbFetch(table, params=''){
+  const res = await fetch(`${SB_URL}/rest/v1/${table}?${params}&order=joined_at.desc`, {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+    }
+  });
+  if(!res.ok) throw new Error('Supabase error: ' + res.status);
+  return res.json();
+}
+
+async function sbUpdate(table, id, data){
+  return fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(data)
+  });
+}
+
+async function sbInsert(table, data){
+  return fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(data)
+  });
+}
+
+/* ── LOAD LIVE DATA ── */
+async function loadSubscribers(){
+  try {
+    const data = await sbFetch('subscribers', 'select=*');
+    subscribers = data.map(s => ({
+      id:      s.id,
+      name:    s.name || s.email.split('@')[0],
+      email:   s.email,
+      tier:    s.tier || 'free',
+      status:  s.status || 'active',
+      runs:    s.runs_used_this_month || 0,
+      cap:     s.run_cap || 3,
+      mrr:     parseFloat(s.mrr_usd) || 0,
+      joined:  s.joined_at,
+      renewal: s.renewal_date,
+      model:   s.model || 'Haiku',
+      notes:   s.notes || '',
+      license: s.license_key || '',
+    }));
+    liveMode = true;
+    document.querySelector('.sb-footer').innerHTML = '<strong style="color:var(--green)">● Live</strong><br>Connected to Supabase.';
+    calcMetrics(); buildChart(); buildRecentTable(); filterTable(); buildPDTable(); buildTrialsTable();
+  } catch(e) {
+    console.error('Supabase load failed:', e);
+    document.querySelector('.sb-footer').innerHTML = '<strong style="color:var(--red)">● Offline</strong><br>Could not reach Supabase.';
+  }
+}
 
 /* ── METRICS ── */
 function calcMetrics(){
@@ -1035,38 +1090,46 @@ function closeDrawer(){
 }
 
 /* ── ACTIONS ── */
-function changeTier(id){
+async function changeTier(id){
   const s = subscribers.find(x=>x.id===id);
   if(!s) return;
   const opts = Object.entries(TIER_CFG).filter(([k])=>k!==s.tier);
-  const choices = opts.map(([k,v])=>v.label+(v.mrr>0?' — $'+v.mrr+'/mo':'')).join('\n');
-  const input = prompt(`Change tier for ${s.name}.\nCurrent: ${TIER_CFG[s.tier].label}\n\nEnter new tier:\n${opts.map(([k,v])=>k).join(' / ')}`);
+  const input = prompt(`Change tier for ${s.name}.\nCurrent: ${TIER_CFG[s.tier].label}\n\nEnter new tier:\n${opts.map(([k,v])=>k+' — $'+v.mrr+'/mo').join('\n')}`);
   if(!input) return;
   const newTier = input.trim().toLowerCase();
   if(!TIER_CFG[newTier]){ showToast('Unknown tier. Use: '+Object.keys(TIER_CFG).join(', '),'error'); return; }
-  s.tier   = newTier;
-  s.cap    = TIER_CFG[newTier].cap;
-  s.mrr    = TIER_CFG[newTier].mrr;
-  s.model  = TIER_CFG[newTier].model;
-  calcMetrics(); filterTable(); buildRecentTable(); buildPDTable(); buildTrialsTable();
-  showToast(`${s.name} moved to ${TIER_CFG[newTier].label} ✓`);
+  const cfg = TIER_CFG[newTier];
+  try {
+    await sbUpdate('subscribers', s.id, {
+      tier: newTier,
+      run_cap: cfg.cap,
+      mrr_usd: cfg.mrr,
+      model: newTier==='solo'?'claude-haiku-4-5-20251001':'claude-sonnet-4-6',
+    });
+    showToast(`${s.name} moved to ${cfg.label} ✓`);
+    await loadSubscribers();
+  } catch(e){ showToast('Update failed: '+e.message,'error'); }
 }
 
-function cancelSub(id){
+async function cancelSub(id){
   const s = subscribers.find(x=>x.id===id);
   if(!s) return;
   if(!confirm(`Cancel subscription for ${s.name}?\n\nThis sets their status to cancelled. Their Gumroad subscription must be cancelled in Gumroad separately.`)) return;
-  s.status = 'cancelled';
-  calcMetrics(); filterTable(); buildRecentTable(); buildPDTable(); buildTrialsTable();
-  showToast(`${s.name}'s subscription cancelled.`,'error');
+  try {
+    await sbUpdate('subscribers', s.id, {status:'cancelled'});
+    showToast(`${s.name}'s subscription cancelled.`,'error');
+    await loadSubscribers();
+  } catch(e){ showToast('Update failed: '+e.message,'error'); }
 }
 
-function resetRuns(id){
+async function resetRuns(id){
   const s = subscribers.find(x=>x.id===id);
   if(!s) return;
-  s.runs = 0;
-  filterTable(); buildTrialsTable();
-  showToast(`Run count reset for ${s.name} ✓`);
+  try {
+    await sbUpdate('subscribers', s.id, {runs_used_this_month:0});
+    showToast(`Run count reset for ${s.name} ✓`);
+    await loadSubscribers();
+  } catch(e){ showToast('Update failed: '+e.message,'error'); }
 }
 
 function emailOne(email, name){
@@ -1086,7 +1149,7 @@ function emailAll(type){
 }
 
 /* ── ADD SUBSCRIBER ── */
-function addSubscriber(){
+async function addSubscriber(){
   const name  = document.getElementById('add-name').value.trim();
   const email = document.getElementById('add-email').value.trim();
   const tier  = document.getElementById('add-tier').value;
@@ -1094,16 +1157,29 @@ function addSubscriber(){
   if(!name||!email){ showToast('Name and email are required.','error'); return; }
   if(subscribers.find(s=>s.email===email)){ showToast('Email already exists.','error'); return; }
   const cfg = TIER_CFG[tier];
-  subscribers.unshift({
-    id: Date.now(), name, email, tier, status:'active',
-    runs:0, cap:cfg.cap, mrr:cfg.mrr, joined:new Date(), renewal:inDays(30), model:cfg.model, notes
-  });
-  calcMetrics(); filterTable(); buildRecentTable(); buildPDTable(); buildTrialsTable();
-  closeAddModal();
-  showToast(`${name} added as ${cfg.label} ✓`);
-  document.getElementById('add-name').value='';
-  document.getElementById('add-email').value='';
-  document.getElementById('add-notes').value='';
+  const now = new Date();
+  const renewal = inDays(30);
+  const record = {
+    name, email, tier, status:'active',
+    run_cap: cfg.cap, mrr_usd: cfg.mrr,
+    model: tier==='solo'?'claude-haiku-4-5-20251001':'claude-sonnet-4-6',
+    runs_used_this_month: 0,
+    billing_month: `${now.getFullYear()}-${now.getMonth()+1}`,
+    renewal_date: renewal.toISOString(),
+    joined_at: now.toISOString(),
+    notes
+  };
+  try {
+    await sbInsert('subscribers', record);
+    showToast(`${name} added as ${cfg.label} ✓`);
+    closeAddModal();
+    document.getElementById('add-name').value='';
+    document.getElementById('add-email').value='';
+    document.getElementById('add-notes').value='';
+    await loadSubscribers();
+  } catch(e) {
+    showToast('Failed to add: '+e.message,'error');
+  }
 }
 
 function openAddModal(){ document.getElementById('addModalBg').classList.add('on'); }
@@ -1112,13 +1188,7 @@ function bgClose(e){ if(e.target===document.getElementById('addModalBg')) closeA
 
 /* ── CREDENTIALS ── */
 function saveCredentials(){
-  const url = document.getElementById('sb-url').value.trim();
-  const key = document.getElementById('sb-key').value.trim();
-  if(!url||!key){ showToast('Both fields are required.','error'); return; }
-  localStorage.setItem('opp_sb_url', url);
-  localStorage.setItem('opp_sb_key', key);
-  showToast('Credentials saved. Reconnecting…');
-  setTimeout(()=>showToast('Connected to Supabase ✓'), 1500);
+  showToast('Already connected — credentials are hardcoded in admin ✓');
 }
 
 /* ── EXPORT CSV ── */
@@ -1155,12 +1225,8 @@ function showToast(msg, type){
 }
 
 /* ── INIT ── */
-calcMetrics();
 buildChart();
-buildRecentTable();
-filterTable();
-buildPDTable();
-buildTrialsTable();
+loadSubscribers();
 
 const savedUrl = localStorage.getItem('opp_sb_url');
 const savedKey = localStorage.getItem('opp_sb_key');
