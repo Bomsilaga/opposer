@@ -431,8 +431,8 @@ table.sub-table tr:hover td{background:rgba(255,255,255,0.02)}
   <nav class="sb-nav">
     <div class="sb-section">Main</div>
     <button class="sb-item active" onclick="showPanel('overview',this)"><span class="ico">📊</span> Overview</button>
-    <button class="sb-item" onclick="showPanel('subscribers',this)"><span class="ico">👥</span> Subscribers <span class="sb-badge" id="sb-count">35</span></button>
-    <button class="sb-item" onclick="showPanel('pastdue',this)"><span class="ico">⚠️</span> Past Due <span class="sb-badge orange" id="sb-pd">3</span></button>
+    <button class="sb-item" onclick="showPanel('subscribers',this)"><span class="ico">👥</span> Subscribers <span class="sb-badge" id="sb-count">—</span></button>
+    <button class="sb-item" onclick="showPanel('pastdue',this)"><span class="ico">⚠️</span> Past Due <span class="sb-badge orange" id="sb-pd">—</span></button>
     <button class="sb-item" onclick="showPanel('trials',this)"><span class="ico">🆓</span> Free Trials</button>
     <div class="sb-section" style="margin-top:10px">Config</div>
     <button class="sb-item" onclick="showPanel('setup',this)"><span class="ico">🔧</span> Setup & Webhooks</button>
@@ -753,28 +753,36 @@ Deno.serve(async (req) => {
   <!-- SETTINGS PANEL -->
   <div class="panel" id="panel-settings">
     <div style="max-width:480px">
-      <div style="font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px">Credentials</div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:16px">Settings</div>
 
       <div class="setup-card" style="margin-bottom:16px">
-        <div class="setup-title" style="margin-bottom:12px">Supabase Connection</div>
+        <div class="setup-title" style="margin-bottom:8px">Supabase Connection</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)">
+          <span class="dot dot-green" style="width:10px;height:10px;flex-shrink:0"></span>
+          <span style="font-size:13px;color:var(--ink2);font-weight:700">Connected</span>
+        </div>
+        <div style="padding:10px 0;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+          <div style="margin-bottom:4px">PROJECT <span style="color:var(--ink2)">mrhekpgvfcwfnzmipjis.supabase.co</span></div>
+          <div>FUNCTIONS <span style="color:var(--green)">gumroad-webhook · oppose</span></div>
+        </div>
+        <button class="btn-save-creds" onclick="loadSubscribers();showToast('Refreshing data…')">↻ Refresh Data</button>
+      </div>
+
+      <div class="setup-card" style="margin-bottom:16px">
+        <div class="setup-title" style="margin-bottom:4px">Change Admin PIN</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600">Enter a new 4-digit PIN for the lock screen.</div>
         <div class="cred-field">
-          <div>
-            <div class="cred-label">PROJECT URL</div>
-            <input class="cred-input" id="sb-url" type="text" placeholder="https://yourproject.supabase.co" value="">
+          <div style="width:100%">
+            <div class="cred-label">NEW PIN</div>
+            <input class="cred-input" id="new-pin" type="password" placeholder="••••" maxlength="8">
           </div>
         </div>
-        <div class="cred-field">
-          <div>
-            <div class="cred-label">ANON KEY</div>
-            <input class="cred-input" id="sb-key" type="password" placeholder="eyJhbGciOiJIUzI1NiIs…">
-          </div>
-        </div>
-        <button class="btn-save-creds" onclick="saveCredentials()">Save & Connect →</button>
+        <button class="btn-save-creds" onclick="changePin()">Save PIN →</button>
       </div>
 
       <div class="setup-card">
         <div class="setup-title" style="margin-bottom:4px">Export</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600">Download all subscriber data as CSV for your records.</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;font-weight:600">Download all subscriber data as CSV.</div>
         <button class="btn-save-creds" onclick="exportCSV()">Export Subscribers CSV →</button>
       </div>
     </div>
@@ -851,7 +859,7 @@ let liveMode = false;
 
 /* ── SUPABASE FETCH ── */
 async function sbFetch(table, params=''){
-  const res = await fetch(`${SB_URL}/rest/v1/${table}?${params}&order=joined_at.desc`, {
+  const res = await fetch(`${SB_URL}/rest/v1/${table}?${params}order=joined_at.desc`, {
     headers: {
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + SB_KEY,
@@ -918,24 +926,26 @@ async function loadSubscribers(){
 
 /* ── METRICS ── */
 function calcMetrics(){
-  const active = subscribers.filter(s=>s.status==='active'&&s.tier!=='free');
-  const mrr    = active.reduce((s,x)=>s+x.mrr,0);
-  const trials = subscribers.filter(s=>s.tier==='free');
-  const pd     = subscribers.filter(s=>s.status==='pastdue');
-  const cost   = (subscribers.filter(s=>s.tier!=='free').length * 0.80).toFixed(2);
+  const active  = subscribers.filter(s=>s.status==='active'&&s.tier!=='free');
+  const mrr     = active.reduce((s,x)=>s+x.mrr,0);
+  const trials  = subscribers.filter(s=>s.tier==='free');
+  const pd      = subscribers.filter(s=>s.status==='pastdue');
+  const paying  = subscribers.filter(s=>s.tier!=='free');
+  const cost    = (paying.length * 0.80).toFixed(2);
+  const mrrFmt  = mrr > 0 ? '$'+mrr.toFixed(2) : '$0.00';
 
-  document.getElementById('mrr-val').textContent  = '$'+mrr.toFixed(2);
-  document.getElementById('tb-mrr').textContent   = '$'+mrr.toFixed(2);
-  document.getElementById('mrr-sub').textContent  = active.length + ' paying subscribers';
+  document.getElementById('mrr-val').textContent    = mrrFmt;
+  document.getElementById('tb-mrr').textContent     = mrrFmt;
+  document.getElementById('mrr-sub').textContent    = active.length + ' paying subscriber' + (active.length===1?'':'s');
   document.getElementById('active-val').textContent = active.length;
-  document.getElementById('active-sub').textContent  = pd.length + ' past due';
-  document.getElementById('trial-val').textContent   = trials.length;
-  document.getElementById('trial-sub').textContent   = trials.filter(t=>t.runs>=2).length + ' used 2+ runs';
-  document.getElementById('cost-val').textContent    = '$'+cost;
-  document.getElementById('cost-sub').textContent    = 'at ~$0.01 per run';
-  document.getElementById('sb-count').textContent    = subscribers.filter(s=>s.tier!=='free').length;
-  document.getElementById('sb-pd').textContent       = pd.length;
-  document.getElementById('pd-count').textContent    = pd.length + ' subscriber' + (pd.length===1?'':'s');
+  document.getElementById('active-sub').textContent = pd.length + ' past due';
+  document.getElementById('trial-val').textContent  = trials.length;
+  document.getElementById('trial-sub').textContent  = trials.filter(t=>t.runs>=2).length + ' used 2+ runs';
+  document.getElementById('cost-val').textContent   = '$'+cost;
+  document.getElementById('cost-sub').textContent   = 'at ~$0.80/subscriber est.';
+  document.getElementById('sb-count').textContent   = paying.length || '0';
+  document.getElementById('sb-pd').textContent      = pd.length || '0';
+  document.getElementById('pd-count').textContent   = pd.length + ' subscriber' + (pd.length===1?'':'s');
 }
 
 /* ── CHART ── */
@@ -1205,9 +1215,14 @@ function openAddModal(){ document.getElementById('addModalBg').classList.add('on
 function closeAddModal(){ document.getElementById('addModalBg').classList.remove('on'); }
 function bgClose(e){ if(e.target===document.getElementById('addModalBg')) closeAddModal(); }
 
-/* ── CREDENTIALS ── */
-function saveCredentials(){
-  showToast('Already connected — credentials are hardcoded in admin ✓');
+/* ── CHANGE PIN ── */
+function changePin(){
+  const val = document.getElementById('new-pin').value.trim();
+  if(!val || val.length < 4){ showToast('PIN must be at least 4 characters.','error'); return; }
+  // Store in sessionStorage so it lasts the session; user can update code for permanent change
+  sessionStorage.setItem('opp_admin_pin', val);
+  document.getElementById('new-pin').value = '';
+  showToast('PIN updated for this session ✓');
 }
 
 /* ── EXPORT CSV ── */
@@ -1248,7 +1263,8 @@ const ADMIN_PIN = '1973';
 
 function checkPin(){
   const val = document.getElementById('pinInput').value.trim();
-  if(val === ADMIN_PIN){
+  const activePin = sessionStorage.getItem('opp_admin_pin') || ADMIN_PIN;
+  if(val === activePin){
     sessionStorage.setItem('opp_admin_auth','1');
     document.getElementById('lockScreen').style.display = 'none';
     document.getElementById('appShell').style.display = 'block';
