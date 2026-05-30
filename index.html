@@ -501,8 +501,8 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
 if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 /* ── CONFIG ── */
-const PROXY_URL  = ''; // Set to your Supabase Edge Function URL when backend is live e.g. https://xyz.supabase.co/functions/v1/oppose
-const DIRECT_URL = 'https://api.anthropic.com/v1/messages'; // fallback (exposes key — use proxy in production)
+const PROXY_URL  = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/oppose';
+const DIRECT_URL = 'https://api.anthropic.com/v1/messages'; // fallback dev only
 const HAIKU  = 'claude-haiku-4-5-20251001';
 const SONNET = 'claude-sonnet-4-6';
 
@@ -969,34 +969,31 @@ async function runIt(){
     }
 
     let raw='';
-    if(PROXY_URL){
-      /* ── BACKEND PROXY PATH (production) ── */
-      const res=await fetch(PROXY_URL,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          email:localStorage.getItem('opp_email')||'',
-          tier, model, docType,
-          systemPrompt:sys,
-          content:userContent,
-          isTrial:trial
-        })
-      });
-      const d=await res.json();
-      if(d.error){ throw new Error(d.error); }
-      raw=d.text||'';
-    } else {
-      /* ── DIRECT PATH (demo/dev — API key exposed) ── */
-      const apiKey=localStorage.getItem('opp_api_key')||'';
-      if(!apiKey){ out.innerHTML='<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ No API key set. Open browser console and run: <code>localStorage.setItem(\'opp_api_key\',\'sk-ant-...\')</code> — or connect the backend proxy.</div>'; btn.disabled=false; btn.innerHTML='<span id="goLabel">Oppose This →</span>'; return; }
-      const res=await fetch(DIRECT_URL,{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model,max_tokens:2000,system:sys,messages:[{role:'user',content:userContent}]})
-      });
-      const d=await res.json();
-      raw=(d.content?.[0]?.text||'').trim();
+    /* ── BACKEND PROXY PATH ── */
+    const licenseKey = localStorage.getItem('opp_key') || '';
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        licenseKey,
+        tier,
+        docType,
+        systemPrompt: sys,
+        messages: [{ role: 'user', content: userContent }],
+        isTrial: trial
+      })
+    });
+    const d = await res.json();
+    if (d.error === 'invalid_key') {
+      out.innerHTML = '<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ Invalid or expired license key. <a href="#pricing" style="color:var(--red)">Renew your plan →</a></div>';
+      btn.disabled = false; btn.innerHTML = '<span id="goLabel">Oppose This →</span>'; return;
     }
+    if (d.error === 'cap_reached') {
+      out.innerHTML = '<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ You\'ve used all ' + d.cap + ' reviews this month. Your cap resets on your next billing date. <a href="#pricing" style="color:var(--red)">Upgrade for more →</a></div>';
+      btn.disabled = false; btn.innerHTML = '<span id="goLabel">Oppose This →</span>'; return;
+    }
+    if (d.error) { throw new Error(d.error); }
+    raw = d.text || '';
 
     runsUsed++;
     localStorage.setItem('opp_runs_'+monthKey(),runsUsed);
