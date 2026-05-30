@@ -400,6 +400,23 @@ table.sub-table tr:hover td{background:rgba(255,255,255,0.02)}
 </head>
 <body>
 
+<!-- PIN LOCK -->
+<div id="lockScreen" style="display:none;position:fixed;inset:0;background:#0f0f14;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px">
+  <div style="font-family:'Fredoka',sans-serif;font-size:28px;font-weight:700;color:#fff">⚔️ The Opposer</div>
+  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#6b6b8a;letter-spacing:2px;text-transform:uppercase;margin-top:-10px">Admin Access</div>
+  <div style="background:#16161f;border:1px solid #2a2a3e;border-radius:16px;padding:32px;width:320px;display:flex;flex-direction:column;gap:14px;margin-top:10px">
+    <input id="pinInput" type="password" placeholder="Enter PIN" autocomplete="off"
+      style="background:#0f0f14;border:1px solid #2a2a3e;border-radius:10px;padding:14px 16px;color:#f0f0f8;font-family:'DM Mono',monospace;font-size:18px;letter-spacing:6px;text-align:center;outline:none;width:100%"
+      onkeydown="if(event.key==='Enter')checkPin()"/>
+    <button onclick="checkPin()"
+      style="background:#ff3d3d;color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer">
+      Unlock →
+    </button>
+    <div id="pinError" style="color:#ff3d3d;font-size:12px;text-align:center;font-family:'DM Mono',monospace;display:none">Incorrect PIN. Try again.</div>
+  </div>
+</div>
+
+<div id="appShell" style="display:none">
 <div class="shell">
 
 <!-- SIDEBAR -->
@@ -802,6 +819,8 @@ Deno.serve(async (req) => {
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+</div><!-- end #appShell -->
 
 <script>
 /* ── CONFIG ── */
@@ -1224,9 +1243,37 @@ function showToast(msg, type){
   setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
+/* ── PIN LOCK ── */
+const ADMIN_PIN = '1973';
+
+function checkPin(){
+  const val = document.getElementById('pinInput').value.trim();
+  if(val === ADMIN_PIN){
+    sessionStorage.setItem('opp_admin_auth','1');
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('appShell').style.display = 'block';
+    buildChart();
+    loadSubscribers();
+  } else {
+    document.getElementById('pinError').style.display = 'block';
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinInput').focus();
+  }
+}
+
 /* ── INIT ── */
-buildChart();
-loadSubscribers();
+(function(){
+  if(sessionStorage.getItem('opp_admin_auth') === '1'){
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('appShell').style.display = 'block';
+    buildChart();
+    loadSubscribers();
+  } else {
+    document.getElementById('lockScreen').style.display = 'flex';
+    document.getElementById('appShell').style.display = 'none';
+    setTimeout(()=>document.getElementById('pinInput').focus(), 100);
+  }
+})();
 
 const savedUrl = localStorage.getItem('opp_sb_url');
 const savedKey = localStorage.getItem('opp_sb_key');
