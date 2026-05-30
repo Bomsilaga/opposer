@@ -195,7 +195,7 @@ table.sub-table tr:hover td{background:rgba(255,255,255,0.02)}
 .t-solo{background:var(--blue-l);color:var(--blue)}
 .t-pro{background:var(--red-l);color:var(--red)}
 .t-team{background:var(--purple-l);color:var(--purple)}
-.t-ent{background:rgba(6,182,212,0.12);color:var(--teal)}
+.t-student{background:rgba(59,130,246,0.15);color:#60a5fa}
 
 /* STATUS */
 .status-dot{
@@ -468,10 +468,10 @@ table.sub-table tr:hover td{background:rgba(255,255,255,0.02)}
       <div class="chart-head">
         <div class="chart-title">Revenue — Last 6 Months</div>
         <div class="chart-legend">
-          <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>Enterprise</div>
           <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Team</div>
           <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Pro</div>
           <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div>Solo</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>Student</div>
         </div>
       </div>
       <div class="chart-wrap" id="revenueChart"></div>
@@ -498,11 +498,11 @@ table.sub-table tr:hover td{background:rgba(255,255,255,0.02)}
           <input class="search-box" id="searchBox" placeholder="Search name or email…" oninput="filterTable()">
           <select class="filter-sel" id="tierFilter" onchange="filterTable()">
             <option value="">All tiers</option>
+            <option value="free">Free Trial</option>
+            <option value="student">Student</option>
             <option value="solo">Solo</option>
             <option value="pro">Pro</option>
             <option value="team">Team</option>
-            <option value="enterprise">Enterprise</option>
-            <option value="free">Free Trial</option>
           </select>
           <select class="filter-sel" id="statusFilter" onchange="filterTable()">
             <option value="">All statuses</option>
@@ -577,7 +577,7 @@ table.sub-table tr:hover td{background:rgba(255,255,255,0.02)}
       <div class="setup-card" style="margin-bottom:16px">
         <div class="setup-title">Step-by-step</div>
         <div class="setup-sub">Follow these in order. Each step links to exactly where to go.</div>
-        <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Create a free Supabase project</strong> at supabase.com. Takes 2 minutes. Choose a region closest to Australia (Sydney).</div></div>
+        <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Create a free Supabase project</strong> at supabase.com. Takes 2 minutes. Choose a region closest to your users (e.g. Sydney, US East, EU West).</div></div>
         <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Run the SQL schema</strong> (see below) in your Supabase SQL Editor. Creates the subscribers table and run_log table.</div></div>
         <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Deploy the Edge Function</strong> (see below) to your Supabase project via the Supabase CLI: <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px">supabase functions deploy gumroad-webhook</code></div></div>
         <div class="step"><div class="step-num">4</div><div class="step-body"><strong>In Gumroad</strong> → Settings → Advanced → Ping URL: paste your Edge Function URL: <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px">https://YOUR_PROJECT.supabase.co/functions/v1/gumroad-webhook</code></div></div>
@@ -602,7 +602,7 @@ CREATE TABLE subscribers (
   billing_month text,
   gumroad_subscription_id text,
   gumroad_product_id text,
-  mrr_aud numeric DEFAULT 0,
+  mrr_usd numeric DEFAULT 0,
   joined_at timestamptz DEFAULT now(),
   renewal_date timestamptz,
   last_active timestamptz,
@@ -636,10 +636,10 @@ CREATE POLICY "own_row" ON subscribers
           <div class="code-block">import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const TIER_MAP: Record&lt;string, {tier:string, cap:number, mrr:number, model:string}&gt; = {
-  'the-opposer-solo':       {tier:'solo',       cap:30,  mrr:29,  model:'claude-haiku-4-5-20251001'},
-  'the-opposer-pro':        {tier:'pro',        cap:80,  mrr:49,  model:'claude-sonnet-4-6'},
-  'the-opposer-team':       {tier:'team',       cap:200, mrr:99,  model:'claude-sonnet-4-6'},
-  'the-opposer-enterprise': {tier:'enterprise', cap:600, mrr:249, model:'claude-sonnet-4-6'},
+  'opposer-student': {tier:'student', cap:20,  mrr:9.99,  model:'claude-sonnet-4-6'},
+  'opposer-solo':    {tier:'solo',    cap:30,  mrr:19.99, model:'claude-haiku-4-5-20251001'},
+  'opposer-pro':     {tier:'pro',     cap:80,  mrr:39.99, model:'claude-sonnet-4-6'},
+  'opposer-team':    {tier:'team',    cap:200, mrr:89.99, model:'claude-sonnet-4-6'},
 }
 
 Deno.serve(async (req) => {
@@ -670,7 +670,7 @@ Deno.serve(async (req) => {
     status: 'active',
     run_cap: cfg.cap,
     model: cfg.model,
-    mrr_aud: cfg.mrr,
+    mrr_usd: cfg.mrr,
     gumroad_subscription_id: subId,
     gumroad_product_id: productSlug,
     billing_month: `${now.getFullYear()}-${now.getMonth()+1}`,
@@ -786,10 +786,10 @@ Deno.serve(async (req) => {
     <div class="field"><label>Tier</label>
       <select id="add-tier">
         <option value="free">Free Trial</option>
-        <option value="solo">Solo — $29/mo</option>
-        <option value="pro" selected>Pro — $49/mo</option>
-        <option value="team">Team — $99/mo</option>
-        <option value="enterprise">Enterprise — $249/mo</option>
+        <option value="student">Student — $9.99/mo</option>
+        <option value="solo">Solo — $19.99/mo</option>
+        <option value="pro" selected>Pro — $39.99/mo</option>
+        <option value="team">Team — $89.99/mo</option>
       </select>
     </div>
     <div class="field"><label>Notes (optional)</label><input id="add-notes" type="text" placeholder="Paid via bank transfer, Invoice #001"></div>
@@ -806,11 +806,11 @@ Deno.serve(async (req) => {
 <script>
 /* ── DEMO DATA ── */
 const TIER_CFG = {
-  free:       {label:'Free Trial', cls:'t-free',  mrr:0,   cap:3,   model:'Haiku'},
-  solo:       {label:'Solo',       cls:'t-solo',  mrr:29,  cap:30,  model:'Haiku'},
-  pro:        {label:'Pro',        cls:'t-pro',   mrr:49,  cap:80,  model:'Sonnet'},
-  team:       {label:'Team',       cls:'t-team',  mrr:99,  cap:200, model:'Sonnet'},
-  enterprise: {label:'Enterprise', cls:'t-ent',   mrr:249, cap:600, model:'Sonnet'},
+  free:    {label:'Free Trial', cls:'t-free',    mrr:0,     cap:3,   model:'Haiku'},
+  student: {label:'Student',   cls:'t-student',  mrr:9.99,  cap:20,  model:'Sonnet'},
+  solo:    {label:'Solo',      cls:'t-solo',     mrr:19.99, cap:30,  model:'Haiku'},
+  pro:     {label:'Pro',       cls:'t-pro',      mrr:39.99, cap:80,  model:'Sonnet'},
+  team:    {label:'Team',      cls:'t-team',     mrr:89.99, cap:200, model:'Sonnet'},
 };
 
 const STATUS_CFG = {
@@ -828,7 +828,7 @@ function fmtDateShort(d){if(!d)return '—';return new Date(d).toLocaleDateStrin
 
 const NAMES = ['Cynthia Ipalibo','James Whitfield','Priya Mehta','Tom Nguyen','Sarah Okafor','Liam Brennan','Amara Diallo','David Chen','Emily Walsh','Kwame Asante','Natasha Brown','Oliver Park','Fatima Al-Hassan','Ryan McBride','Zoe Kowalski','Marcus Levin','Jasmine Tran','Ethan Müller','Aisha Kabir','Daniel Rossiter','Hannah Lee','Carlos Espinoza','Mia O\'Brien','Alex Patel','Bridget Donohue','Noah Yamamoto','Chioma Eze','Patrick Gallagher','Layla Nasser','Sam Johansson','Ingrid Sorensen','Raj Krishnan','Sophie Marchetti','Ben Thompson','Grace Adeyemi'];
 const DOMAINS = ['gmail.com','outlook.com','yahoo.com','icloud.com','proton.me','hotmail.com','company.com.au','law.com.au','business.com'];
-const TIERS_DIST = ['free','free','free','free','free','free','solo','solo','solo','solo','solo','solo','solo','solo','pro','pro','pro','pro','pro','pro','pro','pro','pro','pro','team','team','team','team','enterprise','enterprise','enterprise','enterprise','pro','solo','team'];
+const TIERS_DIST = ['free','free','free','free','free','free','student','student','student','student','solo','solo','solo','solo','pro','pro','pro','pro','pro','pro','pro','pro','pro','pro','team','team','team','team','pro','solo','team','student','pro','solo','team'];
 const STATUSES = ['active','active','active','active','active','active','active','active','active','pastdue','pastdue','pastdue','cancelled','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active','active'];
 
 let subscribers = NAMES.map((name,i) => {
@@ -850,8 +850,8 @@ function calcMetrics(){
   const pd     = subscribers.filter(s=>s.status==='pastdue');
   const cost   = (subscribers.filter(s=>s.tier!=='free').length * 0.80).toFixed(2);
 
-  document.getElementById('mrr-val').textContent  = '$'+mrr.toLocaleString();
-  document.getElementById('tb-mrr').textContent   = '$'+mrr.toLocaleString();
+  document.getElementById('mrr-val').textContent  = '$'+mrr.toFixed(2);
+  document.getElementById('tb-mrr').textContent   = '$'+mrr.toFixed(2);
   document.getElementById('mrr-sub').textContent  = active.length + ' paying subscribers';
   document.getElementById('active-val').textContent = active.length;
   document.getElementById('active-sub').textContent  = pd.length + ' past due';
@@ -872,21 +872,20 @@ function buildChart(){
     const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
     months.push({
       label: d.toLocaleString('en-AU',{month:'short'}),
-      solo: rnd(200,600), pro: rnd(400,1200), team: rnd(0,500), ent: rnd(0,600)
+      student: rnd(80,300), solo: rnd(150,500), pro: rnd(300,1000), team: rnd(0,400)
     });
   }
-  const maxVal = Math.max(...months.map(m=>m.solo+m.pro+m.team+m.ent));
+  const maxVal = Math.max(...months.map(m=>m.student+m.solo+m.pro+m.team));
   const wrap = document.getElementById('revenueChart');
   wrap.innerHTML = months.map(m=>{
-    const total = m.solo+m.pro+m.team+m.ent;
     const h = 140;
     const sh = (v)=>Math.max(4, Math.round((v/maxVal)*h));
     return `<div class="bar-group">
       <div class="bar-stack">
-        <div class="bar-seg" style="background:var(--purple);height:${sh(m.ent)}px" title="Enterprise $${m.ent}"></div>
         <div class="bar-seg" style="background:var(--teal);height:${sh(m.team)}px" title="Team $${m.team}"></div>
         <div class="bar-seg" style="background:var(--red);height:${sh(m.pro)}px" title="Pro $${m.pro}"></div>
         <div class="bar-seg" style="background:var(--blue);height:${sh(m.solo)}px" title="Solo $${m.solo}"></div>
+        <div class="bar-seg" style="background:var(--purple);height:${sh(m.student)}px" title="Student $${m.student}"></div>
       </div>
       <div class="bar-lbl">${m.label}</div>
     </div>`;
@@ -903,7 +902,7 @@ function buildRecentTable(){
       <td><div style="font-weight:700;color:var(--ink)">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.email}</div></td>
       <td><span class="tier-badge ${tc.cls}">${tc.label}</span></td>
       <td><span class="status-dot"><span class="dot ${sc.dot}"></span>${sc.label}</span></td>
-      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${s.mrr>0?'$'+s.mrr:'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${s.mrr>0?'$'+s.mrr.toFixed(2):'—'}</td>
       <td style="font-size:12px;color:var(--muted)">${fmtDate(s.joined)}</td>
     </tr>`;
   }).join('');
@@ -941,7 +940,7 @@ function subRow(s){
         <span class="usage-num">${s.runs}/${s.cap}</span>
       </div>
     </td>
-    <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${s.mrr>0?'$'+s.mrr:'—'}</td>
+    <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green)">${s.mrr>0?'$'+s.mrr.toFixed(2):'—'}</td>
     <td style="font-size:12px;color:var(--muted)">${s.tier==='free'?'—':fmtDateShort(s.renewal)}</td>
     <td>
       <div class="act-btns">
@@ -963,7 +962,7 @@ function buildPDTable(){
           <td><div style="font-weight:700;color:var(--ink)">${s.name}</div><div style="font-size:11px;color:var(--muted)">${s.email}</div></td>
           <td><span class="tier-badge ${tc.cls}">${tc.label}</span></td>
           <td style="font-size:12px;color:var(--orange)">${fmtDate(daysAgo(rnd(2,7)))}</td>
-          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--red)">$${s.mrr}/mo</td>
+          <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--red)">$${s.mrr.toFixed(2)}/mo</td>
           <td>
             <div class="act-btns">
               <button class="act-btn" title="Email" onclick="emailOne('${s.email}','${s.name}')">✉</button>
@@ -1017,7 +1016,7 @@ function openDrawer(id){
     </div>
     <div class="drow"><span class="dlabel">Joined</span><span class="dval">${fmtDate(s.joined)}</span></div>
     <div class="drow"><span class="dlabel">Renewal</span><span class="dval">${s.tier==='free'?'—':fmtDate(s.renewal)}</span></div>
-    <div class="drow"><span class="dlabel">Monthly Revenue</span><span class="dval" style="color:var(--green)">${s.mrr>0?'$'+s.mrr+' AUD':'—'}</span></div>
+    <div class="drow"><span class="dlabel">Monthly Revenue</span><span class="dval" style="color:var(--green)">${s.mrr>0?'$'+s.mrr.toFixed(2)+' USD':'—'}</span></div>
     <div class="drow"><span class="dlabel">Model</span><span class="dval">${s.model}</span></div>
     <div class="drow"><span class="dlabel">Runs Used</span><span class="dval">${s.runs} / ${s.cap}</span></div>
     <div class="drow"><span class="dlabel">Run Cap</span><span class="dval">${s.cap}/month</span></div>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Opposer — Plan Prompts & Covers</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a1a;color:#e2e8f0;font-family:'Georgia',serif;line-height:1.6}
+  h1{text-align:center;padding:48px 24px 8px;font-size:2.2rem;color:#fff}
+  .tagline{text-align:center;color:#94a3b8;font-family:monospace;font-size:13px;letter-spacing:3px;padding-bottom:40px;text-transform:uppercase}
+  .plan{max-width:900px;margin:0 auto 72px;padding:0 24px}
+  .cover{width:100%;border-radius:12px;overflow:hidden;margin-bottom:28px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+  .cover img{width:100%;display:block}
+  .plan-label{font-family:monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;opacity:0.7}
+  .plan-title{font-size:1.6rem;font-weight:700;color:#fff;margin-bottom:20px}
+  .prompt-box{background:#0f172a;border-radius:10px;padding:28px;border:1px solid rgba(255,255,255,0.08);position:relative}
+  .copy-btn{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;font-size:12px;font-family:monospace;letter-spacing:1px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+  .copy-btn:hover{background:rgba(255,255,255,0.12);color:#fff}
+  .copy-btn.copied{color:#22c55e;border-color:#22c55e}
+  pre{white-space:pre-wrap;word-break:break-word;font-family:monospace;font-size:13.5px;line-height:1.75;color:#cbd5e1;padding-right:80px}
+  .divider{max-width:900px;margin:0 auto 72px;padding:0 24px;border:none;border-top:1px solid rgba(255,255,255,0.06)}
+  /* plan accent colours */
+  .plan-student .plan-label{color:#93c5fd}
+  .plan-student .prompt-box{border-color:rgba(59,130,246,0.3)}
+  .plan-solo   .plan-label{color:#fca5a5}
+  .plan-solo   .prompt-box{border-color:rgba(255,61,61,0.3)}
+  .plan-pro    .plan-label{color:#fde68a}
+  .plan-pro    .prompt-box{border-color:rgba(255,198,43,0.3)}
+  .plan-team   .plan-label{color:#c4b5fd}
+  .plan-team   .prompt-box{border-color:rgba(139,92,246,0.3)}
+  .plan-free   .plan-label{color:#94a3b8}
+  footer{text-align:center;padding:48px 24px;font-family:monospace;font-size:11px;letter-spacing:2px;color:#334155;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<h1>The Opposer</h1>
+<p class="tagline">Plan Prompts &amp; Cover Images</p>
+
+<!-- ── FREE TRIAL ─────────────────────────────────────────── -->
+<section class="plan plan-free">
+  <div class="plan-label">Free Trial — 3 reviews / month</div>
+  <div class="plan-title">Getting Started Prompt</div>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <pre id="p-free">You are an adversarial document reviewer. Your job is to stress-test the document I give you — find weaknesses, gaps, risks, and problems a real opponent, critic, or examiner would exploit.
+
+Here is my document:
+
+[PASTE YOUR DOCUMENT TEXT HERE]
+
+Please do the following:
+
+1. Identify the 3 most critical weaknesses in this document
+2. For each weakness, explain exactly why it is a problem and what could go wrong
+3. Give me one concrete fix for each weakness
+
+Be direct. Do not soften your critique. I need to know the real risks.</pre>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── STUDENT ─────────────────────────────────────────────── -->
+<section class="plan plan-student">
+  <div class="cover">
+    <img src="covers/student.jpg" alt="The Opposer — Student Plan"/>
+  </div>
+  <div class="plan-label">Student Plan — $9.99 / month · 20 reviews</div>
+  <div class="plan-title">Student / Academic Prompt</div>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <pre id="p-student">You are an adversarial academic examiner — rigorous, unsparing, and expert in scholarly standards. Your role is to attack the document I give you as a hostile examiner or peer reviewer would.
+
+Here is my document:
+
+[PASTE YOUR THESIS / ESSAY / REPORT / RESEARCH PAPER HERE]
+
+Conduct a full adversarial review across all of the following dimensions:
+
+ARGUMENT & LOGIC
+- Identify every logical fallacy, circular argument, or unsupported leap
+- Flag claims presented as fact that require citation
+- Note anywhere the argument contradicts itself
+
+METHODOLOGY (if applicable)
+- Attack the research design: sampling, controls, validity, reliability
+- Identify confounding variables that have not been addressed
+- Note any generalisations that exceed what the data supports
+
+LITERATURE & CITATIONS
+- Flag any obvious gaps in the literature review
+- Identify claims that contradict established scholarship
+- Note any over-reliance on weak or outdated sources
+
+STRUCTURE & CLARITY
+- Identify sections that are vague, underdeveloped, or off-topic
+- Note transitions that do not follow logically
+- Flag the abstract/introduction/conclusion for alignment issues
+
+EXAMINER RED FLAGS
+- List the exact questions a hostile examiner is most likely to ask
+- Rate overall risk: LOW / MEDIUM / HIGH / CRITICAL
+- Give the top 5 fixes that would have the most impact before submission
+
+Be specific. Quote the problematic sections. Do not be kind — my grade depends on surviving a real critique.</pre>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── SOLO ────────────────────────────────────────────────── -->
+<section class="plan plan-solo">
+  <div class="cover">
+    <img src="covers/solo.jpg" alt="The Opposer — Solo Plan"/>
+  </div>
+  <div class="plan-label">Solo Plan — $19.99 / month · 30 reviews</div>
+  <div class="plan-title">Solo Professional Prompt</div>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <pre id="p-solo">You are an adversarial document specialist — part hostile lawyer, part risk auditor, part expert critic. Your role is to find every flaw, gap, risk, and weakness in the document I give you before it is signed, submitted, or enforced.
+
+Document type: [CONTRACT / VISA APPLICATION / BUSINESS PLAN / HR POLICY / LEASE / OTHER — specify]
+
+Here is my document:
+
+[PASTE YOUR DOCUMENT HERE]
+
+Run a full 8-phase adversarial attack:
+
+PHASE 1 — FATAL FLAWS
+Identify anything that could make this document void, unenforceable, or immediately rejected. These are the deal-breakers.
+
+PHASE 2 — AMBIGUOUS LANGUAGE
+Find every clause or term that is vague, undefined, or open to competing interpretations. Quote the exact text and show two opposing ways it could be read.
+
+PHASE 3 — MISSING PROTECTIONS
+List every standard protection, clause, or safeguard that is absent from this document but should be present for this document type.
+
+PHASE 4 — UNFAIR OR ONE-SIDED TERMS
+Identify any term that is heavily weighted against one party. Flag unusual penalty clauses, waiver traps, or rights that are surrendered without apparent consideration.
+
+PHASE 5 — JURISDICTION & COMPLIANCE RISKS
+Note any provisions that may violate applicable law, regulations, or standard practice. Flag anything that may not be enforceable in the relevant jurisdiction.
+
+PHASE 6 — PROCESS & PROCEDURAL GAPS
+Identify missing deadlines, notice requirements, dispute resolution procedures, or signature/execution requirements.
+
+PHASE 7 — WORST-CASE SCENARIOS
+Walk me through the 3 most damaging scenarios that could play out if this document is used as-is. Be specific and realistic.
+
+PHASE 8 — PRIORITY FIX LIST
+Rank all issues found by severity (CRITICAL / HIGH / MEDIUM / LOW) and give me the exact language or changes needed to fix the top 5.
+
+Do not summarise. Do not soften. Quote exact problem text and provide exact fix text.</pre>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── PRO ─────────────────────────────────────────────────── -->
+<section class="plan plan-pro">
+  <div class="cover">
+    <img src="covers/pro.jpg" alt="The Opposer — Pro Plan"/>
+  </div>
+  <div class="plan-label">Pro Plan — $39.99 / month · 80 reviews · Best Value</div>
+  <div class="plan-title">Pro / Expert Prompt</div>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <pre id="p-pro">You are a senior adversarial analyst — combining the perspective of a hostile opposing counsel, a specialist domain expert, and a strategic risk consultant. Your analysis must be exhaustive, precise, and immediately actionable.
+
+Document type: [specify — e.g. Commercial Contract / Research Paper / Immigration Application / Business Plan / Policy Document / Financial Agreement]
+Domain context: [specify industry, jurisdiction, or field if relevant]
+My position: [specify — e.g. I am the contractor / applicant / employer / buyer]
+Stakes: [specify — e.g. $500K contract / PhD submission / visa renewal]
+
+Here is my document:
+
+[PASTE YOUR DOCUMENT HERE]
+
+Conduct a full-spectrum adversarial review:
+
+─── DOMAIN EXPERTISE LAYER ───
+Apply specialist knowledge for this document type. What would a domain expert immediately flag that a generalist would miss? Reference relevant standards, regulations, or precedents where applicable.
+
+─── ADVERSARIAL ATTACK SIMULATION ───
+Simulate the opposing party's strategy. If this document went to dispute today:
+• What arguments would the opposing side make?
+• Which clauses would they exploit?
+• What evidence would they seek?
+• What outcome are they most likely to achieve?
+
+─── RISK MATRIX ───
+For every identified issue, classify by:
+• Severity: CRITICAL / HIGH / MEDIUM / LOW
+• Likelihood: HIGH / MEDIUM / LOW
+• Financial/legal/reputational exposure
+• Time to mitigate (can this be fixed now, or is it a structural problem?)
+
+─── BLIND SPOT AUDIT ───
+What is this document completely silent on that it should address? What assumptions are being made that are not in writing? What happens in scenarios the document does not contemplate?
+
+─── STRATEGIC RECOMMENDATIONS ───
+Beyond fixing problems — what strategic improvements would strengthen my position? What leverage am I leaving on the table? What terms should I be pushing for that I have not asked for?
+
+─── EXECUTIVE SUMMARY ───
+Overall document strength: [1–10]
+Top 3 critical actions before using this document
+Estimated risk level if used as-is: LOW / MEDIUM / HIGH / SEVERE
+
+Provide exact replacement language for every critical and high-severity issue identified.</pre>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── TEAM ─────────────────────────────────────────────────── -->
+<section class="plan plan-team">
+  <div class="cover">
+    <img src="covers/team.jpg" alt="The Opposer — Team Plan"/>
+  </div>
+  <div class="plan-label">Team Plan — $89.99 / month · 200 reviews · Up to 5 users</div>
+  <div class="plan-title">Team / Organisation Prompt</div>
+  <div class="prompt-box">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <pre id="p-team">You are a multi-discipline adversarial review panel. You will analyse the document below from the perspective of multiple expert roles simultaneously: legal counsel, domain specialist, risk manager, compliance officer, and strategic advisor.
+
+Organisation type: [Law firm / Consultancy / Research group / Corporate team — specify]
+Document type: [specify]
+Review purpose: [Internal approval / Client delivery / Regulatory submission / Negotiation prep — specify]
+Jurisdiction: [specify country/region]
+Team note: [Any specific concerns or focus areas your team wants flagged]
+
+Here is the document:
+
+[PASTE YOUR DOCUMENT HERE]
+
+── PANEL REVIEW ──
+
+[LEGAL COUNSEL VIEW]
+Enforceability, liability exposure, missing protections, clause-by-clause risk. Flag any provision that would concern litigation counsel.
+
+[DOMAIN SPECIALIST VIEW]
+Technical accuracy and completeness for this document type and industry. Flag anything that deviates from professional standards or best practice in this field.
+
+[RISK MANAGER VIEW]
+Operational, financial, and reputational risks. Quantify where possible. What is the expected loss if the worst-case scenario plays out?
+
+[COMPLIANCE OFFICER VIEW]
+Regulatory requirements, data protection, employment law, industry-specific obligations. What are we potentially non-compliant with?
+
+[STRATEGIC ADVISOR VIEW]
+Are we negotiating from a position of strength or weakness? What leverage do we have that we are not using? What concessions have we made unnecessarily?
+
+── CONSOLIDATED FINDINGS ──
+
+CRITICAL ISSUES (must fix before proceeding):
+[List with exact quotes and exact fix language]
+
+HIGH PRIORITY (fix before finalising):
+[List with recommendations]
+
+MEDIUM / LOW (improvements worth making):
+[List]
+
+── TEAM BRIEFING ──
+Prepare a 5-bullet executive brief our team can use in a meeting to discuss this document. Include the single most important action each stakeholder (legal, ops, finance, executive) needs to take.
+
+── COMPARISON BENCHMARK ──
+How does this document compare to best-in-class standards for this document type? What is it missing that top-tier organisations routinely include?</pre>
+  </div>
+</section>
+
+<footer>opposer.vercel.app &nbsp;·&nbsp; adversarial document review &nbsp;·&nbsp; powered by claude ai</footer>
+
+<script>
+function copyPrompt(btn){
+  const pre = btn.parentElement.querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent).then(()=>{
+    btn.textContent='Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000);
+  });
+}
+</script>
+</body>
+</html>
