@@ -480,7 +480,7 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
       </div>
       <div class="setup-step">
         <div class="step-num">6</div>
-        <div class="step-body"><strong>To cancel:</strong> Log in to <code>gumroad.com</code> → Library → find your Opposer subscription → Cancel. Or email us and we'll do it within 24 hours. No questions asked. Your access stays active until the end of the current billing period.</div>
+        <div class="step-body"><strong>To cancel:</strong> Log in to <code>boboma.gumroad.com</code> → Library → find your Opposer subscription → Cancel. Or email us and we'll do it within 24 hours. No questions asked. Your access stays active until the end of the current billing period.</div>
       </div>
       <div class="setup-step">
         <div class="step-num">7</div>
@@ -506,12 +506,13 @@ const DIRECT_URL = 'https://api.anthropic.com/v1/messages'; // fallback (exposes
 const HAIKU  = 'claude-haiku-4-5-20251001';
 const SONNET = 'claude-sonnet-4-6';
 
-/* Gumroad product URLs — replace with your real Gumroad product permalinks */
+/* Gumroad product URLs */
+const SITE_URL = 'https://opposer.vercel.app';
 const GUMROAD = {
-  student: 'https://gumroad.com/l/opposer-student',
-  solo:    'https://gumroad.com/l/opposer-solo',
-  pro:     'https://gumroad.com/l/opposer-pro',
-  team:    'https://gumroad.com/l/opposer-team',
+  student: 'https://boboma.gumroad.com/l/opposer-student?wanted=true&redirect_url=' + encodeURIComponent(SITE_URL + '/?tier=student&key={license_key}'),
+  solo:    'https://boboma.gumroad.com/l/opposer-solo?wanted=true&redirect_url='    + encodeURIComponent(SITE_URL + '/?tier=solo&key={license_key}'),
+  pro:     'https://boboma.gumroad.com/l/opposer-pro?wanted=true&redirect_url='     + encodeURIComponent(SITE_URL + '/?tier=pro&key={license_key}'),
+  team:    'https://boboma.gumroad.com/l/opposer-team?wanted=true&redirect_url='    + encodeURIComponent(SITE_URL + '/?tier=team&key={license_key}'),
 };
 
 const TIERS = {
