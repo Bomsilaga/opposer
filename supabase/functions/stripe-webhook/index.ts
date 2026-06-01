@@ -2,10 +2,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@14?target=deno'
 
 const TIER_MAP: Record<string, { tier: string; cap: number; mrr: number; model: string }> = {
-  solo:     { tier: 'solo',     cap: 50,  mrr: 29,  model: 'claude-haiku-4-5-20251001' },
-  pro:      { tier: 'pro',      cap: 150, mrr: 59,  model: 'claude-sonnet-4-6' },
-  tribunal: { tier: 'tribunal', cap: 50,  mrr: 79,  model: 'claude-sonnet-4-6' },
-  team:     { tier: 'team',     cap: 300, mrr: 129, model: 'claude-sonnet-4-6' },
+  student:  { tier: 'student',  cap: 20,  mrr: 9.99,  model: 'claude-sonnet-4-6' },
+  solo:     { tier: 'solo',     cap: 50,  mrr: 29.99, model: 'claude-haiku-4-5-20251001' },
+  pro:      { tier: 'pro',      cap: 150, mrr: 59.99, model: 'claude-sonnet-4-6' },
+  team:     { tier: 'team',     cap: 300, mrr: 129.99, model: 'claude-sonnet-4-6' },
 }
 
 function generateLicenseKey(): string {

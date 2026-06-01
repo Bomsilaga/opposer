@@ -7,9 +7,9 @@ const CORS = {
 }
 
 const PRICE_IDS: Record<string, string> = {
+  student:  Deno.env.get('STRIPE_PRICE_STUDENT')  ?? '',
   solo:     Deno.env.get('STRIPE_PRICE_SOLO')     ?? '',
   pro:      Deno.env.get('STRIPE_PRICE_PRO')      ?? '',
-  tribunal: Deno.env.get('STRIPE_PRICE_TRIBUNAL') ?? '',
   team:     Deno.env.get('STRIPE_PRICE_TEAM')     ?? '',
 }
 
