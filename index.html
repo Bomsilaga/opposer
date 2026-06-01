@@ -441,8 +441,9 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
         <tr><td>Domain skill packs</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
         <tr><td>Monthly reviews</td><td>20</td><td>30</td><td>80</td><td>200</td></tr>
       </table>
-      <a href="https://boboma.gumroad.com/l/opposer-student" target="_blank" class="mgumroad" id="gumroadBtn" onclick="handleCheckout(event)">Subscribe — $9.99/month USD →</a>
-      <p class="mnote">Secure checkout via Gumroad · Cancel anytime · Instant access · <a onclick="openModal('setup')">How does payment work? →</a></p>
+      <button class="mgumroad" id="stripeBtn" onclick="handleStripeCheckout(event)" style="background:#635bff;box-shadow:0 4px 20px rgba(99,91,255,0.35);margin-bottom:8px">Pay with Stripe — $29/month →</button>
+      <a href="https://boboma.gumroad.com/l/opposer-student" target="_blank" class="mgumroad" id="gumroadBtn" onclick="handleCheckout(event)" style="background:#555;box-shadow:none;font-size:13px;padding:11px">Or pay via Gumroad — $9.99/month →</a>
+      <p class="mnote">Stripe or Gumroad · Secure checkout · Cancel anytime · <a onclick="openModal('setup')">How does payment work? →</a></p>
     </div>
   </div>
 </div>
@@ -508,12 +509,15 @@ const SONNET = 'claude-sonnet-4-6';
 
 /* Gumroad product URLs */
 const SITE_URL = 'https://opposer.vercel.app';
+const CHECKOUT_URL = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/create-checkout-session';
 const GUMROAD = {
   student: 'https://boboma.gumroad.com/l/opposer-student?wanted=true&redirect_url=' + encodeURIComponent(SITE_URL + '/?tier=student&key={license_key}'),
   solo:    'https://boboma.gumroad.com/l/opposer-solo?wanted=true&redirect_url='     + encodeURIComponent(SITE_URL + '/?tier=solo&key={license_key}'),
   pro:     'https://boboma.gumroad.com/l/opposer-pro?wanted=true&redirect_url='      + encodeURIComponent(SITE_URL + '/?tier=pro&key={license_key}'),
   team:    'https://boboma.gumroad.com/l/opposer-team?wanted=true&redirect_url='     + encodeURIComponent(SITE_URL + '/?tier=team&key={license_key}'),
 };
+/* Stripe plan keys map to create-checkout-session plans */
+const STRIPE_PLAN = { student:'solo', solo:'solo', pro:'pro', team:'team' };
 
 const TIERS = {
   free:    {model:HAIKU,  cap:3,   label:'FREE TRIAL', pill:'tp-free'},
@@ -1117,6 +1121,32 @@ function handleCheckout(e){
   const url=GUMROAD[selPlan.id]||'https://gumroad.com';
   window.open(url,'_blank');
 }
+async function handleStripeCheckout(e){
+  e.preventDefault();
+  const btn=document.getElementById('stripeBtn');
+  btn.textContent='Redirecting…'; btn.disabled=true;
+  try {
+    const plan=STRIPE_PLAN[selPlan.id]||'solo';
+    const res=await fetch(CHECKOUT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({plan,successUrl:SITE_URL,cancelUrl:SITE_URL})
+    });
+    const data=await res.json();
+    if(data.url) window.location.href=data.url;
+    else throw new Error(data.error||'no url');
+  } catch(err){
+    alert('Checkout error: '+err.message);
+    btn.textContent='Pay with Stripe →'; btn.disabled=false;
+  }
+}
+
+/* Activate Stripe subscriber from URL param */
+(function(){
+  const p=new URLSearchParams(location.search);
+  const sid=p.get('stripe_session');
+  if(sid) { /* key delivered via webhook; user re-enters key from email */ }
+})();
 </script>
 </body>
 </html>
