@@ -399,24 +399,42 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
-  <div class="hero-chip">Adversarial Review · <span id="tw-doc">Any Document</span><span class="tw-cursor"></span></div>
+  <div class="hero-chip">The Tribunal · <span id="tw-doc">Any Document</span><span class="tw-cursor"></span></div>
   <h1 class="hero-h">
     <span class="word-find">Find</span> Every Weakness<br>
     <span class="word-before">Before They Do.</span>
   </h1>
-  <p class="hero-sub">Upload any document — thesis, contract, visa, pitch, claim. The Opposer deploys the exact critique your toughest examiner, judge, or reviewer would use. Fix it before it's too late.</p>
+  <p class="hero-sub">Submit anything — a thesis, contract, email, pitch, claim, essay, letter, or paragraph. <strong>The Tribunal</strong> instantly becomes your toughest examiner, opposing counsel, hostile investor, or enforcement authority — and destroys it before the real one does.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;animation:slideUp 0.55s 0.55s ease both">
+    <span style="background:rgba(255,45,45,0.1);border:1px solid rgba(255,45,45,0.3);color:rgba(255,120,80,0.9);font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px">⚖️ Legal Claims</span>
+    <span style="background:rgba(255,45,45,0.1);border:1px solid rgba(255,45,45,0.3);color:rgba(255,120,80,0.9);font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px">🎓 Theses & Essays</span>
+    <span style="background:rgba(255,45,45,0.1);border:1px solid rgba(255,45,45,0.3);color:rgba(255,120,80,0.9);font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px">📄 Contracts</span>
+    <span style="background:rgba(255,45,45,0.1);border:1px solid rgba(255,45,45,0.3);color:rgba(255,120,80,0.9);font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px">🚀 Pitches</span>
+    <span style="background:rgba(255,45,45,0.1);border:1px solid rgba(255,45,45,0.3);color:rgba(255,120,80,0.9);font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px">📧 Emails & Memos</span>
+    <span style="background:rgba(255,45,45,0.1);border:1px solid rgba(255,45,45,0.3);color:rgba(255,120,80,0.9);font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px">💼 HR Documents</span>
+    <span style="background:rgba(255,45,45,0.08);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px">+ anything else</span>
+  </div>
   <div class="trial-chip">
     <span class="tc-free">FREE</span>
-    3 partial reviews to try · Full 8-phase attack from $9/mo 🔥
+    3 partial reviews to try · Full 8-phase Tribunal attack from $9/mo 🔥
   </div>
   <div class="student-banner" onclick="openModal('upgrade')">
     <span class="sb-tag">STUDENTS</span>
-    Masters & PhD thesis review · Essay critique · Research papers — <strong>Special $9.99/mo plan</strong> →
+    Masters & PhD thesis · Essay critique · Research papers — <strong>Special $9.99/mo plan</strong> →
   </div>
 </div>
 
 <!-- TRIGGER GROUPS -->
 <div class="trig-wrap" style="position:relative">
+  <!-- Auto-detect banner -->
+  <div style="margin-bottom:14px">
+    <button id="autoTrigBtn" class="trig-btn on" onclick="setTrig(this,'auto')" style="width:100%;background:rgba(255,45,45,0.15);border-color:rgba(255,45,45,0.6);color:#fff;padding:12px 16px;border-radius:12px;font-size:13.5px;justify-content:flex-start;gap:12px;box-shadow:0 0 18px rgba(255,45,45,0.2)">
+      <span style="font-size:18px">⚔️</span>
+      <span style="flex:1;text-align:left"><strong>Tribunal Auto-Detect</strong> — submit anything. The Opposer identifies and destroys.</span>
+      <span style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(255,45,45,0.8);background:rgba(255,45,45,0.12);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,45,45,0.3)">DEFAULT</span>
+    </button>
+  </div>
+  <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.22);margin-bottom:10px;padding-left:2px">— or specify document type —</div>
   <div class="trig-grid">
 
     <!-- Academic -->
@@ -527,13 +545,13 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
   <div class="or-div">or type / paste your content below</div>
   <div class="icard">
     <div class="icard-head">
-      <span class="icard-mode" id="iMode">OPPOSING: ANY DOCUMENT</span>
+      <span class="icard-mode" id="iMode">OPPOSING: TRIBUNAL AUTO-DETECT</span>
       <span class="icard-chars" id="iChars">0 chars</span>
     </div>
     <textarea class="itxt" id="inp" maxlength="30000" oninput="onInp()"
-      placeholder="Paste your document, describe your situation, or summarise your submission.
+      placeholder="Paste or upload anything — a document, email, contract, essay, pitch, chat transcript, letter, clause, paragraph, or single sentence.
 
-The more specific you are, the more surgical the attack. The Opposer finds exactly what your examiner, judge, or reviewer will use against you."></textarea>
+The Tribunal analyses everything. No context needed — just submit."></textarea>
     <div class="icard-foot">
       <span class="icard-hint">📎 Upload · paste · or both</span>
       <button class="btn-go" id="goBtn" onclick="runIt()" disabled>
@@ -565,8 +583,8 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
       <button class="mclose" onclick="closeModal('modalBg')">✕</button>
     </div>
     <div class="mbody">
-      <div class="mtitle">Full Opposition.<br><em>No Limits.</em> 🔥</div>
-      <p class="msub">All 8 phases. Every attack rated. Domain-aware critique using your location and document type. The adversary's closing. The survivability verdict. Cancel anytime.</p>
+      <div class="mtitle">The Tribunal.<br><em>Full Power.</em> 🔥</div>
+      <p class="msub">All 8 phases. Every attack rated. Submit <strong>any document</strong> — the Tribunal auto-detects the type and deploys the exact adversary it fears most. Contracts, theses, pitches, claims, emails, plans. If it can be judged, it will be judged. Cancel anytime.</p>
       <div class="mplans" id="mplans">
         <div class="mplan student-plan sel" onclick="pickPlan(this,'student','9.99')">
           <div class="mpl">
@@ -731,6 +749,12 @@ const TIERS = {
    blind_spots = common weak points for this doc type
 */
 const DOMAIN_SKILLS = {
+  auto:{
+    systemRole:'universal adversarial examiner — simultaneously acting as opposing counsel, senior examiner, hostile peer reviewer, sceptical investor, and enforcement authority — whatever this document fears most',
+    framework:'Universal adversarial audit: logic integrity · claims vs evidence · internal contradictions · structural failures · language exploitation · omission as admission · procedural gaps · credibility vulnerabilities · intent vs execution misalignment',
+    criteria:'claim substantiation · internal consistency · logical soundness · evidential support · structural completeness · language precision · factual verifiability · procedural compliance · rhetorical vulnerability · tone and credibility risk',
+    blind_spots:'assumed context · vague qualifying language · passive constructions hiding accountability · dates and numbers without sources · assertions presented as conclusions · missing definitions · buried contradictions · silence on obvious objections'
+  },
   thesis:{
     systemRole:'doctoral examiner and thesis committee member',
     framework:'PhD/Masters examination standards: originality, methodological rigour, theoretical contribution, literature mastery, coherence of argument',
@@ -848,6 +872,7 @@ const DOMAIN_SKILLS = {
 };
 
 const TRIG_MODES = {
+  auto:'ANY DOCUMENT — TRIBUNAL AUTO-DETECT',
   thesis:'MASTERS / PHD THESIS',essay:'ESSAY / ASSIGNMENT',research:'RESEARCH PAPER',
   lit_review:'LITERATURE REVIEW',proposal:'RESEARCH PROPOSAL',report:'LAB / FIELD REPORT',
   dissertation:'DISSERTATION CHAPTER',claim:'LEGAL CLAIM',contract:'CONTRACT REVIEW',
@@ -857,6 +882,7 @@ const TRIG_MODES = {
 };
 
 const TRIG_PH = {
+  auto:'Paste or upload anything — a document, email, contract, essay, pitch, chat transcript, letter, clause, paragraph, or single sentence.\n\nThe Tribunal analyses everything. No context needed — just submit.',
   thesis:'Paste your thesis chapter, abstract, or full thesis.\n\nInclude: your research question, methodology, key argument, and any examiner feedback received so far.',
   essay:'Paste your essay or assignment.\n\nInclude: the question/prompt, your argument, and word count limit.',
   research:'Paste your research paper or draft.\n\nInclude: journal target, research question, methodology summary.',
@@ -904,7 +930,7 @@ function monthKey(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth(
 let tier      = localStorage.getItem('opp_tier') || 'free';
 let runsUsed  = parseInt(localStorage.getItem('opp_runs_'+monthKey()) || '0');
 let selPlan   = {id:'student', price:'9'};
-let curTrig   = '';
+let curTrig   = 'auto';
 let uploadedText  = '';
 let uploadedImage = null;
 let uploadedName  = '';
@@ -962,8 +988,9 @@ function setTrig(btn,type){
   document.querySelectorAll('.trig-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   curTrig=type;
-  document.getElementById('iMode').textContent='OPPOSING: '+(TRIG_MODES[type]||'ANY DOCUMENT');
-  document.getElementById('inp').placeholder=TRIG_PH[type]||'Paste or describe your submission here.';
+  const label = type==='auto' ? 'TRIBUNAL AUTO-DETECT' : (TRIG_MODES[type]||'ANY DOCUMENT');
+  document.getElementById('iMode').textContent='OPPOSING: '+label;
+  document.getElementById('inp').placeholder=TRIG_PH[type]||'Paste or describe your submission. The Tribunal will identify and destroy.';
 }
 function updatePrefs(){ /* prefs read live at run time */ }
 
@@ -1069,36 +1096,41 @@ function burst(){
 
 /* ── BUILD SKILL-AWARE SYSTEM PROMPT ── */
 function buildSystemPrompt(isTrial){
-  const skill   = DOMAIN_SKILLS[curTrig] || DOMAIN_SKILLS.essay;
+  const isAuto  = !curTrig || curTrig === 'auto';
+  const skill   = DOMAIN_SKILLS[curTrig] || DOMAIN_SKILLS.auto;
   const loc     = document.getElementById('locSel').value;
   const tone    = document.getElementById('toneSel').value;
   const depth   = document.getElementById('depthSel').value;
   const locCtx  = LOCATION_CONTEXT[loc]  || LOCATION_CONTEXT.global;
   const toneCtx = TONE_CONTEXT[tone]     || TONE_CONTEXT.adversarial;
-  const docLabel= TRIG_MODES[curTrig]    || 'DOCUMENT';
+  const docLabel= TRIG_MODES[curTrig]    || 'ANY DOCUMENT — AUTO-DETECT';
+
+  const autoDetectInstruction = isAuto
+    ? `\nCRITICAL: Before anything else, identify EXACTLY what this document is — its type, purpose, genre, and the context in which it would be judged. Then adopt the harshest possible adversarial role for THAT specific context. A single sentence. A CV. A memo. An email. A receipt. A poem. A chat transcript. A contract. ANYTHING submitted gets the full treatment. No document is too short, too informal, or too minor. Even a punctuation choice can be a liability.\n`
+    : '';
 
   const skillBlock = `
-=== DOMAIN SKILL LOADED: ${docLabel} ===
-Role you play: ${skill.systemRole}
-Evaluation framework: ${skill.framework}
-Key criteria to assess: ${skill.criteria}
-Known blind spots for this document type: ${skill.blind_spots}
-Location context: ${locCtx}
-Tone directive: ${toneCtx}
-=== END SKILL ===`.trim();
+=== TRIBUNAL INTELLIGENCE LOADED: ${docLabel} ===
+Adversarial role: ${skill.systemRole}
+Destruction framework: ${skill.framework}
+Attack criteria: ${skill.criteria}
+Known vulnerabilities to exploit: ${skill.blind_spots}
+Jurisdiction context: ${locCtx}
+Engagement tone: ${toneCtx}
+${autoDetectInstruction}=== TRIBUNAL ARMED ===`.trim();
 
   if(isTrial){
-    return `You are THE OPPOSER — an adversarial AI that finds weaknesses in any submission before the real opponent does.
+    return `You are THE OPPOSER — the Tribunal's adversarial AI. Your mandate: find every weakness in any submission before the real opponent does. You analyse EVERYTHING — no document type is out of scope. A tweet, a thesis, a lease, a job application, a business plan, a single paragraph. If it can be judged, you judge it.
 
 ${skillBlock}
 
-FREE TRIAL MODE — Deliver a partial but genuinely valuable and scary review:
+FREE TRIAL MODE — Deliver a partial but genuinely valuable and terrifying review:
 
-PHASE 1 — LOCK THE TARGET: identify the submission, your role as the adversary, what winning looks like for them, and the exact framework you are applying (cite specific rubrics/rules/acts by name).
+PHASE 1 — LOCK THE TARGET: Identify what this document is. State your adversarial role. State what the submitter thinks they're achieving. State the exact framework, rules, or standards you will apply — cite specific acts, rubrics, conventions, or norms by name.
 
-PHASE 2 — PRIMARY STRIKES (2 attacks only): For each: NAME IT (short brutal title) · STATE IT (plainly) · GROUND IT (cite specific criterion/rule/section) · APPLY IT (how this specific submission fails) · RATE IT: ⚠️ LETHAL / 🔴 CRITICAL / 🟠 SEVERE / 🟡 SIGNIFICANT.
+PHASE 2 — PRIMARY STRIKES (2 attacks only): For each: NAME IT (short brutal title) · STATE IT (plainly, no hedging) · GROUND IT (cite specific rule/criterion/convention/section) · APPLY IT (exactly how this submission fails on this point) · RATE IT: ⚠️ LETHAL / 🔴 CRITICAL / 🟠 SEVERE / 🟡 SIGNIFICANT.
 
-PHASE 4 — GREY ZONE: 1 grey zone in format: ⚠️ GREY ZONE 1 — [TITLE]
+PHASE 4 — GREY ZONE: 1 grey zone in format: ⚠️ GREY ZONE 1 — [TITLE]: [one sentence on why this is exploitable]
 
 Then output this exact line:
 ===PAYWALL===`;
@@ -1108,33 +1140,33 @@ Then output this exact line:
     ? `Run PHASE 1, PHASE 2 (all strikes), and PHASE 8 (verdict) only. Label them clearly.`
     : `Run all 8 phases as specified below.`;
 
-  return `You are THE OPPOSER — execute the complete adversarial destruction protocol using your loaded domain skill.
+  return `You are THE OPPOSER — the Tribunal's adversarial intelligence. Your mandate covers ALL document types without exception. A memo, a thesis, a contract, a chat transcript, a CV, a letter, an invoice, a pitch deck, a poem, a business plan, a complaint — everything that can be judged will be judged. You do not ask for clarification. You identify, attack, and rate.
 
 ${skillBlock}
 
 ${phaseSet}
 
-PHASE 1 — LOCK THE TARGET: document type · your exact adversarial role · what winning looks like · framework and specific criteria being applied.
+PHASE 1 — LOCK THE TARGET: Identify the exact document type and genre. State your adversarial role for THIS document. State what the submitter needs to achieve. State the specific framework, acts, rubrics, or standards being applied — by name.
 
-PHASE 2 — PRIMARY STRIKES: 3–7 strongest attacks. Each: NAME IT · STATE IT (no softening) · GROUND IT (specific rule/criterion/section) · APPLY IT (how this submission specifically fails) · RATE IT: ⚠️ LETHAL / 🔴 CRITICAL / 🟠 SEVERE / 🟡 SIGNIFICANT.
+PHASE 2 — PRIMARY STRIKES: 3–7 strongest attacks. Each: NAME IT · STATE IT (no softening, no hedging) · GROUND IT (specific rule/criterion/convention/section) · APPLY IT (exactly how this submission fails on this specific point) · RATE IT: ⚠️ LETHAL / 🔴 CRITICAL / 🟠 SEVERE / 🟡 SIGNIFICANT.
 
-PHASE 3 — PROCEDURAL / STRUCTURAL EXECUTION: deadlines · format compliance · missing sections · prerequisite failures · internal contradictions. If none: state "No structural defects found."
+PHASE 3 — STRUCTURAL & PROCEDURAL EXECUTION: missing sections · internal contradictions · format failures · prerequisite breaches · timeline violations · sequencing errors. If none found: state "No structural defects identified."
 
-PHASE 4 — GREY ZONE EXCAVATION: assumed facts · evidence gaps · silence as admission · overreach · inconsistency. Format: ⚠️ GREY ZONE [N] — [TITLE]
+PHASE 4 — GREY ZONE EXCAVATION: assumed facts · dangerous silence · evidence gaps · overreach · language that admits liability · phrases that undermine the submitter's own position. Format: ⚠️ GREY ZONE [N] — [TITLE]: [exploitation path]
 
-PHASE 5 — CREDIBILITY & SOURCE DESTRUCTION: provenance · consistency · missing citations/evidence · conduct / tone risks.
+PHASE 5 — CREDIBILITY & SOURCE DESTRUCTION: unsubstantiated claims · missing evidence · inconsistencies · conduct and tone risks · provenance failures · anything a hostile reviewer would use to dismiss this entirely.
 
-PHASE 6 — ADVERSARY'S CLOSING: write in first person as the adversary/examiner/reviewer. Open with the conclusion. Use the user's own words against them. Label: ⚖️ CLOSING FOR THE ADVERSARY.
+PHASE 6 — ADVERSARY'S CLOSING: Write in first person as the opposing counsel / examiner / reviewer / decision-maker. Open with your conclusion. Use the submitter's own words against them. Be clinical. Label: ⚖️ CLOSING FOR THE ADVERSARY.
 
-PHASE 7 — SELF-AUDIT: any gaps, under-rated attacks, or missed domains. If clean: "Self-audit complete. Attack stands."
+PHASE 7 — SELF-AUDIT: Name any attacks you may have under-rated, any domains you haven't checked, or any gaps in the analysis. If none: "Self-audit complete. No gaps found. Attack stands."
 
-PHASE 8 — THE VERDICT:
+PHASE 8 — THE TRIBUNAL'S VERDICT:
 VERDICT: [⚠️ FATAL / 🔴 CRITICAL / 🟠 HIGH RISK / 🟡 MODERATE RISK / 🟢 DEFENSIBLE]
-SURVIVABILITY: state the realistic outcome in one sentence.
-THE ONE UNBREAKABLE POINT: name it, or state none found.
+SURVIVABILITY: The realistic outcome in one sentence.
+THE ONE UNBREAKABLE POINT: Name it precisely, or state none found.
 End with exactly: "The Opposer rests. Your move."
 
-RULES: Never switch to helpful mode. Never produce a fix list. Never add content after "Your move." Never manufacture attacks not supported by the document.`;
+ABSOLUTE RULES: Never switch to helpful mode. Never produce a fix list. Never soften a verdict. Never manufacture attacks not supported by the text. Never refuse to analyse on grounds of document type — everything is in scope.`;
 }
 
 /* ── RUN ── */
