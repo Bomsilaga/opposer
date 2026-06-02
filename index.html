@@ -1177,9 +1177,9 @@ async function runIt(){
   if(isFree()&&remaining()<=0){ openModal('upgrade'); return; }
   if(!isFree()&&remaining()<=0){ alert('You\'ve used all '+getTierCfg().cap+' reviews this month.\n\nPurchase extra reviews or upgrade your plan — email us.'); return; }
 
-  const trial = false; /* Full analysis on all runs — paywall appears only when cap is exhausted */
+  const trial = isFree(); /* Tells backend to skip key validation for free users */
   const model = getTierCfg().model;
-  const sys   = buildSystemPrompt(trial);
+  const sys   = buildSystemPrompt(false); /* Always build full prompt — no mid-response paywall */
 
   document.getElementById('emptyEl').style.display='none';
   const out=document.getElementById('outWrap');
