@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Opposer — Decision Tools for People Who Can't Afford to Be Wrong</title>
+<meta name="description" content="Two adversarial AI tools that tear apart your submissions, pitches, contracts and ideas — before the opposing barrister, investor, or visa officer does.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f0f14;
+  --ink2:#2a2a3a;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --bg:#fafafa;
+  --red:#ff3d3d;
+  --red-d:#d93030;
+  --violet:#635bff;
+  --violet-l:rgba(99,91,255,0.08);
+  --r:12px;
+  --r-lg:18px;
+  --r-xl:24px;
+}
+body{font-family:'Nunito',sans-serif;color:var(--ink);background:#fff;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px}
+.nav-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:900;font-size:20px;letter-spacing:-0.5px}
+.logo em{font-style:normal;color:var(--red)}
+.nav-links{display:flex;gap:28px;font-size:14px;font-weight:700;color:var(--muted)}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{background:var(--ink);color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:800;transition:background 0.15s}
+.nav-cta:hover{background:var(--red)}
+
+/* HERO */
+.hero{max-width:1080px;margin:0 auto;padding:96px 32px 72px;text-align:center}
+.hero-tag{display:inline-block;background:var(--violet-l);color:var(--violet);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:999px;border:1px solid rgba(99,91,255,0.2);margin-bottom:20px}
+.hero h1{font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1.08;letter-spacing:-2px;color:var(--ink);margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero-sub{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto 36px;font-weight:600}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.btn-primary{background:var(--red);color:#fff;padding:15px 32px;border-radius:999px;font-weight:900;font-size:16px;cursor:pointer;border:none;transition:all 0.15s;box-shadow:0 4px 20px rgba(255,61,61,0.35)}
+.btn-primary:hover{background:var(--red-d);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--ink);padding:14px 28px;border-radius:999px;font-weight:800;font-size:15px;cursor:pointer;border:2px solid var(--border);transition:border-color 0.15s}
+.btn-ghost:hover{border-color:var(--ink)}
+.hero-note{font-size:12px;color:var(--muted);font-weight:600}
+.hero-note a{color:var(--violet);text-decoration:underline}
+
+/* STATS BAR */
+.stats-bar{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 32px}
+.stats-inner{max-width:1080px;margin:0 auto;display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-n{font-size:24px;font-weight:900;letter-spacing:-1px}
+.stat-l{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+
+/* SECTION */
+section{padding:80px 32px}
+.section-inner{max-width:1080px;margin:0 auto}
+.section-tag{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.section-title{font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px;line-height:1.1}
+.section-sub{font-size:16px;color:var(--muted);max-width:560px;font-weight:600;margin-bottom:48px}
+
+/* PROBLEMS */
+.problems{background:#fff}
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.problem-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px 24px}
+.problem-icon{font-size:28px;margin-bottom:12px}
+.problem-title{font-weight:900;font-size:17px;margin-bottom:8px}
+.problem-body{font-size:14px;color:var(--muted);font-weight:600;line-height:1.6}
+
+/* PRODUCTS */
+.products-section{background:var(--bg)}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.product-card{background:#fff;border:2px solid var(--border);border-radius:var(--r-xl);padding:36px 32px;transition:border-color 0.2s}
+.product-card:hover{border-color:var(--ink)}
+.product-card.featured{border-color:var(--red)}
+.product-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.product-name{font-size:26px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.product-tagline{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:24px}
+.product-points{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.product-points li{font-size:14px;font-weight:700;display:flex;gap:10px;align-items:flex-start}
+.product-points li::before{content:'→';color:var(--red);flex-shrink:0;margin-top:1px}
+.product-cta{display:inline-block;background:var(--ink);color:#fff;padding:12px 24px;border-radius:999px;font-weight:800;font-size:14px;transition:background 0.15s}
+.product-cta:hover{background:var(--red)}
+
+/* USE CASES */
+.use-cases{background:#fff}
+.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.uc-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:20px}
+.uc-title{font-weight:900;font-size:15px;margin-bottom:6px}
+.uc-body{font-size:13px;color:var(--muted);font-weight:600}
+
+/* DOC TYPES */
+.doc-types{background:var(--bg)}
+.doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.doc-cat{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:20px}
+.doc-cat-title{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.doc-chips{display:flex;flex-direction:column;gap:6px}
+.doc-chip{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+
+/* TESTIMONIALS */
+.testimonials{background:#fff}
+.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.t-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px}
+.t-quote{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:16px;color:var(--ink2)}
+.t-quote::before{content:'"';font-size:32px;font-weight:900;line-height:0;vertical-align:-14px;color:var(--red);margin-right:2px}
+.t-author{display:flex;gap:10px;align-items:center}
+.t-avatar{width:36px;height:36px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:16px}
+.t-name{font-size:13px;font-weight:800}
+.t-role{font-size:11px;color:var(--muted);font-weight:600}
+
+/* PRICING */
+.pricing-section{background:var(--bg)}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.price-card{background:#fff;border:2px solid var(--border);border-radius:var(--r-xl);padding:28px 22px;position:relative}
+.price-card.best{border-color:var(--red)}
+.price-best-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.price-name{font-size:18px;font-weight:900;margin-bottom:4px}
+.price-tagline{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:16px}
+.price-amount{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1}
+.price-amount sup{font-size:18px;vertical-align:top;margin-top:6px;margin-right:2px}
+.price-period{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:20px}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.price-features li{font-size:13px;font-weight:700;display:flex;gap:8px}
+.price-features li.yes::before{content:'✓';color:#22c55e;flex-shrink:0}
+.price-features li.no::before{content:'✗';color:#d1d5db;flex-shrink:0}
+.price-btn{display:block;width:100%;background:var(--ink);color:#fff;border:none;padding:12px;border-radius:999px;font-weight:800;font-size:14px;cursor:pointer;transition:all 0.15s;text-align:center;font-family:inherit}
+.price-btn:hover{background:var(--red)}
+.price-card.best .price-btn{background:var(--red)}
+.price-card.best .price-btn:hover{background:var(--red-d)}
+.pricing-note{text-align:center;margin-top:20px;font-size:13px;color:var(--muted);font-weight:600}
+
+/* CTA STRIP */
+.cta-strip{background:var(--ink);color:#fff;padding:80px 32px;text-align:center}
+.cta-strip h2{font-size:clamp(28px,4vw,48px);font-weight:900;letter-spacing:-2px;margin-bottom:12px}
+.cta-strip p{font-size:16px;opacity:0.7;margin-bottom:36px;font-weight:600}
+.cta-strip .btn-primary{background:var(--red)}
+
+/* FOOTER */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px}
+.footer-inner{max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:32px;flex-wrap:wrap}
+.footer-brand .logo{margin-bottom:8px}
+.footer-brand p{font-size:13px;color:var(--muted);font-weight:600;max-width:240px}
+.footer-col h4{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.footer-col ul li a{font-size:14px;font-weight:700;color:var(--ink2)}
+.footer-col ul li a:hover{color:var(--red)}
+.footer-bottom{max-width:1080px;margin:24px auto 0;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .problem-grid,.product-grid,.uc-grid,.doc-grid,.t-grid,.pricing-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .hero{padding:60px 20px 40px}
+  section{padding:56px 20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">The Opposer</div>
+    <div class="nav-links">
+      <a href="#products">Products</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#use-cases">Who It's For</a>
+    </div>
+    <a href="./index.html" class="nav-cta">Try Free →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding-bottom:0">
+  <div class="hero-tag">Built for decisions that have real consequences</div>
+  <h1>Stop Losing on the Things<br>You Could Have <em>Caught.</em></h1>
+  <p class="hero-sub">Two adversarial AI tools that tear apart your submissions, pitches, contracts and ideas — before the opposing barrister, the investor, or the visa officer does.</p>
+  <div class="hero-actions">
+    <a href="./index.html" class="btn-primary">Try The Opposer Free →</a>
+    <a href="#pricing" class="btn-ghost">See Pricing</a>
+  </div>
+  <p class="hero-note">From $29/month · Cancel anytime · <a href="#how-stripe">Stripe-secured payments</a></p>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-n">10,000+</div><div class="stat-l">Documents Reviewed</div></div>
+    <div class="stat"><div class="stat-n">4.9/5</div><div class="stat-l">User Rating</div></div>
+    <div class="stat"><div class="stat-n">20+</div><div class="stat-l">Document Types</div></div>
+    <div class="stat"><div class="stat-n">&lt;30s</div><div class="stat-l">Average Review Time</div></div>
+  </div>
+</div>
+
+<!-- PROBLEMS -->
+<section class="problems">
+  <div class="section-inner">
+    <div class="section-tag">Why this exists</div>
+    <h2 class="section-title">The Three Failure Modes</h2>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">🪞</div>
+        <div class="problem-title">The Echo Chamber</div>
+        <div class="problem-body">Standard AI tells you what you want to hear. Your real opponent won't. You need the adversarial voice — not the encouraging one.</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🕳️</div>
+        <div class="problem-title">The Blind Spot</div>
+        <div class="problem-body">You're too close to your submission to see what kills it. They aren't. Distance is a weapon — yours or theirs.</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💸</div>
+        <div class="problem-title">The Expensive Mistake</div>
+        <div class="problem-body">Most losses are not from bad luck — they're from one missed weakness. One overlooked clause. One unanswered objection. These tools find it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products" class="products-section">
+  <div class="section-inner">
+    <div class="section-tag">Two tools. One job: make you sharper.</div>
+    <h2 class="section-title">Two Tools. One Job.</h2>
+    <div class="product-grid">
+      <div class="product-card featured">
+        <div class="product-label">Adversarial Review</div>
+        <div class="product-name">The Opposer</div>
+        <div class="product-tagline">Becomes your worst enemy — so you don't meet them unprepared.</div>
+        <ul class="product-points">
+          <li>Hunts the 3–7 attacks that would kill your case</li>
+          <li>Surfaces procedural defects before merits even matter</li>
+          <li>Rates each weakness LETHAL / CRITICAL / SEVERE</li>
+          <li>Works on legal cases, visas, tenders, pitches, contracts, claims</li>
+        </ul>
+        <a href="./index.html" class="product-cta">Try Free — 3 Reviews →</a>
+      </div>
+      <div class="product-card">
+        <div class="product-label">Decision Panel</div>
+        <div class="product-name">The Tribunal</div>
+        <div class="product-tagline">Five sharp advisors, a peer-review panel, and one decisive verdict.</div>
+        <ul class="product-points">
+          <li>Five distinct thinking frames — never the same voice twice</li>
+          <li>Anonymous peer review evaluates the reasoning, not the answer</li>
+          <li>Ends with ONE verdict and ONE next step. No "it depends."</li>
+          <li>Use on pricing, launches, hiring, expansion, exit decisions</li>
+        </ul>
+        <a href="./index.html" class="product-cta" style="background:var(--violet)">Coming Soon →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="use-cases" class="use-cases">
+  <div class="section-inner">
+    <div class="section-tag">Who it's for</div>
+    <h2 class="section-title">Built for Any Business That Makes High-Stakes Calls</h2>
+    <p class="section-sub">If a wrong submission, pitch, or decision costs you real money — these tools pay for themselves the first time you use them.</p>
+    <div class="uc-grid">
+      <div class="uc-card"><div class="uc-title">⚖️ Law Firms</div><div class="uc-body">Pressure-test submissions before filing.</div></div>
+      <div class="uc-card"><div class="uc-title">📋 Bid & Tender Teams</div><div class="uc-body">Find non-conformances before the panel does.</div></div>
+      <div class="uc-card"><div class="uc-title">🛂 Migration Agents</div><div class="uc-body">Mirror what the delegate will write.</div></div>
+      <div class="uc-card"><div class="uc-title">💼 Consultants & Coaches</div><div class="uc-body">Sharpen client recommendations.</div></div>
+      <div class="uc-card"><div class="uc-title">🚀 Founders & Operators</div><div class="uc-body">Stop launching on assumptions.</div></div>
+      <div class="uc-card"><div class="uc-title">🏥 Insurance & Claims</div><div class="uc-body">Anticipate the assessor's exclusion.</div></div>
+      <div class="uc-card"><div class="uc-title">📞 Sales Teams</div><div class="uc-body">War-game the prospect's objection list.</div></div>
+      <div class="uc-card"><div class="uc-title">🎓 Academics & Researchers</div><div class="uc-body">Stress-test before peer review.</div></div>
+      <div class="uc-card"><div class="uc-title">🏠 Property & Development</div><div class="uc-body">See the objector's case first.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DOC TYPES -->
+<section class="doc-types">
+  <div class="section-inner">
+    <div class="section-tag">The Opposer — what you can review</div>
+    <h2 class="section-title">20+ Document Types</h2>
+    <div class="doc-grid">
+      <div class="doc-cat">
+        <div class="doc-cat-title">📚 Academic & Research</div>
+        <div class="doc-chips">
+          <div class="doc-chip">📚 Masters / PhD Thesis</div>
+          <div class="doc-chip">📝 Essay / Assignment</div>
+          <div class="doc-chip">🔬 Research Paper</div>
+          <div class="doc-chip">📖 Literature Review</div>
+          <div class="doc-chip">🗂 Research Proposal</div>
+          <div class="doc-chip">🎓 Dissertation Chapter</div>
+        </div>
+      </div>
+      <div class="doc-cat">
+        <div class="doc-cat-title">⚖️ Legal & Claims</div>
+        <div class="doc-chips">
+          <div class="doc-chip">⚖️ Legal Claim</div>
+          <div class="doc-chip">📄 Contract</div>
+          <div class="doc-chip">👔 Employment Dispute</div>
+          <div class="doc-chip">🏥 Insurance Claim</div>
+          <div class="doc-chip">🛂 Visa / Immigration</div>
+          <div class="doc-chip">📮 Formal Complaint</div>
+        </div>
+      </div>
+      <div class="doc-cat">
+        <div class="doc-cat-title">💼 Business & Finance</div>
+        <div class="doc-chips">
+          <div class="doc-chip">🚀 Investor Pitch</div>
+          <div class="doc-chip">🗺️ Business Plan</div>
+          <div class="doc-chip">📋 Tender / RFP</div>
+          <div class="doc-chip">💰 Grant Application</div>
+          <div class="doc-chip">👥 HR / Performance</div>
+          <div class="doc-chip">🏠 Property Application</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-inner">
+    <div class="section-tag">Trusted by students, lawyers &amp; founders</div>
+    <h2 class="section-title">What Users Say</h2>
+    <div class="t-grid">
+      <div class="t-card">
+        <div class="t-quote">Found 3 critical flaws in my PhD thesis that my supervisor missed. The Opposer literally saved my defence.</div>
+        <div class="t-author">
+          <div class="t-avatar">🎓</div>
+          <div><div class="t-name">Dr. Sarah K.</div><div class="t-role">PhD Graduate, University of Melbourne</div></div>
+        </div>
+      </div>
+      <div class="t-card">
+        <div class="t-quote">The Opposer found the one paragraph that would have lost us the matter. We rewrote it in twenty minutes. We won.</div>
+        <div class="t-author">
+          <div class="t-avatar">⚖️</div>
+          <div><div class="t-name">Senior Associate</div><div class="t-role">Commercial Litigation Practice</div></div>
+        </div>
+      </div>
+      <div class="t-card">
+        <div class="t-quote">My visa application was rejected twice. The Opposer found the exact credibility gaps. Third time approved.</div>
+        <div class="t-author">
+          <div class="t-avatar">🛂</div>
+          <div><div class="t-name">Priya M.</div><div class="t-role">Software Engineer, Immigration Applicant</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="pricing-section">
+  <div class="section-inner">
+    <div class="section-tag">Simple, honest pricing</div>
+    <h2 class="section-title">Full Opposition. No Limits.</h2>
+    <p class="section-sub" style="margin:0 auto 40px">All 8 phases. Every attack rated. Domain-aware critique using your location and document type. Cancel anytime.</p>
+
+    <div class="pricing-grid">
+      <!-- Student -->
+      <div class="price-card">
+        <div class="price-name">🎓 Student</div>
+        <div class="price-tagline">Academia · Thesis · Essays</div>
+        <div class="price-amount"><sup>$</sup>9</div>
+        <div class="price-period">/month USD · .edu email</div>
+        <ul class="price-features">
+          <li class="yes">20 reviews/month</li>
+          <li class="yes">Full 8-phase review</li>
+          <li class="yes">Academic examiner mode</li>
+          <li class="no">Domain skill packs</li>
+        </ul>
+        <button class="price-btn" onclick="goCheckout('solo',9)">Get Student Plan →</button>
+      </div>
+      <!-- Solo -->
+      <div class="price-card">
+        <div class="price-name">Solo</div>
+        <div class="price-tagline">All document types</div>
+        <div class="price-amount"><sup>$</sup>29</div>
+        <div class="price-period">/month USD</div>
+        <ul class="price-features">
+          <li class="yes">50 reviews/month</li>
+          <li class="yes">Full 8-phase review</li>
+          <li class="yes">Location-aware critique</li>
+          <li class="no">Domain skill packs</li>
+        </ul>
+        <button class="price-btn" onclick="goCheckout('solo',29)">Get Solo Plan →</button>
+      </div>
+      <!-- Pro -->
+      <div class="price-card best">
+        <div class="price-best-tag">Best Value</div>
+        <div class="price-name">Pro</div>
+        <div class="price-tagline">All types · Domain packs</div>
+        <div class="price-amount"><sup>$</sup>59</div>
+        <div class="price-period">/month USD</div>
+        <ul class="price-features">
+          <li class="yes">150 reviews/month</li>
+          <li class="yes">Full 8-phase review</li>
+          <li class="yes">Domain skill packs</li>
+          <li class="yes">Priority support</li>
+        </ul>
+        <button class="price-btn" onclick="goCheckout('pro',59)">Get Pro Plan →</button>
+      </div>
+      <!-- Team -->
+      <div class="price-card">
+        <div class="price-name">Team</div>
+        <div class="price-tagline">5 users · All tools</div>
+        <div class="price-amount"><sup>$</sup>129</div>
+        <div class="price-period">/month USD</div>
+        <ul class="price-features">
+          <li class="yes">300 reviews/month</li>
+          <li class="yes">Up to 5 users</li>
+          <li class="yes">Domain skill packs</li>
+          <li class="yes">Admin dashboard</li>
+        </ul>
+        <button class="price-btn" onclick="goCheckout('team',129)">Get Team Plan →</button>
+      </div>
+    </div>
+    <p class="pricing-note" id="how-stripe">🔒 Stripe-secured payments · Cancel anytime · 7-day money-back guarantee</p>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<section class="cta-strip">
+  <h2>Make Sharper Calls.<br>Starting This Week.</h2>
+  <p>Try free — no card required. 3 full reviews on us.</p>
+  <a href="./index.html" class="btn-primary">Start Free Review →</a>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">The Opposer</div>
+      <p>Decision tools for people who can't afford to be wrong.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="./index.html">The Opposer</a></li>
+        <li><a href="#">The Tribunal</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 The Opposer — All rights reserved.</span>
+    <span>Adversarial Document Review · Global</span>
+  </div>
+</footer>
+
+<script>
+const CHECKOUT_URL = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/create-checkout-session';
+const SITE_URL = window.location.origin;
+
+async function goCheckout(plan, price) {
+  const btn = event.target;
+  const orig = btn.textContent;
+  btn.textContent = 'Redirecting…'; btn.disabled = true;
+  try {
+    const res = await fetch(CHECKOUT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan,
+        successUrl: SITE_URL + '/index.html',
+        cancelUrl: SITE_URL + '/landing.html#pricing',
+      })
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else throw new Error(data.error || 'no checkout url');
+  } catch (err) {
+    alert('Checkout error: ' + err.message);
+    btn.textContent = orig; btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

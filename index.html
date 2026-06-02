@@ -32,6 +32,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .tp-pro{color:var(--red);background:var(--red-m);border-color:rgba(255,61,61,0.3)}
 .tp-team{color:var(--purple);background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3)}
 .btn-up{background:var(--red);color:#fff;border:none;padding:9px 20px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(255,61,61,0.35);transition:all 0.18s;white-space:nowrap}
+.btn-manage{background:transparent;color:var(--muted2);border:1.5px solid var(--border);padding:8px 16px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:all 0.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.btn-manage:hover{border-color:var(--ink);color:var(--ink)}
 .btn-up:hover{background:var(--red-d);transform:translateY(-2px);box-shadow:0 6px 18px rgba(255,61,61,0.4)}
 
 /* HERO */
@@ -252,6 +254,7 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
   </div>
   <div class="topbar-right">
     <span class="tier-pill tp-free" id="tierPill">FREE TRIAL</span>
+    <button class="btn-manage" id="manageBtn" onclick="openManagePortal()" style="display:none">Manage Plan</button>
     <button class="btn-up" onclick="openModal('upgrade')">Upgrade 🔥</button>
   </div>
 </div>
@@ -441,8 +444,9 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
         <tr><td>Domain skill packs</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
         <tr><td>Monthly reviews</td><td>20</td><td>30</td><td>80</td><td>200</td></tr>
       </table>
-      <a href="https://boboma.gumroad.com/l/opposer-student" target="_blank" class="mgumroad" id="gumroadBtn" onclick="handleCheckout(event)">Subscribe — $9.99/month USD →</a>
-      <p class="mnote">Secure checkout via Gumroad · Cancel anytime · Instant access · <a onclick="openModal('setup')">How does payment work? →</a></p>
+      <button class="mgumroad" id="stripeBtn" onclick="handleStripeCheckout(event)" style="background:#635bff;box-shadow:0 4px 20px rgba(99,91,255,0.35);margin-bottom:8px">Pay with Stripe — $29/month →</button>
+      <a href="https://boboma.gumroad.com/l/opposer-student" target="_blank" class="mgumroad" id="gumroadBtn" onclick="handleCheckout(event)" style="background:#555;box-shadow:none;font-size:13px;padding:11px">Or pay via Gumroad — $9.99/month →</a>
+      <p class="mnote">Stripe or Gumroad · Secure checkout · Cancel anytime · <a onclick="openModal('setup')">How does payment work? →</a></p>
     </div>
   </div>
 </div>
@@ -496,24 +500,44 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
   </div>
 </div>
 
+<!-- STRIPE SUCCESS MODAL -->
+<div class="modal-bg" id="successBg" onclick="bgClose(event,'successBg')">
+  <div class="modal" style="max-width:460px;text-align:center">
+    <div class="mhead"><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:2px;text-transform:uppercase">Payment Successful</span><button class="mclose" onclick="closeModal('successBg')">✕</button></div>
+    <div class="mbody">
+      <div style="font-size:48px;margin-bottom:12px">⚔️</div>
+      <div class="mtitle" style="font-size:22px">You're in!</div>
+      <p class="msub">Your license key is below. Copy it and paste it in the key field to activate your account.</p>
+      <div style="background:#fafafa;border:2px solid var(--border2);border-radius:var(--r);padding:16px 20px;margin:20px 0;cursor:pointer" onclick="copyKey()" title="Click to copy">
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;margin-bottom:6px">License Key (click to copy)</div>
+        <div id="successKey" style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--red)">—</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted2);margin-bottom:16px">We also emailed this key to you.</p>
+      <button class="btn-pw" style="max-width:100%" onclick="activateFromSuccess()">Paste &amp; Activate →</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 /* ── CONFIG ── */
-const PROXY_URL  = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/oppose';
-const DIRECT_URL = 'https://api.anthropic.com/v1/messages'; // fallback dev only
-const HAIKU  = 'claude-haiku-4-5-20251001';
-const SONNET = 'claude-sonnet-4-6';
-
-/* Gumroad product URLs */
-const SITE_URL = 'https://opposer.vercel.app';
+const PROXY_URL   = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/oppose';
+const DIRECT_URL  = 'https://api.anthropic.com/v1/messages'; // fallback dev only
+const HAIKU       = 'claude-haiku-4-5-20251001';
+const SONNET      = 'claude-sonnet-4-6';
+const SITE_URL    = 'https://the-opposer.com';
+const CHECKOUT_URL  = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/create-checkout-session';
+const PORTAL_URL    = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/create-portal-session';
 const GUMROAD = {
   student: 'https://boboma.gumroad.com/l/opposer-student?wanted=true&redirect_url=' + encodeURIComponent(SITE_URL + '/?tier=student&key={license_key}'),
   solo:    'https://boboma.gumroad.com/l/opposer-solo?wanted=true&redirect_url='     + encodeURIComponent(SITE_URL + '/?tier=solo&key={license_key}'),
   pro:     'https://boboma.gumroad.com/l/opposer-pro?wanted=true&redirect_url='      + encodeURIComponent(SITE_URL + '/?tier=pro&key={license_key}'),
   team:    'https://boboma.gumroad.com/l/opposer-team?wanted=true&redirect_url='     + encodeURIComponent(SITE_URL + '/?tier=team&key={license_key}'),
 };
+/* Stripe plan keys map to create-checkout-session plans */
+const STRIPE_PLAN = { student:'solo', solo:'solo', pro:'pro', team:'team' };
 
 const TIERS = {
   free:    {model:HAIKU,  cap:3,   label:'FREE TRIAL', pill:'tp-free'},
@@ -1117,6 +1141,88 @@ function handleCheckout(e){
   const url=GUMROAD[selPlan.id]||'https://gumroad.com';
   window.open(url,'_blank');
 }
+async function handleStripeCheckout(e){
+  e.preventDefault();
+  const btn=document.getElementById('stripeBtn');
+  btn.textContent='Redirecting…'; btn.disabled=true;
+  try {
+    const plan=STRIPE_PLAN[selPlan.id]||'solo';
+    const res=await fetch(CHECKOUT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({plan,successUrl:SITE_URL,cancelUrl:SITE_URL})
+    });
+    const data=await res.json();
+    if(data.url) window.location.href=data.url;
+    else throw new Error(data.error||'no url');
+  } catch(err){
+    alert('Checkout error: '+err.message);
+    btn.textContent='Pay with Stripe →'; btn.disabled=false;
+  }
+}
+
+/* ── STRIPE SUCCESS — show key on return from checkout ── */
+(function(){
+  const p = new URLSearchParams(location.search);
+  const sid = p.get('stripe_session');
+  if (!sid) return;
+  // Clean URL without reload
+  history.replaceState({}, '', location.pathname);
+  // Fetch license key from Supabase via stripe session
+  fetch('https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/get-license-key', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stripe_session_id: sid })
+  }).then(r => r.json()).then(d => {
+    if (d.license_key) {
+      document.getElementById('successKey').textContent = d.license_key;
+      document.getElementById('successBg').classList.add('on');
+    }
+  }).catch(() => {});
+})();
+
+let _successKey = '';
+function copyKey() {
+  const k = document.getElementById('successKey').textContent;
+  navigator.clipboard.writeText(k).catch(() => {});
+  _successKey = k;
+}
+function activateFromSuccess() {
+  const k = document.getElementById('successKey').textContent;
+  closeModal('successBg');
+  // Put key in license field if it exists, otherwise activate directly
+  const field = document.getElementById('keyInput');
+  if (field) { field.value = k; activateKey(); }
+  else { localStorage.setItem('opp_key', k); location.reload(); }
+}
+
+/* ── MANAGE SUBSCRIPTION (Stripe Customer Portal) ── */
+async function openManagePortal() {
+  const key = localStorage.getItem('opp_key') || '';
+  if (!key) return;
+  const btn = document.getElementById('manageBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Loading…'; btn.disabled = true;
+  try {
+    const res = await fetch(PORTAL_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey: key, returnUrl: SITE_URL })
+    });
+    const d = await res.json();
+    if (d.url) window.location.href = d.url;
+    else throw new Error(d.error || 'no portal url');
+  } catch(err) {
+    alert('Could not open portal: ' + err.message);
+    btn.textContent = orig; btn.disabled = false;
+  }
+}
+
+/* Show manage button only for paid Stripe users */
+(function(){
+  const key = localStorage.getItem('opp_key');
+  if (key) document.getElementById('manageBtn').style.display = 'inline-flex';
+})();
 </script>
 </body>
 </html>
