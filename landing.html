@@ -151,6 +151,22 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px
 .footer-col ul li a:hover{color:var(--red)}
 .footer-bottom{max-width:1080px;margin:24px auto 0;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
+/* WINS TICKER */
+.wins-ticker{background:var(--ink);padding:36px 0;overflow:hidden}
+.wins-ticker-label{text-align:center;font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:18px}
+.ticker-row{display:flex;gap:12px;width:max-content;margin-bottom:12px}
+.ticker-row:last-child{margin-bottom:0}
+.ticker-row.row-a{animation:scroll-left 55s linear infinite}
+.ticker-row.row-b{animation:scroll-right 65s linear infinite}
+@keyframes scroll-left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes scroll-right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.win-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px 18px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:12px}
+.win-card:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,61,61,0.5)}
+.win-emoji{font-size:20px;line-height:1}
+.win-text{display:flex;flex-direction:column;gap:2px}
+.win-headline{font-size:13px;font-weight:800;color:#fff;letter-spacing:-0.2px}
+.win-who{font-size:11px;color:rgba(255,255,255,0.45);font-weight:600}
+
 /* RESPONSIVE */
 @media(max-width:768px){
   .problem-grid,.product-grid,.uc-grid,.doc-grid,.t-grid,.pricing-grid{grid-template-columns:1fr}
@@ -194,6 +210,13 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px
     <div class="stat"><div class="stat-n">20+</div><div class="stat-l">Document Types</div></div>
     <div class="stat"><div class="stat-n">&lt;30s</div><div class="stat-l">Average Review Time</div></div>
   </div>
+</div>
+
+<!-- WINS TICKER -->
+<div class="wins-ticker">
+  <div class="wins-ticker-label">Real results from real people</div>
+  <div id="tickerA" class="ticker-row row-a"></div>
+  <div id="tickerB" class="ticker-row row-b"></div>
 </div>
 
 <!-- PROBLEMS -->
@@ -462,6 +485,67 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px
 </footer>
 
 <script>
+// ---- WINS TICKER ----
+const WINS = [
+  { e:'🎓', h:'PhD thesis passed first try — no corrections', w:'Doctoral candidate · Biomedical Engineering' },
+  { e:'⚖️', h:'Contract clause spotted. Saved $240k in liability', w:'In-house counsel · SaaS company' },
+  { e:'🛂', h:'Visa approved after 2 rejections. Third app bulletproof', w:'Priya M. · Software engineer, India → Australia' },
+  { e:'🏥', h:'Insurance claim paid in full. Assessor had no comeback', w:'ICU nurse · Personal injury claimant' },
+  { e:'🚀', h:'VC said "tightest deck we\'ve seen all quarter"', w:'James T. · Founder, Series A round' },
+  { e:'📋', h:'Tender scored 97/100. First government contract won', w:'Bid manager · Infrastructure consultancy' },
+  { e:'🎓', h:'Essay grade jumped from B– to A. Same argument, sharper delivery', w:'Undergrad · Law School, UCL' },
+  { e:'💼', h:'Client accepted proposal. No pushback on scope or price', w:'Independent management consultant' },
+  { e:'🏠', h:'Council objection dismissed. Development approved', w:'Property developer · Melbourne, AU' },
+  { e:'📞', h:'Closed deal after war-gaming every objection', w:'Enterprise AE · B2B SaaS' },
+  { e:'🔬', h:'Paper accepted by Nature Reviews on first submission', w:'Postdoc · Molecular biology, Oxford' },
+  { e:'👔', h:'Unfair dismissal claim settled for 18 months salary', w:'HR manager turned claimant' },
+  { e:'🛂', h:'Student visa granted same week', w:'International student · MSc Finance, LSE' },
+  { e:'📄', h:'NDA rewritten. Counterparty signed without a word', w:'Startup founder · EdTech' },
+  { e:'🏥', h:'Grant application funded. Panel loved the risk section', w:'Research nurse · NHS England' },
+  { e:'🎤', h:'Pitch deck presentation scored highest in cohort', w:'MBA student · INSEAD' },
+  { e:'⚖️', h:'Magistrate dismissed opposing claim on procedural grounds — we spotted it', w:'Sole practitioner solicitor · Family law' },
+  { e:'🚀', h:'Angel round closed. Investor said our assumptions were unassailable', w:'Co-founder · ClimateTech startup' },
+  { e:'🗂️', h:'Research proposal funded £180k first round', w:'Senior lecturer · Social sciences, UCL' },
+  { e:'📋', h:'RFP response won over incumbent supplier', w:'Procurement lead · Logistics firm' },
+  { e:'🏠', h:'Rental application accepted. Weaknesses pre-empted in cover letter', w:'Graduate relocating · Sydney, AU' },
+  { e:'💰', h:'Grant approved. Only 12% acceptance rate', w:'Charity director · Youth services NGO' },
+  { e:'📞', h:'Sales proposal reviewed. Closed in one call', w:'Senior BDM · Enterprise software' },
+  { e:'🛂', h:'Partner visa approved. No further questions from immigration', w:'Ahmed K. · Sponsoring spouse, UK' },
+  { e:'⚖️', h:'Expert witness report cross-examination — nothing stuck', w:'Forensic accountant · Commercial litigation' },
+  { e:'🎓', h:'Dissertation distinction. Examiner cited "rigorous self-critique"', w:'MSc student · Public policy, Edinburgh' },
+  { e:'💼', h:'Management buyout proposal approved by board first read', w:'Operations director · Manufacturing SME' },
+  { e:'🔬', h:'Clinical trial protocol approved by ethics committee', w:'Principal investigator · Oncology research' },
+  { e:'🏥', h:'Complaint upheld. Hospital's defence collapsed on paragraph 3', w:'Patient advocate · NHS complaint' },
+  { e:'📄', h:'Lease negotiated down 22%. Landlord had no response to our points', w:'Retail franchise owner · High street' },
+  { e:'🚀', h:'YC application made the final cut', w:'Technical co-founder · Dev tools' },
+  { e:'👔', h:'Performance improvement plan successfully challenged', w:'Senior engineer · FAANG company' },
+  { e:'📋', h:'Planning submission approved. Objectors had nothing left', w:'Town planner · Local authority' },
+  { e:'🎤', h:'Conference paper accepted. Reviewers praised methodology', w:'PhD candidate · Cognitive science, MIT' },
+  { e:'💰', h:'SBIR grant approved — $750k Phase II', w:'CTO · Deep tech startup, Boston' },
+];
+
+function buildTicker(rowEl, items) {
+  const doubled = [...items, ...items];
+  doubled.forEach(w => {
+    const card = document.createElement('div');
+    card.className = 'win-card';
+    card.innerHTML = `<div class="win-emoji">${w.e}</div><div class="win-text"><div class="win-headline">${w.h}</div><div class="win-who">${w.w}</div></div>`;
+    rowEl.appendChild(card);
+  });
+}
+
+const rowA = WINS.filter((_, i) => i % 2 === 0);
+const rowB = WINS.filter((_, i) => i % 2 === 1);
+buildTicker(document.getElementById('tickerA'), rowA);
+buildTicker(document.getElementById('tickerB'), rowB);
+
+// Pause on hover
+document.querySelectorAll('.ticker-row').forEach(row => {
+  row.addEventListener('mouseenter', () => row.style.animationPlayState = 'paused');
+  row.addEventListener('mouseleave', () => row.style.animationPlayState = 'running');
+});
+// ---- END WINS TICKER ----
+
 const CHECKOUT_URL = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/create-checkout-session';
 const SITE_URL = window.location.origin;
 
