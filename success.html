@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>You're in — The Opposer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#ff3d3d;--red-d:#d93030;--ink:#0f0f14;--muted:#6b7280;--border:#e5e7eb;--bg:#fafafa}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
+
+.card{background:#fff;border:2px solid var(--border);border-radius:24px;padding:48px 40px;max-width:520px;width:100%;text-align:center;box-shadow:0 8px 48px rgba(0,0,0,0.06)}
+
+.icon{font-size:56px;margin-bottom:20px;line-height:1}
+.title{font-size:32px;font-weight:900;letter-spacing:-1.5px;margin-bottom:8px}
+.subtitle{font-size:16px;color:var(--muted);font-weight:600;margin-bottom:32px}
+
+.key-box{background:var(--bg);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:12px;cursor:pointer;transition:border-color 0.15s;position:relative}
+.key-box:hover{border-color:var(--red)}
+.key-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.key-value{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;letter-spacing:4px;color:var(--red);word-break:break-all}
+.key-hint{font-size:12px;color:var(--muted);font-weight:600;margin-top:6px}
+
+.copied-badge{position:absolute;top:12px;right:12px;background:var(--ink);color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;opacity:0;transition:opacity 0.2s;pointer-events:none}
+.copied-badge.show{opacity:1}
+
+.steps{background:#fff9f9;border:1px solid #ffe0e0;border-radius:12px;padding:16px 20px;margin-bottom:28px;text-align:left}
+.steps-title{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;font-size:14px;font-weight:700;color:var(--ink)}
+.step:last-child{margin-bottom:0}
+.step-n{background:var(--red);color:#fff;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+.btn-main{display:block;width:100%;background:var(--red);color:#fff;border:none;padding:16px;border-radius:999px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.15s;box-shadow:0 4px 20px rgba(255,61,61,0.35);text-decoration:none;margin-bottom:10px}
+.btn-main:hover{background:var(--red-d);transform:translateY(-2px)}
+.btn-copy{display:block;width:100%;background:transparent;color:var(--ink);border:2px solid var(--border);padding:14px;border-radius:999px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.15s;margin-bottom:24px}
+.btn-copy:hover{border-color:var(--ink)}
+
+.note{font-size:12px;color:var(--muted);font-weight:600;line-height:1.7}
+.note a{color:var(--red)}
+
+/* Loading state */
+.loading{display:flex;flex-direction:column;align-items:center;gap:16px;color:var(--muted);font-weight:700;font-size:15px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Error state */
+.error-card{background:#fff0f0;border-color:#fca5a5}
+.error-icon{color:var(--red)}
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="loading" id="loadingState">
+    <div class="spinner"></div>
+    Activating your subscription…
+  </div>
+</div>
+
+<script>
+const GET_KEY_URL = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/get-license-key';
+const APP_URL = 'https://the-opposer.com';
+
+const TIER_LABEL = { student:'Student', solo:'Solo', pro:'Pro', team:'Team' };
+
+async function init() {
+  const params = new URLSearchParams(location.search);
+  const sessionId = params.get('stripe_session');
+
+  if (!sessionId) {
+    showError('No session found. If you just paid, check your email for your license key.');
+    return;
+  }
+
+  try {
+    const res = await fetch(GET_KEY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stripe_session_id: sessionId })
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.license_key) {
+      throw new Error(data.error || 'Could not retrieve key');
+    }
+
+    showSuccess(data.license_key, data.tier, data.email);
+  } catch (err) {
+    // Webhook may still be processing — retry once after 3s
+    setTimeout(async () => {
+      try {
+        const res = await fetch(GET_KEY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stripe_session_id: sessionId })
+        });
+        const data = await res.json();
+        if (data.license_key) showSuccess(data.license_key, data.tier, data.email);
+        else showError('Your key is being processed — check your email in a moment.');
+      } catch {
+        showError('Your key is being processed — check your email in a moment.');
+      }
+    }, 3000);
+  }
+}
+
+function showSuccess(key, tier, email) {
+  const label = TIER_LABEL[tier] ?? tier ?? '';
+  const card = document.getElementById('card');
+  card.innerHTML = `
+    <div class="icon">⚔️</div>
+    <div class="title">You're in${label ? ', ' + label : ''}.</div>
+    <div class="subtitle">Your subscription is active${email ? ' · ' + email : ''}. Save your key below.</div>
+
+    <div class="key-box" onclick="copyKey()" id="keyBox">
+      <div class="key-label">Your License Key — click to copy</div>
+      <div class="key-value" id="keyVal">${key}</div>
+      <div class="key-hint">Keep this safe — you'll need it to activate The Opposer</div>
+      <div class="copied-badge" id="copiedBadge">Copied ✓</div>
+    </div>
+
+    <div class="steps">
+      <div class="steps-title">Activate in 3 steps</div>
+      <div class="step"><div class="step-n">1</div><span>Click <strong>Go to The Opposer</strong> below</span></div>
+      <div class="step"><div class="step-n">2</div><span>Click <strong>Upgrade 🔥</strong> in the top right</span></div>
+      <div class="step"><div class="step-n">3</div><span>Paste your key and click <strong>Activate</strong></span></div>
+    </div>
+
+    <a class="btn-main" href="${APP_URL}?key=${encodeURIComponent(key)}&tier=${encodeURIComponent(tier)}">Go to The Opposer →</a>
+    <button class="btn-copy" onclick="copyKey()">Copy License Key</button>
+
+    <p class="note">
+      We've also emailed your key to ${email ? '<strong>' + email + '</strong>' : 'you'}.<br>
+      To manage or cancel: <a href="${APP_URL}?manage=1">Manage subscription →</a>
+    </p>
+  `;
+}
+
+function showError(msg) {
+  const card = document.getElementById('card');
+  card.classList.add('error-card');
+  card.innerHTML = `
+    <div class="icon error-icon">⚠️</div>
+    <div class="title" style="font-size:24px">Almost there</div>
+    <div class="subtitle">${msg}</div>
+    <a class="btn-main" href="${APP_URL}" style="margin-top:24px">Back to The Opposer →</a>
+    <p class="note" style="margin-top:16px">If you're still having trouble, reply to your Stripe receipt and we'll sort it within the hour.</p>
+  `;
+}
+
+function copyKey() {
+  const key = document.getElementById('keyVal')?.textContent ?? '';
+  navigator.clipboard.writeText(key).then(() => {
+    const badge = document.getElementById('copiedBadge');
+    if (badge) { badge.classList.add('show'); setTimeout(() => badge.classList.remove('show'), 1800); }
+  });
+}
+
+init();
+</script>
+</body>
+</html>

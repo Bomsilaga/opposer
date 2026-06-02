@@ -475,7 +475,7 @@ async function goCheckout(plan, price) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         plan,
-        successUrl: SITE_URL + '/index.html',
+        successUrl: SITE_URL + '/success.html',
         cancelUrl: SITE_URL + '/landing.html#pricing',
       })
     });

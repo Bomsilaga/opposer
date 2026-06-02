@@ -1150,7 +1150,7 @@ async function handleStripeCheckout(e){
     const res=await fetch(CHECKOUT_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({plan,successUrl:SITE_URL,cancelUrl:SITE_URL})
+      body:JSON.stringify({plan,successUrl:SITE_URL+'/success.html',cancelUrl:SITE_URL})
     });
     const data=await res.json();
     if(data.url) window.location.href=data.url;
@@ -1161,12 +1161,23 @@ async function handleStripeCheckout(e){
   }
 }
 
+/* ── AUTO-ACTIVATE when arriving from success page with ?key= ── */
+(function(){
+  const p = new URLSearchParams(location.search);
+  const autoKey = p.get('key');
+  if (autoKey) {
+    localStorage.setItem('opp_key', autoKey);
+    history.replaceState({}, '', location.pathname);
+    location.reload();
+    return;
+  }
+})();
+
 /* ── STRIPE SUCCESS — show key on return from checkout ── */
 (function(){
   const p = new URLSearchParams(location.search);
   const sid = p.get('stripe_session');
   if (!sid) return;
-  // Clean URL without reload
   history.replaceState({}, '', location.pathname);
   // Fetch license key from Supabase via stripe session
   fetch('https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/get-license-key', {
