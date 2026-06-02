@@ -240,8 +240,17 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
 .confetti-piece{position:fixed;border-radius:50%;pointer-events:none;z-index:999;animation:confettiFall 1.2s ease-in forwards}
 @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(120px) rotate(360deg);opacity:0}}
 
-/* ── FIRE CANVAS ── */
-#fire-canvas{position:absolute;bottom:0;left:0;width:100%;height:260px;pointer-events:none;z-index:0;opacity:0.55}
+/* ── FIRE CANVAS (fixed bottom of viewport) ── */
+#fire-canvas{position:fixed;bottom:0;left:0;width:100%;height:200px;pointer-events:none;z-index:1;opacity:0.38}
+
+/* ── MATRIX LOADING ── */
+#matrix-wrap{display:none;position:relative;border-radius:var(--r-lg);overflow:hidden;margin-bottom:10px;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.15)}
+#matrix-wrap.on{display:block}
+#matrix-canvas{display:block;width:100%;height:220px}
+.matrix-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none}
+.matrix-status{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#00ff41;text-shadow:0 0 10px #00ff41;animation:matrix-flicker 0.12s step-end infinite}
+.matrix-phase{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(0,255,65,0.5)}
+@keyframes matrix-flicker{0%{opacity:1}92%{opacity:1}93%{opacity:0.7}94%{opacity:1}97%{opacity:0.85}100%{opacity:1}}
 .hero{position:relative;overflow:hidden}
 
 /* ── TYPEWRITER CURSOR ── */
@@ -362,7 +371,6 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
 </div>
 
 <div class="hero">
-  <canvas id="fire-canvas"></canvas>
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
@@ -511,6 +519,13 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
     <div class="empty-icon">⚔️</div>
     <div class="empty-title">Ready to find the weaknesses!</div>
     <p class="empty-text">Choose a document type · set your location & preference · upload or paste · hit <strong>Oppose This</strong>.</p>
+  </div>
+  <div id="matrix-wrap">
+    <canvas id="matrix-canvas"></canvas>
+    <div class="matrix-overlay">
+      <div class="matrix-status" id="matrixStatus">⬛ ENGAGING TARGET</div>
+      <div class="matrix-phase" id="matrixPhase">loading domain skill…</div>
+    </div>
   </div>
   <div class="out-wrap" id="outWrap"></div>
 </div>
@@ -1096,8 +1111,18 @@ async function runIt(){
 
   document.getElementById('emptyEl').style.display='none';
   const out=document.getElementById('outWrap');
-  out.className='out-wrap on';
-  out.innerHTML=`<div style="text-align:center;padding:48px 24px"><div style="font-size:40px;margin-bottom:16px;animation:bob 1s ease-in-out infinite">⚔️</div><div style="font-family:'Fredoka',sans-serif;font-size:18px;font-weight:600;color:var(--ink2);margin-bottom:6px">Engaging the target…</div><div style="font-size:13px;color:var(--muted);font-weight:500">Building attack protocol using your domain skill. 10–25 seconds.</div></div>`;
+  out.className='out-wrap'; out.innerHTML='';
+  /* Show Matrix loading */
+  const mwrap = document.getElementById('matrix-wrap');
+  mwrap.classList.add('on');
+  const matrixPhases=['loading domain skill…','building attack protocol…','identifying vulnerabilities…','calibrating adversarial stance…','preparing the verdict…'];
+  let mpi=0;
+  const mpit=setInterval(()=>{
+    mpi=(mpi+1)%matrixPhases.length;
+    const el=document.getElementById('matrixPhase');
+    if(el) el.textContent=matrixPhases[mpi];
+  },2800);
+  window._matrixInterval=mpit;
 
   const btn=document.getElementById('goBtn');
   btn.disabled=true; btn.innerHTML='<div class="spinner"></div> Opposing…';
@@ -1143,10 +1168,16 @@ async function runIt(){
 
     runsUsed++;
     localStorage.setItem('opp_runs_'+monthKey(),runsUsed);
+    clearInterval(window._matrixInterval);
+    document.getElementById('matrix-wrap').classList.remove('on');
+    out.className='out-wrap on';
     updateUI(); burst();
     renderResult(raw,trial);
   } catch(e){
-    out.innerHTML='<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ Error: '+esc(e.message||'Connection failed')+' — please try again.</div>';
+    clearInterval(window._matrixInterval);
+    document.getElementById('matrix-wrap').classList.remove('on');
+    out.className='out-wrap on';
+    out.innerHTML='<div style="padding:24px;background:rgba(255,45,45,0.08);border-radius:16px;border:1px solid rgba(255,45,45,0.3);color:#ff6666;font-weight:700;font-size:14px">⚠️ Error: '+esc(e.message||'Connection failed')+' — please try again.</div>';
   }
   btn.disabled=false; btn.innerHTML='<span id="goLabel">Oppose This →</span>';
 }
@@ -1345,6 +1376,70 @@ async function openManagePortal() {
   if (key) document.getElementById('manageBtn').style.display = 'inline-flex';
 })();
 
+/* ── MATRIX RAIN CANVAS ── */
+(function(){
+  const canvas = document.getElementById('matrix-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&<>[]{}';
+  const FONT_SIZE = 13;
+  let cols, drops, W, H;
+
+  function resize(){
+    const rect = canvas.parentElement.getBoundingClientRect();
+    W = canvas.width = rect.width || 800;
+    H = canvas.height = 220;
+    cols = Math.floor(W / FONT_SIZE);
+    drops = Array(cols).fill(1).map(()=>-Math.floor(Math.random()*40));
+  }
+  resize();
+
+  /* Resize only when matrix-wrap becomes visible */
+  const observer = new MutationObserver(()=>{
+    if(document.getElementById('matrix-wrap').classList.contains('on')) resize();
+  });
+  observer.observe(document.getElementById('matrix-wrap'), {attributes:true, attributeFilter:['class']});
+
+  let raf;
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.055)';
+    ctx.fillRect(0,0,W,H);
+
+    for(let i=0;i<cols;i++){
+      const ch = CHARS[Math.floor(Math.random()*CHARS.length)];
+      const y  = drops[i]*FONT_SIZE;
+
+      /* Leading char — bright white-green */
+      ctx.font = FONT_SIZE+'px monospace';
+      ctx.fillStyle='#afffbc';
+      ctx.shadowColor='#00ff41';
+      ctx.shadowBlur=8;
+      ctx.fillText(ch, i*FONT_SIZE, y);
+
+      /* Trail chars — matrix green */
+      ctx.fillStyle='#00ff41';
+      ctx.shadowBlur=4;
+      const trail = CHARS[Math.floor(Math.random()*CHARS.length)];
+      ctx.fillText(trail, i*FONT_SIZE, y - FONT_SIZE);
+
+      ctx.shadowBlur=0;
+
+      if(y>H && Math.random()>0.975) drops[i]=0;
+      drops[i]++;
+    }
+    raf = requestAnimationFrame(draw);
+  }
+
+  /* Start/stop with visibility */
+  const mwrap = document.getElementById('matrix-wrap');
+  const startStop = new MutationObserver(()=>{
+    if(mwrap.classList.contains('on')){ resize(); if(!raf) draw(); }
+    else { cancelAnimationFrame(raf); raf=null; ctx.clearRect(0,0,W,H); }
+  });
+  startStop.observe(mwrap,{attributes:true,attributeFilter:['class']});
+})();
+
 /* ── FIRE PARTICLE SYSTEM ── */
 (function(){
   const canvas = document.getElementById('fire-canvas');
@@ -1480,5 +1575,6 @@ renderResult = function(raw, isTrial){
   });
 };
 </script>
+<canvas id="fire-canvas"></canvas>
 </body>
 </html>
