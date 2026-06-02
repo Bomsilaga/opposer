@@ -21,7 +21,7 @@ html,body{min-height:100%;font-family:'Nunito',sans-serif;background:var(--bg);c
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle 500px at 10% 20%,rgba(255,198,43,0.18) 0%,transparent 60%),radial-gradient(circle 400px at 85% 10%,rgba(236,72,153,0.12) 0%,transparent 55%),radial-gradient(circle 600px at 70% 80%,rgba(59,130,246,0.1) 0%,transparent 60%),radial-gradient(circle 350px at 20% 85%,rgba(34,197,94,0.12) 0%,transparent 50%);pointer-events:none;z-index:0}
 .topbar{position:sticky;top:0;z-index:200;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(255,248,240,0.88);backdrop-filter:blur(20px);border-bottom:2px solid var(--border)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 10px rgba(255,61,61,0.35);flex-shrink:0}
+.logo-icon{width:40px;height:40px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(255,61,61,0.4))}
 .logo-text{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:var(--ink)}
 .logo-text span{color:var(--red)}
 .topbar-right{display:flex;align-items:center;gap:10px}
@@ -249,7 +249,7 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
 
 <div class="topbar">
   <div class="logo">
-    <div class="logo-icon">⚔️</div>
+    <img class="logo-icon" src="./logo.svg" alt="The Opposer">
     <div class="logo-text">The <span>Opposer</span></div>
   </div>
   <div class="topbar-right">

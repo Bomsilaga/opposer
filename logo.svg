@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Left red chevron/diamond -->
+  <polygon points="0,100 40,60 55,100 40,140" fill="#cc0a0a"/>
+  <polygon points="0,100 40,60 48,100 40,140" fill="#e01010"/>
+
+  <!-- Right red chevron/diamond -->
+  <polygon points="200,100 160,60 145,100 160,140" fill="#cc0a0a"/>
+  <polygon points="200,100 160,60 152,100 160,140" fill="#e01010"/>
+
+  <!-- Top red pyramid -->
+  <polygon points="100,4 130,68 100,58 70,68" fill="#cc0a0a"/>
+  <polygon points="100,4 130,68 100,52 70,68" fill="#e01010"/>
+  <!-- pyramid center highlight -->
+  <line x1="100" y1="4" x2="100" y2="68" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
+
+  <!-- Dark charcoal body - upper-left arm -->
+  <polygon points="55,100 100,52 100,100" fill="#2b3342"/>
+  <polygon points="40,60 70,68 100,52 55,100" fill="#3a4455"/>
+
+  <!-- Dark charcoal body - upper-right arm -->
+  <polygon points="100,52 130,68 145,100 100,100" fill="#2b3342"/>
+  <polygon points="130,68 160,60 145,100 100,52" fill="#3a4455"/>
+
+  <!-- Dark charcoal body - lower-left arm -->
+  <polygon points="55,100 100,100 100,148" fill="#1e2535"/>
+  <polygon points="40,140 55,100 100,148 70,132" fill="#2b3342"/>
+
+  <!-- Dark charcoal body - lower-right arm -->
+  <polygon points="100,100 145,100 100,148" fill="#1e2535"/>
+  <polygon points="145,100 160,140 130,132 100,148" fill="#2b3342"/>
+
+  <!-- Bottom point -->
+  <polygon points="70,132 100,196 130,132 100,148" fill="#2b3342"/>
+  <polygon points="100,148 130,132 100,196" fill="#1e2535"/>
+  <line x1="100" y1="148" x2="100" y2="196" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+
+  <!-- Central X highlight lines -->
+  <line x1="55" y1="100" x2="100" y2="52" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+  <line x1="100" y1="52" x2="145" y2="100" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+  <line x1="55" y1="100" x2="100" y2="148" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <line x1="100" y1="148" x2="145" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <!-- Vertical center -->
+  <line x1="100" y1="52" x2="100" y2="148" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <!-- Horizontal center -->
+  <line x1="55" y1="100" x2="145" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+</svg>

@@ -110,7 +110,7 @@ function showSuccess(key, tier, email) {
   const label = TIER_LABEL[tier] ?? tier ?? '';
   const card = document.getElementById('card');
   card.innerHTML = `
-    <div class="icon">⚔️</div>
+    <div class="icon"><img src="./logo.svg" alt="" style="width:56px;height:56px;filter:drop-shadow(0 0 12px rgba(255,61,61,0.5))"></div>
     <div class="title">You're in${label ? ', ' + label : ''}.</div>
     <div class="subtitle">Your subscription is active${email ? ' · ' + email : ''}. Save your key below.</div>
 
