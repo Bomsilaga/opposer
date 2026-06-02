@@ -8,6 +8,10 @@ const TIER_MAP: Record<string, { tier: string; cap: number; mrr: number; model: 
   team:     { tier: 'team',     cap: 300, mrr: 129.99, model: 'claude-sonnet-4-6' },
 }
 
+const TIER_LABEL: Record<string, string> = {
+  student: 'Student', solo: 'Solo', pro: 'Pro', team: 'Team',
+}
+
 function generateLicenseKey(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   let key = ''
@@ -16,6 +20,53 @@ function generateLicenseKey(): string {
     key += chars[Math.floor(Math.random() * chars.length)]
   }
   return key
+}
+
+async function sendLicenseEmail(email: string, name: string, licenseKey: string, tier: string) {
+  const resendKey = Deno.env.get('RESEND_API_KEY')
+  if (!resendKey) return
+
+  const firstName = name.split(' ')[0] || 'there'
+  const appUrl = 'https://the-opposer.com'
+  const tierLabel = TIER_LABEL[tier] ?? tier
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${resendKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: Deno.env.get('RESEND_FROM') ?? 'The Opposer <noreply@the-opposer.com>',
+      to: email,
+      subject: `Your Opposer ${tierLabel} license key`,
+      html: `
+        <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#0f0f14">
+          <h2 style="margin:0 0 8px;font-size:24px;font-weight:900">You're in. ⚔️</h2>
+          <p style="color:#6b7280;margin:0 0 28px">Hi ${firstName}, your <strong>Opposer ${tierLabel}</strong> subscription is active.</p>
+
+          <div style="background:#fafafa;border:2px solid #e5e7eb;border-radius:12px;padding:20px 24px;margin-bottom:28px">
+            <p style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin:0 0 8px">Your License Key</p>
+            <p style="font-family:monospace;font-size:20px;font-weight:700;letter-spacing:3px;color:#ff3d3d;margin:0">${licenseKey}</p>
+          </div>
+
+          <p style="margin:0 0 16px;color:#2a2a3a">To activate your account:</p>
+          <ol style="padding-left:20px;margin:0 0 28px;color:#2a2a3a;line-height:2">
+            <li>Go to <a href="${appUrl}" style="color:#ff3d3d">${appUrl}</a></li>
+            <li>Click <strong>Upgrade 🔥</strong> in the top right</li>
+            <li>Paste your license key and click Activate</li>
+          </ol>
+
+          <a href="${appUrl}" style="display:inline-block;background:#ff3d3d;color:#fff;padding:13px 28px;border-radius:999px;font-weight:900;font-size:15px;text-decoration:none">Go to The Opposer →</a>
+
+          <p style="margin:28px 0 0;font-size:12px;color:#9ca3af">
+            To manage or cancel your subscription, <a href="${appUrl}?manage=1" style="color:#6b7280">click here</a>.<br>
+            Questions? Reply to this email.
+          </p>
+        </div>
+      `,
+    }),
+  })
 }
 
 Deno.serve(async (req) => {
@@ -56,6 +107,7 @@ Deno.serve(async (req) => {
       const customer = await stripe.customers.retrieve(session.customer as string) as Stripe.Customer
       const email = customer.email ?? session.customer_email ?? ''
       const name = typeof customer.name === 'string' ? customer.name : ''
+      const licenseKey = generateLicenseKey()
 
       const now = new Date()
       const renewal = new Date(now)
@@ -69,7 +121,7 @@ Deno.serve(async (req) => {
         run_cap: cfg.cap,
         model: cfg.model,
         mrr_usd: cfg.mrr,
-        license_key: generateLicenseKey(),
+        license_key: licenseKey,
         stripe_customer_id: session.customer as string,
         stripe_subscription_id: session.subscription as string,
         payment_provider: 'stripe',
@@ -78,6 +130,9 @@ Deno.serve(async (req) => {
         renewal_date: renewal.toISOString(),
         last_active: now.toISOString(),
       }, { onConflict: 'email' })
+
+      // Send license key email (no-op if RESEND_API_KEY not set)
+      await sendLicenseEmail(email, name, licenseKey, cfg.tier)
 
     } else if (event.type === 'customer.subscription.updated') {
       const sub = event.data.object as Stripe.Subscription
