@@ -240,8 +240,18 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
 .confetti-piece{position:fixed;border-radius:50%;pointer-events:none;z-index:999;animation:confettiFall 1.2s ease-in forwards}
 @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(120px) rotate(360deg);opacity:0}}
 
-/* ── FIRE CANVAS (fixed bottom of viewport) ── */
-#fire-canvas{position:fixed;bottom:0;left:0;width:100%;height:200px;pointer-events:none;z-index:1;opacity:0.38}
+/* ── FIRE CANVASES ── */
+/* Fixed bottom — full-width floor embers */
+#fire-floor{position:fixed;bottom:0;left:0;width:100%;height:220px;pointer-events:none;z-index:1;opacity:0.42}
+/* Hero base */
+.fire-hero{position:absolute;bottom:0;left:0;width:100%;height:180px;pointer-events:none;z-index:1;opacity:0.5}
+/* Trig section base */
+.fire-trig{display:block;width:100%;height:100px;pointer-events:none;opacity:0.35;margin-top:-100px;position:relative;z-index:2}
+/* Inline strip — used under upgrade btn area and paywall */
+.fire-strip{display:block;width:100%;height:80px;pointer-events:none;opacity:0.45;border-radius:0 0 var(--r-xl) var(--r-xl)}
+/* Flanking left/right — for paywall */
+.fire-left{position:absolute;left:0;bottom:0;width:40%;height:140px;pointer-events:none;opacity:0.4}
+.fire-right{position:absolute;right:0;bottom:0;width:40%;height:140px;pointer-events:none;opacity:0.4;transform:scaleX(-1)}
 
 /* ── MATRIX LOADING ── */
 #matrix-wrap{display:none;position:relative;border-radius:var(--r-lg);overflow:hidden;margin-bottom:10px;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.15)}
@@ -371,6 +381,7 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
 </div>
 
 <div class="hero">
+  <canvas class="fire-hero" data-fire></canvas>
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
@@ -391,7 +402,7 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
 </div>
 
 <!-- TRIGGER GROUPS -->
-<div class="trig-wrap">
+<div class="trig-wrap" style="position:relative">
   <div class="trig-grid">
 
     <!-- Academic -->
@@ -444,6 +455,7 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
     </div>
 
   </div>
+  <canvas class="fire-trig" data-fire></canvas>
 </div>
 
 <!-- LOCATION + PREFERENCE -->
@@ -481,6 +493,7 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
     <span class="usage-num" id="usageNum">0 / 3</span>
     <a class="usage-cta" onclick="openModal('upgrade')">Upgrade →</a>
   </div>
+  <canvas class="fire-strip" data-fire></canvas>
 </div>
 
 <!-- MAIN -->
@@ -1261,6 +1274,8 @@ function tog(h){ h.parentElement.classList.toggle('open'); }
 function buildPaywall(){
   const rem=remaining();
   return `<div class="pw-card">
+    <canvas class="fire-left" data-fire></canvas>
+    <canvas class="fire-right" data-fire></canvas>
     <div class="pw-blur">Phase 3 Structural Execution · Phase 5 Credibility Destruction · Phase 6 Adversary Closing · Phase 7 Self-Audit · Phase 8 Verdict with survivability rating…</div>
     <div class="pw-lock">🔒</div>
     <div class="pw-title">5 More Phases Running.<br><em>Subscribe to See Them.</em></div>
@@ -1273,6 +1288,7 @@ function buildPaywall(){
     </div>
     <button class="btn-pw" onclick="openModal('upgrade')">Get Full Access — from $9.99/month →</button>
     <p class="pw-note">Cancel anytime · ${rem>0?rem+' free trial review'+(rem===1?'':'s')+' remaining':'Trial complete'} · <a onclick="openModal('setup')">How does payment work? →</a></p>
+    <canvas class="fire-strip" data-fire style="opacity:0.5;border-radius:0 0 var(--r-xl) var(--r-xl)"></canvas>
   </div>`;
 }
 
@@ -1441,37 +1457,33 @@ async function openManagePortal() {
 })();
 
 /* ── FIRE PARTICLE SYSTEM ── */
-(function(){
-  const canvas = document.getElementById('fire-canvas');
-  if (!canvas) return;
+function initFireOnCanvas(canvas){
+  if (!canvas || canvas._fireInit) return;
+  canvas._fireInit = true;
   const ctx = canvas.getContext('2d');
   let W, H;
 
   function resize(){
-    W = canvas.width = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
+    W = canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 400;
+    H = canvas.height = canvas.offsetHeight || parseInt(getComputedStyle(canvas).height) || 120;
   }
   window.addEventListener('resize', resize);
   resize();
 
-  /* Particle pool */
-  const MAX = 140;
   const pool = [];
 
   function spawn(){
-    /* Spread emitters: random x near base, biased to center with spread */
     const cx = W * 0.5;
     const spread = W * 0.48;
     const x = cx + (Math.random() - 0.5) * 2 * spread;
-    /* Weight toward center — embers cluster in the middle */
     const weight = 1 - Math.abs(x - cx) / (W * 0.5);
-    if (Math.random() > weight * 0.9 + 0.1) return; /* sparse at edges */
+    if (Math.random() > weight * 0.9 + 0.1) return;
 
     const size  = Math.random() * 3.2 + 0.6;
-    const life  = Math.random() * 0.6 + 0.4; /* 0.4 – 1.0 */
+    const life  = Math.random() * 0.6 + 0.4;
     const speed = Math.random() * 1.1 + 0.4;
-    const drift = (Math.random() - 0.5) * 0.6; /* horizontal waver */
-    const waver = Math.random() * 2 * Math.PI; /* phase for sine waver */
+    const drift = (Math.random() - 0.5) * 0.6;
+    const waver = Math.random() * 2 * Math.PI;
     const waverAmp = Math.random() * 0.4 + 0.1;
     const waverFreq = Math.random() * 0.04 + 0.02;
 
@@ -1479,7 +1491,6 @@ async function openManagePortal() {
   }
 
   function heatColor(t, alpha){
-    /* t: 0 = base (deep red/orange), 1 = tip (pale yellow/white) */
     const r = 255;
     const g = Math.round(t < 0.5 ? t * 2 * 140 : 140 + (t - 0.5) * 2 * 115);
     const b = Math.round(t > 0.75 ? (t - 0.75) * 4 * 80 : 0);
@@ -1489,9 +1500,9 @@ async function openManagePortal() {
   let frame = 0;
   function draw(){
     frame++;
+    if (!W || !H){ resize(); }
     ctx.clearRect(0, 0, W, H);
 
-    /* Spawn ~3-5 per frame */
     const spawnCount = 3 + Math.floor(Math.random() * 3);
     for (let s = 0; s < spawnCount; s++) spawn();
 
@@ -1500,22 +1511,18 @@ async function openManagePortal() {
       p.age += 0.016;
       if (p.age >= p.maxLife){ pool.splice(i, 1); continue; }
 
-      const progress = p.age / p.maxLife; /* 0→1 */
+      const progress = p.age / p.maxLife;
       const inv      = 1 - progress;
 
-      /* Rise */
       p.y -= p.speed * (0.8 + progress * 0.6);
-      /* Horizontal waver */
       p.x += Math.sin(p.waver + frame * p.waverFreq) * p.waverAmp + p.drift * 0.04;
 
-      /* Shrink & fade */
       const radius = p.size * (inv * 0.85 + 0.15);
-      const alpha  = inv * inv * 0.75; /* quad fade */
-      const t      = progress; /* heat: hotter at bottom, cools to yellow at tip */
+      const alpha  = inv * inv * 0.75;
+      const t      = progress;
 
       if (alpha < 0.01) continue;
 
-      /* Glow */
       const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius * 3.5);
       grd.addColorStop(0,   heatColor(t, alpha * 0.9));
       grd.addColorStop(0.4, heatColor(t, alpha * 0.45));
@@ -1526,7 +1533,6 @@ async function openManagePortal() {
       ctx.fillStyle = grd;
       ctx.fill();
 
-      /* Core bright dot */
       ctx.beginPath();
       ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
       ctx.fillStyle = heatColor(t * 0.4, alpha);
@@ -1536,7 +1542,15 @@ async function openManagePortal() {
     requestAnimationFrame(draw);
   }
   draw();
-})();
+}
+
+/* Initialize all static fire canvases */
+document.querySelectorAll('[data-fire]').forEach(initFireOnCanvas);
+
+/* Export factory so dynamic paywall canvases get fire too */
+window.initFireCanvases = function(){
+  document.querySelectorAll('[data-fire]').forEach(initFireOnCanvas);
+};
 
 /* ── TYPEWRITER: cycle doc types in hero chip ── */
 (function(){
@@ -1564,6 +1578,8 @@ async function openManagePortal() {
 const _origRenderResult = renderResult;
 renderResult = function(raw, isTrial){
   _origRenderResult(raw, isTrial);
+  /* Activate fire on any newly injected paywall canvases */
+  if (window.initFireCanvases) window.initFireCanvases();
   document.querySelectorAll('.pcard').forEach((card,i)=>{
     card.style.opacity='0';
     card.style.transform='translateX(-10px)';
@@ -1575,6 +1591,6 @@ renderResult = function(raw, isTrial){
   });
 };
 </script>
-<canvas id="fire-canvas"></canvas>
+<canvas id="fire-floor" data-fire></canvas>
 </body>
 </html>
