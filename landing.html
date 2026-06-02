@@ -27,28 +27,79 @@ body{font-family:'Nunito',sans-serif;color:var(--ink);background:#fff;line-heigh
 a{color:inherit;text-decoration:none}
 
 /* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px}
+nav{position:sticky;top:0;z-index:100;background:rgba(9,9,15,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.08);padding:0 32px}
 .nav-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font-weight:900;font-size:20px;letter-spacing:-0.5px}
+.logo{font-weight:900;font-size:20px;letter-spacing:-0.5px;color:#fff}
 .logo em{font-style:normal;color:var(--red)}
-.nav-links{display:flex;gap:28px;font-size:14px;font-weight:700;color:var(--muted)}
-.nav-links a:hover{color:var(--ink)}
-.nav-cta{background:var(--ink);color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:800;transition:background 0.15s}
-.nav-cta:hover{background:var(--red)}
+.nav-links{display:flex;gap:28px;font-size:14px;font-weight:700;color:rgba(255,255,255,0.5)}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--red);color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:800;transition:background 0.15s;box-shadow:0 2px 12px rgba(255,61,61,0.35)}
+.nav-cta:hover{background:var(--red-d)}
 
 /* HERO */
-.hero{max-width:1080px;margin:0 auto;padding:96px 32px 72px;text-align:center}
-.hero-tag{display:inline-block;background:var(--violet-l);color:var(--violet);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:999px;border:1px solid rgba(99,91,255,0.2);margin-bottom:20px}
-.hero h1{font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1.08;letter-spacing:-2px;color:var(--ink);margin-bottom:20px}
-.hero h1 em{font-style:normal;color:var(--red)}
-.hero-sub{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto 36px;font-weight:600}
+.hero-wrap{position:relative;overflow:hidden;background:#09090f;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:0.55;pointer-events:none}
+.hero-orb-1{width:600px;height:600px;background:radial-gradient(circle,#ff3d3d 0%,transparent 70%);top:-120px;left:-100px;animation:orb-drift-1 18s ease-in-out infinite}
+.hero-orb-2{width:500px;height:500px;background:radial-gradient(circle,#635bff 0%,transparent 70%);bottom:-80px;right:-60px;animation:orb-drift-2 22s ease-in-out infinite}
+.hero-orb-3{width:340px;height:340px;background:radial-gradient(circle,#ff3d3d88 0%,transparent 70%);bottom:20%;left:40%;animation:orb-drift-3 15s ease-in-out infinite}
+@keyframes orb-drift-1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,40px) scale(1.08)}66%{transform:translate(-30px,70px) scale(0.95)}}
+@keyframes orb-drift-2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-50px,-60px) scale(1.12)}}
+@keyframes orb-drift-3{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-50px)}}
+.hero-grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.hero-fade-bottom{position:absolute;bottom:0;left:0;right:0;height:160px;background:linear-gradient(to bottom,transparent,#09090f);pointer-events:none}
+
+.hero-inner{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:110px 32px 80px;text-align:center}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:6px 16px 6px 10px;margin-bottom:32px;backdrop-filter:blur(8px)}
+.hero-eyebrow-dot{width:7px;height:7px;background:#ff3d3d;border-radius:50%;box-shadow:0 0 10px #ff3d3d;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.4)}}
+.hero-eyebrow span{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7)}
+
+.hero h1{font-size:clamp(40px,6.5vw,82px);font-weight:900;line-height:1.04;letter-spacing:-3px;color:#fff;margin-bottom:24px}
+.hero h1 .h-red{color:#ff3d3d;position:relative}
+.hero h1 .h-red::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:3px;background:linear-gradient(90deg,#ff3d3d,#ff7b7b,#ff3d3d);border-radius:2px;animation:underline-glow 3s ease-in-out infinite}
+@keyframes underline-glow{0%,100%{opacity:1;filter:blur(0px)}50%{opacity:0.7;filter:blur(1px)}}
+.hero h1 .h-dim{color:rgba(255,255,255,0.45)}
+
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.6);max-width:580px;margin:0 auto 48px;font-weight:600;line-height:1.65}
+
+/* CONNECTOR PIPELINE */
+.hero-pipeline{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:52px;flex-wrap:wrap;row-gap:16px}
+.pipe-node{display:flex;flex-direction:column;align-items:center;gap:10px}
+.pipe-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative}
+.pipe-icon-you{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15)}
+.pipe-icon-opp{background:rgba(255,61,61,0.18);border:1px solid rgba(255,61,61,0.4);box-shadow:0 0 24px rgba(255,61,61,0.25);animation:icon-pulse 3s ease-in-out infinite}
+@keyframes icon-pulse{0%,100%{box-shadow:0 0 24px rgba(255,61,61,0.25)}50%{box-shadow:0 0 40px rgba(255,61,61,0.5)}}
+.pipe-icon-win{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.35)}
+.pipe-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.45)}
+.pipe-sublabel{font-size:10px;color:rgba(255,255,255,0.25);font-weight:600;margin-top:-6px}
+
+.pipe-connector{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;gap:4px}
+.pipe-line{width:48px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,0.1),rgba(255,61,61,0.6),rgba(255,255,255,0.1));position:relative;overflow:visible}
+.pipe-line::after{content:'';position:absolute;top:50%;left:-6px;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#ff3d3d;box-shadow:0 0 8px #ff3d3d;animation:particle-travel 2.4s linear infinite}
+@keyframes particle-travel{0%{left:-6px;opacity:0}10%{opacity:1}90%{opacity:1}100%{left:calc(100% - 2px);opacity:0}}
+.pipe-arrow{color:rgba(255,61,61,0.7);font-size:13px;line-height:1;margin-top:-2px}
+.pipe-tag{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,61,61,0.7);white-space:nowrap}
+
+/* ATTACK BADGES */
+.hero-attacks{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:44px}
+.attack-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:0.5px;border:1px solid}
+.badge-lethal{background:rgba(255,61,61,0.12);border-color:rgba(255,61,61,0.4);color:#ff6b6b}
+.badge-critical{background:rgba(251,146,60,0.12);border-color:rgba(251,146,60,0.4);color:#fb923c}
+.badge-severe{background:rgba(250,204,21,0.1);border-color:rgba(250,204,21,0.3);color:#fbbf24}
+.badge-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.badge-lethal .badge-dot{background:#ff3d3d}
+.badge-critical .badge-dot{background:#fb923c}
+.badge-severe .badge-dot{background:#fbbf24}
+
 .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
-.btn-primary{background:var(--red);color:#fff;padding:15px 32px;border-radius:999px;font-weight:900;font-size:16px;cursor:pointer;border:none;transition:all 0.15s;box-shadow:0 4px 20px rgba(255,61,61,0.35)}
-.btn-primary:hover{background:var(--red-d);transform:translateY(-2px)}
-.btn-ghost{background:transparent;color:var(--ink);padding:14px 28px;border-radius:999px;font-weight:800;font-size:15px;cursor:pointer;border:2px solid var(--border);transition:border-color 0.15s}
-.btn-ghost:hover{border-color:var(--ink)}
-.hero-note{font-size:12px;color:var(--muted);font-weight:600}
-.hero-note a{color:var(--violet);text-decoration:underline}
+.btn-primary{background:var(--red);color:#fff;padding:16px 36px;border-radius:999px;font-weight:900;font-size:16px;cursor:pointer;border:none;transition:all 0.18s;box-shadow:0 4px 24px rgba(255,61,61,0.45),0 0 0 0 rgba(255,61,61,0.3)}
+.btn-primary:hover{background:var(--red-d);transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,61,61,0.55)}
+.btn-ghost{background:rgba(255,255,255,0.06);color:#fff;padding:15px 28px;border-radius:999px;font-weight:800;font-size:15px;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:all 0.15s;backdrop-filter:blur(8px)}
+.btn-ghost:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3)}
+.hero-note{font-size:12px;color:rgba(255,255,255,0.35);font-weight:600}
+.hero-note a{color:rgba(255,255,255,0.6);text-decoration:underline}
 
 /* STATS BAR */
 .stats-bar{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 32px}
@@ -171,8 +222,13 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px
 @media(max-width:768px){
   .problem-grid,.product-grid,.uc-grid,.doc-grid,.t-grid,.pricing-grid{grid-template-columns:1fr}
   .nav-links{display:none}
-  .hero{padding:60px 20px 40px}
+  .hero-inner{padding:80px 20px 60px}
+  .hero-pipeline{gap:0;row-gap:8px}
+  .pipe-line{width:28px}
   section{padding:56px 20px}
+  .hero-orb-1{width:320px;height:320px}
+  .hero-orb-2{width:280px;height:280px}
+  .hero-orb-3{display:none}
 }
 </style>
 </head>
@@ -191,16 +247,77 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px
 </nav>
 
 <!-- HERO -->
-<section class="hero" style="padding-bottom:0">
-  <div class="hero-tag">Built for decisions that have real consequences</div>
-  <h1>Stop Losing on the Things<br>You Could Have <em>Caught.</em></h1>
-  <p class="hero-sub">Two adversarial AI tools that tear apart your submissions, pitches, contracts and ideas — before the opposing barrister, the investor, or the visa officer does.</p>
-  <div class="hero-actions">
-    <a href="./index.html" class="btn-primary">Try The Opposer Free →</a>
-    <a href="#pricing" class="btn-ghost">See Pricing</a>
+<div class="hero-wrap">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-fade-bottom"></div>
+
+  <div class="hero-inner hero">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      <span>Adversarial AI · Live</span>
+    </div>
+
+    <h1>
+      Your Submission.<br>
+      <span class="h-dim">Their</span> <span class="h-red">Worst Attack.</span><br>
+      <span class="h-dim">Your</span> Win.
+    </h1>
+
+    <p class="hero-sub">
+      The Opposer reads your documents as the opposing barrister, the visa delegate, the investor, or the tender panel — then delivers every attack that would sink you, before you file.
+    </p>
+
+    <!-- CONNECTOR PIPELINE -->
+    <div class="hero-pipeline">
+      <div class="pipe-node">
+        <div class="pipe-icon pipe-icon-you">📄</div>
+        <div class="pipe-label">Your Doc</div>
+        <div class="pipe-sublabel">Any type</div>
+      </div>
+
+      <div class="pipe-connector">
+        <div class="pipe-line"></div>
+        <div class="pipe-arrow">▶</div>
+        <div class="pipe-tag">Ingested</div>
+      </div>
+
+      <div class="pipe-node">
+        <div class="pipe-icon pipe-icon-opp">⚔️</div>
+        <div class="pipe-label">The Opposer</div>
+        <div class="pipe-sublabel">8 attack phases</div>
+      </div>
+
+      <div class="pipe-connector">
+        <div class="pipe-line"></div>
+        <div class="pipe-arrow">▶</div>
+        <div class="pipe-tag">Rated output</div>
+      </div>
+
+      <div class="pipe-node">
+        <div class="pipe-icon pipe-icon-win">✅</div>
+        <div class="pipe-label">You Win</div>
+        <div class="pipe-sublabel">No surprises</div>
+      </div>
+    </div>
+
+    <!-- ATTACK SEVERITY BADGES -->
+    <div class="hero-attacks">
+      <div class="attack-badge badge-lethal"><div class="badge-dot"></div>LETHAL weakness found</div>
+      <div class="attack-badge badge-critical"><div class="badge-dot"></div>CRITICAL gap flagged</div>
+      <div class="attack-badge badge-severe"><div class="badge-dot"></div>SEVERE assumption exposed</div>
+    </div>
+
+    <div class="hero-actions">
+      <a href="./index.html" class="btn-primary">Try Free — 3 Full Reviews →</a>
+      <a href="#pricing" class="btn-ghost">See Plans</a>
+    </div>
+    <p class="hero-note">No card required &nbsp;·&nbsp; From $9.99/month &nbsp;·&nbsp; <a href="#how-stripe">Stripe-secured</a></p>
   </div>
-  <p class="hero-note">From $29/month · Cancel anytime · <a href="#how-stripe">Stripe-secured payments</a></p>
-</section>
+</div>
 
 <!-- STATS -->
 <div class="stats-bar">
@@ -485,6 +602,81 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px
 </footer>
 
 <script>
+// ---- HERO CANVAS PARTICLES ----
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], mouse = {x:-9999,y:-9999};
+
+  function resize(){
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const COUNT = Math.min(90, Math.floor((W * H) / 12000));
+  for(let i = 0; i < COUNT; i++){
+    particles.push({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+      r: Math.random()*1.8+0.4,
+      a: Math.random()*0.5+0.15,
+    });
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  canvas.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // connections
+    for(let i = 0; i < particles.length; i++){
+      for(let j = i+1; j < particles.length; j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 120){
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(255,61,61,${0.12*(1-dist/120)})`;
+          ctx.lineWidth = 0.6;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+      // mouse repel
+      const mdx = particles[i].x - mouse.x;
+      const mdy = particles[i].y - mouse.y;
+      const mdist = Math.sqrt(mdx*mdx+mdy*mdy);
+      if(mdist < 100){
+        const force = (100-mdist)/100*0.6;
+        particles[i].vx += (mdx/mdist)*force;
+        particles[i].vy += (mdy/mdist)*force;
+      }
+    }
+    // dots
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.995; p.vy *= 0.995;
+      if(p.x<0||p.x>W) p.vx *= -1;
+      if(p.y<0||p.y>H) p.vy *= -1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+// ---- END HERO CANVAS ----
+
 // ---- WINS TICKER ----
 const WINS = [
   { e:'🎓', h:'PhD thesis passed first try — no corrections', w:'Doctoral candidate · Biomedical Engineering' },
