@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Opposer — Find Every Weakness First</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;0,800;0,900;1,800&family=DM+Mono:wght@400;500&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff8f0;--bg2:#fff3e8;--card:#ffffff;
+  --red:#ff3d3d;--red-d:#e02020;--red-l:#fff0f0;--red-m:rgba(255,61,61,0.12);
+  --orange:#ff7a1a;--yellow:#ffc62b;--green:#22c55e;--blue:#3b82f6;
+  --purple:#8b5cf6;--pink:#ec4899;--teal:#06b6d4;
+  --ink:#1a1a2e;--ink2:#2d2d4e;--muted:#6b6b8a;--muted2:#9898b0;
+  --border:#e8e0f5;--border2:#d4c8f0;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);--shadow-lg:0 8px 40px rgba(0,0,0,0.12);
+  --r:16px;--r-lg:24px;--r-xl:32px;
+}
+html,body{min-height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle 500px at 10% 20%,rgba(255,198,43,0.18) 0%,transparent 60%),radial-gradient(circle 400px at 85% 10%,rgba(236,72,153,0.12) 0%,transparent 55%),radial-gradient(circle 600px at 70% 80%,rgba(59,130,246,0.1) 0%,transparent 60%),radial-gradient(circle 350px at 20% 85%,rgba(34,197,94,0.12) 0%,transparent 50%);pointer-events:none;z-index:0}
+.topbar{position:sticky;top:0;z-index:200;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(255,248,240,0.88);backdrop-filter:blur(20px);border-bottom:2px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:40px;height:40px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(255,61,61,0.4))}
+.logo-text{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:var(--ink)}
+.logo-text span{color:var(--red)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tier-pill{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:2px solid}
+.tp-free{color:var(--orange);background:rgba(255,122,26,0.1);border-color:rgba(255,122,26,0.3)}
+.tp-student{color:var(--blue);background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3)}
+.tp-solo{color:var(--teal);background:rgba(6,182,212,0.1);border-color:rgba(6,182,212,0.3)}
+.tp-pro{color:var(--red);background:var(--red-m);border-color:rgba(255,61,61,0.3)}
+.tp-team{color:var(--purple);background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.3)}
+.btn-up{background:var(--red);color:#fff;border:none;padding:9px 20px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(255,61,61,0.35);transition:all 0.18s;white-space:nowrap}
+.btn-manage{background:transparent;color:var(--muted2);border:1.5px solid var(--border);padding:8px 16px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:all 0.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.btn-manage:hover{border-color:var(--ink);color:var(--ink)}
+.btn-up:hover{background:var(--red-d);transform:translateY(-2px);box-shadow:0 6px 18px rgba(255,61,61,0.4)}
+
+/* HERO */
+.hero{position:relative;z-index:1;text-align:center;padding:60px 24px 40px}
+.hero-chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--border2);padding:7px 18px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:24px;box-shadow:var(--shadow);animation:floatIn 0.6s ease both}
+@keyframes floatIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+h1.hero-h{font-family:'Fredoka',sans-serif;font-size:clamp(40px,7vw,80px);font-weight:700;line-height:1.05;margin-bottom:14px;color:var(--ink);animation:slideUp 0.55s 0.1s ease both}
+h1.hero-h .word-find{color:var(--red)}
+h1.hero-h .word-before{background:var(--yellow);padding:0 12px;border-radius:8px;transform:rotate(-1.5deg);display:inline-block;color:var(--ink)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero-sub{font-size:17px;color:var(--muted);max-width:560px;margin:0 auto 20px;line-height:1.75;font-weight:500;animation:slideUp 0.55s 0.2s ease both}
+.trial-chip{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#fff7e6,#fff0ff);border:2px solid rgba(255,198,43,0.5);padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:16px;box-shadow:var(--shadow);animation:slideUp 0.55s 0.3s ease both}
+.trial-chip .tc-free{background:var(--orange);color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:800}
+
+/* STUDENT BANNER */
+.student-banner{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#e0f0ff,#f0e8ff);border:2px solid rgba(59,130,246,0.35);padding:12px 22px;border-radius:24px;font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:44px;box-shadow:var(--shadow);animation:slideUp 0.55s 0.4s ease both;cursor:pointer;transition:all 0.18s}
+.student-banner:hover{border-color:var(--blue);transform:translateY(-2px)}
+.sb-tag{background:var(--blue);color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:800}
+
+.blob{position:absolute;border-radius:50%;opacity:0.5;pointer-events:none}
+.b1{width:80px;height:80px;background:var(--yellow);top:60px;left:8%;animation:bob 4s ease-in-out infinite}
+.b2{width:50px;height:50px;background:var(--pink);top:80px;right:10%;animation:bob 3.5s 0.5s ease-in-out infinite}
+.b3{width:35px;height:35px;background:var(--teal);bottom:20px;left:20%;animation:bob 5s 1s ease-in-out infinite}
+.b4{width:60px;height:60px;background:var(--purple);bottom:30px;right:15%;animation:bob 4.5s 0.3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(6deg)}}
+
+/* TRIGGER GROUPS */
+.trig-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 36px;width:100%}
+.trig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.trig-group{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:16px 16px 14px;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
+.trig-group-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.trig-group-label .cat-icon{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.cat-icon-academic{background:rgba(59,130,246,0.12)}
+.cat-icon-legal{background:rgba(255,61,61,0.1)}
+.cat-icon-business{background:rgba(16,185,129,0.1)}
+.trigs{display:flex;flex-direction:column;gap:5px}
+.trig-btn{background:var(--bg);border:1.5px solid var(--border);color:var(--ink2);padding:8px 12px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.16s;display:flex;align-items:center;gap:7px;text-align:left;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trig-btn:hover{border-color:var(--red);color:var(--red);background:#fff8f8;transform:translateX(2px)}
+.trig-btn.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 3px 10px rgba(255,61,61,0.25)}
+.trig-btn.student-btn:hover{border-color:var(--blue);color:var(--blue);background:#f0f6ff}
+.trig-btn.student-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.trig-btn-icon{font-size:14px;flex-shrink:0;line-height:1}
+
+/* LOCATION + PREFERENCE ROW */
+.pref-row{position:relative;z-index:1;max-width:860px;margin:0 auto 20px;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap}
+.pref-sel{background:#fff;border:2px solid var(--border);border-radius:20px;padding:9px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--ink2);cursor:pointer;outline:none;transition:all 0.15s}
+.pref-sel:focus{border-color:var(--red)}
+
+/* USAGE BAR */
+.usage-wrap{position:relative;z-index:1;max-width:860px;margin:0 auto 20px;padding:0 24px;width:100%}
+.usage-card{background:#fff;border:2px solid var(--border);border-radius:var(--r-lg);padding:14px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+.usage-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.usage-track{flex:1;height:8px;background:#f0ebff;border-radius:4px;overflow:hidden}
+.usage-fill{height:100%;border-radius:4px;transition:width 0.4s ease;background:linear-gradient(90deg,var(--red),var(--orange))}
+.usage-fill.warn{background:linear-gradient(90deg,var(--orange),var(--yellow))}
+.usage-fill.full{background:var(--muted2)}
+.usage-num{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--ink2);white-space:nowrap}
+.usage-cta{font-size:12px;font-weight:800;color:var(--red);cursor:pointer;white-space:nowrap;text-decoration:none}
+
+/* MAIN */
+.main{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 24px 80px;width:100%}
+
+/* UPLOAD ZONE */
+.upload-zone{border:2.5px dashed var(--border2);border-radius:var(--r-lg);background:#fff;padding:28px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:all 0.2s;margin-bottom:12px;position:relative}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--red);background:var(--red-l);box-shadow:0 0 0 4px rgba(255,61,61,0.08)}
+.upload-zone.has-file{border-style:solid;border-color:var(--green);background:rgba(34,197,94,0.04)}
+.upload-icon{font-size:32px;line-height:1}
+.upload-title{font-family:'Fredoka',sans-serif;font-size:16px;font-weight:600;color:var(--ink2)}
+.upload-sub{font-size:12px;color:var(--muted);font-weight:600;text-align:center;line-height:1.6}
+.upload-types{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:2px}
+.utype{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:3px 8px;border-radius:8px;background:#f0ebff;color:var(--muted2)}
+#fileInput{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.file-chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--green);padding:8px 14px;border-radius:20px;font-size:13px;font-weight:700;color:var(--ink2);box-shadow:var(--shadow)}
+.file-chip-rm{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:14px;padding:0 0 0 4px;line-height:1;font-weight:800}
+.file-chip-rm:hover{color:var(--red)}
+.or-div{display:flex;align-items:center;gap:12px;margin-bottom:12px;color:var(--muted2);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.or-div::before,.or-div::after{content:'';flex:1;height:1.5px;background:var(--border)}
+.img-preview{max-width:100%;max-height:200px;border-radius:10px;border:2px solid var(--border2);margin-top:8px;display:block}
+
+/* INPUT CARD */
+.icard{background:#fff;border:2px solid var(--border2);border-radius:var(--r-xl);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow-lg);transition:border-color 0.2s,box-shadow 0.2s}
+.icard:focus-within{border-color:var(--red);box-shadow:0 0 0 4px rgba(255,61,61,0.1),var(--shadow-lg)}
+.icard-head{background:linear-gradient(135deg,var(--red-l),#fff);border-bottom:2px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.icard-mode{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.icard-mode::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.icard-chars{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2)}
+textarea.itxt{width:100%;min-height:140px;background:transparent;border:none;outline:none;padding:20px;color:var(--ink);font-family:'Nunito',sans-serif;font-size:15px;line-height:1.75;resize:vertical}
+textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
+.icard-foot{border-top:2px solid var(--border);background:#fafafa;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.icard-hint{font-size:11px;color:var(--muted2);font-weight:600}
+.btn-go{background:var(--red);color:#fff;border:none;padding:13px 32px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(255,61,61,0.35);transition:all 0.18s}
+.btn-go:hover:not(:disabled){background:var(--red-d);transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,61,61,0.4)}
+.btn-go:active:not(:disabled){transform:scale(0.97)}
+.btn-go:disabled{background:var(--muted2);box-shadow:none;cursor:not-allowed;opacity:0.5}
+.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMPTY */
+.empty{text-align:center;padding:52px 24px}
+.empty-icon{font-size:48px;margin-bottom:16px;animation:bob 4s ease-in-out infinite}
+.empty-title{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:600;color:var(--ink2);margin-bottom:8px}
+.empty-text{font-size:13px;color:var(--muted);line-height:1.7;font-weight:500}
+
+/* OUTPUT */
+.out-wrap{display:none}
+.out-wrap.on{display:block}
+
+/* PHASE CARDS */
+.pcard{background:#fff;border:2px solid var(--border);border-radius:var(--r-lg);margin-bottom:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05);transition:border-color 0.2s}
+.pcard:hover{border-color:var(--border2)}
+.pcard-head{padding:15px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background 0.15s;user-select:none}
+.pcard-head:hover{background:#faf9ff}
+.pnum{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;min-width:54px}
+.ptitle{font-size:14px;font-weight:800;color:var(--ink);flex:1}
+.pstatus{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:4px 10px;border-radius:10px}
+.ps-done{background:rgba(34,197,94,0.12);color:var(--green)}
+.pchev{color:var(--muted2);font-size:12px;transition:transform 0.18s;flex-shrink:0}
+.pcard.open .pchev{transform:rotate(180deg)}
+.pbody{display:none;padding:4px 20px 20px;font-size:14px;color:var(--muted);line-height:1.8;border-top:2px solid var(--border)}
+.pcard.open .pbody{display:block}
+.pbody p{margin-bottom:10px}
+.pbody p:last-child{margin:0}
+
+/* LABELS */
+.slabel{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:6px;display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:10px}
+.lethal{background:rgba(255,40,40,0.12);color:#cc0000}
+.critical{background:rgba(255,100,40,0.12);color:#c04010}
+.severe{background:rgba(255,165,0,0.12);color:#b87000}
+.significant{background:rgba(255,200,40,0.12);color:#8a6000}
+.gz{background:linear-gradient(135deg,#fff8e0,#fffaf0);border:2px solid rgba(255,198,43,0.35);border-left:4px solid var(--yellow);border-radius:0 12px 12px 0;padding:12px 14px;margin:10px 0}
+.gzlabel{font-family:'DM Mono',monospace;font-size:9px;color:#b87000;letter-spacing:1px;margin-bottom:5px;font-weight:600}
+.vrating{font-family:'Fredoka',sans-serif;font-size:32px;font-weight:700;line-height:1;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.vfatal{color:#cc0000}.vcritical{color:#c04010}.vhigh{color:#c06000}.vmod{color:#8a6000}.vdef{color:var(--green)}
+.your-move{font-family:'Nunito',sans-serif;font-size:14px;font-style:italic;font-weight:700;color:var(--muted);margin-top:14px;padding-top:14px;border-top:2px solid var(--border)}
+
+/* PAYWALL */
+.pw-card{background:linear-gradient(135deg,#fff8f0,#fff0ff);border:3px solid rgba(255,61,61,0.3);border-radius:var(--r-xl);padding:32px;text-align:center;margin-top:8px;box-shadow:0 8px 40px rgba(255,61,61,0.1);position:relative;overflow:hidden}
+.pw-blur{filter:blur(5px);opacity:0.3;pointer-events:none;user-select:none;font-size:12px;color:var(--muted);line-height:1.7;text-align:left;margin-bottom:24px;max-height:72px;overflow:hidden;background:var(--red-l);border-radius:10px;padding:12px}
+.pw-lock{font-size:44px;margin-bottom:14px;animation:bob 3s ease-in-out infinite}
+.pw-title{font-family:'Fredoka',sans-serif;font-size:28px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.pw-title em{color:var(--red)}
+.pw-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.75;font-weight:500;max-width:420px;margin-left:auto;margin-right:auto}
+.pw-plans{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.pwp{background:#fff;border:2px solid var(--border);border-radius:var(--r);padding:14px;text-align:left;cursor:pointer;transition:all 0.18s;position:relative;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+.pwp:hover{border-color:var(--red);transform:translateY(-2px);box-shadow:0 4px 20px rgba(255,61,61,0.15)}
+.pwp.rec{border-color:var(--red);background:var(--red-l)}
+.pwp-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-family:'Nunito',sans-serif;font-size:10px;font-weight:800;padding:3px 12px;border-radius:10px;white-space:nowrap}
+.pwp-name{font-family:'Fredoka',sans-serif;font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.pwp-price{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:var(--red);line-height:1}
+.pwp-mo{font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.pwp-runs{font-size:11px;color:var(--muted);font-weight:700}
+.btn-pw{display:block;width:100%;max-width:360px;margin:0 auto 14px;background:var(--red);color:#fff;border:none;padding:15px 32px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.18s;box-shadow:0 4px 20px rgba(255,61,61,0.4)}
+.btn-pw:hover{background:var(--red-d);transform:translateY(-2px)}
+.pw-note{font-size:11px;color:var(--muted2);line-height:1.6;font-weight:600}
+.pw-note a{color:var(--red);cursor:pointer}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(26,26,46,0.6);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:var(--r-xl);max-width:560px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.2);border:2px solid var(--border2);animation:popIn 0.25s ease both}
+@keyframes popIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+.mhead{padding:24px 24px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.mclose{background:#f0ebff;border:none;color:var(--ink2);font-size:14px;cursor:pointer;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-weight:800}
+.mclose:hover{background:var(--red-l);color:var(--red)}
+.mbody{padding:20px 24px 28px}
+.mtitle{font-family:'Fredoka',sans-serif;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.mtitle em{color:var(--red)}
+.msub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.75;font-weight:500}
+.mplans{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.mplan{background:#fafafa;border:2px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.18s}
+.mplan:hover,.mplan.sel{border-color:var(--red);background:var(--red-l)}
+.mplan.student-plan:hover,.mplan.student-plan.sel{border-color:var(--blue);background:rgba(59,130,246,0.06)}
+.mpl-name{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.mpl-tag{background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:8px}
+.mpl-tag.blue{background:var(--blue)}
+.mpl-desc{font-size:11px;color:var(--muted);font-weight:600}
+.mpl-runs{font-size:10px;color:var(--muted2);margin-top:2px;font-weight:600}
+.mpr-n{font-family:'Fredoka',sans-serif;font-size:24px;font-weight:700;color:var(--red);line-height:1}
+.mpr-s{font-size:10px;color:var(--muted2);font-weight:600}
+.ctable{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:12px}
+.ctable th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);padding:8px 10px;text-align:left;border-bottom:2px solid var(--border);font-weight:500}
+.ctable td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--muted);font-weight:600}
+.ctable td:first-child{color:var(--ink2)}
+.ctable .yes{color:var(--green)}
+.ctable .no{color:var(--muted2)}
+.mgumroad{display:block;width:100%;background:var(--red);color:#fff;border:none;padding:15px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.18s;text-align:center;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 20px rgba(255,61,61,0.35)}
+.mgumroad:hover{background:var(--red-d);transform:translateY(-2px)}
+.mnote{font-size:10px;color:var(--muted2);text-align:center;line-height:1.6;font-weight:600}
+.mnote a{color:var(--red);cursor:pointer}
+
+/* SETUP GUIDE MODAL */
+.setup-modal{max-width:680px}
+.setup-step{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border)}
+.setup-step:last-child{border:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#fff;flex-shrink:0;margin-top:2px}
+.step-body{font-size:14px;color:var(--ink2);line-height:1.7;font-weight:600}
+.step-body strong{color:var(--ink)}
+.step-body code{background:var(--bg2);padding:2px 7px;border-radius:6px;font-family:'DM Mono',monospace;font-size:12px;color:var(--red)}
+
+/* CONFETTI */
+.confetti-piece{position:fixed;border-radius:50%;pointer-events:none;z-index:999;animation:confettiFall 1.2s ease-in forwards}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(120px) rotate(360deg);opacity:0}}
+
+@media(max-width:640px){
+  .topbar{padding:0 16px}
+  .trig-wrap,.usage-wrap,.pref-row,.main{padding-left:16px;padding-right:16px}
+  .trig-grid{grid-template-columns:1fr}
+  h1.hero-h{font-size:38px}
+  .pw-plans{grid-template-columns:repeat(2,1fr)}
+  .mplans{grid-template-columns:1fr}
+  .btn-go{width:100%}
+  .icard-foot{flex-direction:column;align-items:stretch}
+  .b1,.b2,.b3,.b4{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <img class="logo-icon" src="./logo.png" alt="The Opposer">
+    <div class="logo-text">The <span>Opposer</span></div>
+  </div>
+  <div class="topbar-right">
+    <span class="tier-pill tp-free" id="tierPill">FREE TRIAL</span>
+    <button class="btn-manage" id="manageBtn" onclick="openManagePortal()" style="display:none">Manage Plan</button>
+    <button class="btn-up" onclick="openModal('upgrade')">Upgrade 🔥</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+  <div class="hero-chip">Adversarial Document Review · Global</div>
+  <h1 class="hero-h">
+    <span class="word-find">Find</span> Every Weakness<br>
+    <span class="word-before">Before They Do.</span>
+  </h1>
+  <p class="hero-sub">Upload any document — thesis, contract, visa, pitch, claim. The Opposer deploys the exact critique your toughest examiner, judge, or reviewer would use. Fix it before it's too late.</p>
+  <div class="trial-chip">
+    <span class="tc-free">FREE</span>
+    3 partial reviews to try · Full 8-phase attack from $9/mo 🔥
+  </div>
+  <div class="student-banner" onclick="openModal('upgrade')">
+    <span class="sb-tag">STUDENTS</span>
+    Masters & PhD thesis review · Essay critique · Research papers — <strong>Special $9.99/mo plan</strong> →
+  </div>
+</div>
+
+<!-- TRIGGER GROUPS -->
+<div class="trig-wrap">
+  <div class="trig-grid">
+
+    <!-- Academic -->
+    <div class="trig-group">
+      <div class="trig-group-label">
+        <div class="cat-icon cat-icon-academic">📚</div>
+        Academic &amp; Research
+      </div>
+      <div class="trigs">
+        <button class="trig-btn student-btn" onclick="setTrig(this,'thesis')"><span class="trig-btn-icon">📚</span>Masters / PhD Thesis</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'dissertation')"><span class="trig-btn-icon">🎓</span>Dissertation Chapter</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'essay')"><span class="trig-btn-icon">📝</span>Essay / Assignment</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'research')"><span class="trig-btn-icon">🔬</span>Research Paper</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'lit_review')"><span class="trig-btn-icon">📖</span>Literature Review</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'proposal')"><span class="trig-btn-icon">🗂</span>Research Proposal</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'report')"><span class="trig-btn-icon">📊</span>Lab / Field Report</button>
+      </div>
+    </div>
+
+    <!-- Legal -->
+    <div class="trig-group">
+      <div class="trig-group-label">
+        <div class="cat-icon cat-icon-legal">⚖️</div>
+        Legal &amp; Claims
+      </div>
+      <div class="trigs">
+        <button class="trig-btn" onclick="setTrig(this,'claim')"><span class="trig-btn-icon">⚖️</span>Legal Claim</button>
+        <button class="trig-btn" onclick="setTrig(this,'contract')"><span class="trig-btn-icon">📄</span>Contract Review</button>
+        <button class="trig-btn" onclick="setTrig(this,'employment')"><span class="trig-btn-icon">👔</span>Employment Dispute</button>
+        <button class="trig-btn" onclick="setTrig(this,'insurance')"><span class="trig-btn-icon">🏥</span>Insurance Claim</button>
+        <button class="trig-btn" onclick="setTrig(this,'immigration')"><span class="trig-btn-icon">🛂</span>Visa / Immigration</button>
+        <button class="trig-btn" onclick="setTrig(this,'complaint')"><span class="trig-btn-icon">📮</span>Formal Complaint</button>
+      </div>
+    </div>
+
+    <!-- Business -->
+    <div class="trig-group">
+      <div class="trig-group-label">
+        <div class="cat-icon cat-icon-business">💼</div>
+        Business &amp; Finance
+      </div>
+      <div class="trigs">
+        <button class="trig-btn" onclick="setTrig(this,'pitch')"><span class="trig-btn-icon">🚀</span>Investor Pitch</button>
+        <button class="trig-btn" onclick="setTrig(this,'plan')"><span class="trig-btn-icon">🗺️</span>Business Plan</button>
+        <button class="trig-btn" onclick="setTrig(this,'tender')"><span class="trig-btn-icon">📋</span>Tender / RFP</button>
+        <button class="trig-btn" onclick="setTrig(this,'grant')"><span class="trig-btn-icon">💰</span>Grant Application</button>
+        <button class="trig-btn" onclick="setTrig(this,'hr')"><span class="trig-btn-icon">👥</span>HR / Performance</button>
+        <button class="trig-btn" onclick="setTrig(this,'property')"><span class="trig-btn-icon">🏠</span>Property Application</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOCATION + PREFERENCE -->
+<div class="pref-row">
+  <select class="pref-sel" id="locSel" onchange="updatePrefs()">
+    <option value="global">🌍 Global / International</option>
+    <option value="us">🇺🇸 United States</option>
+    <option value="uk">🇬🇧 United Kingdom</option>
+    <option value="eu">🇪🇺 European Union</option>
+    <option value="ca">🇨🇦 Canada</option>
+    <option value="au">🇦🇺 Australia</option>
+    <option value="nz">🇳🇿 New Zealand</option>
+    <option value="in">🇮🇳 India</option>
+    <option value="sg">🇸🇬 Singapore</option>
+    <option value="other">🌐 Other</option>
+  </select>
+  <select class="pref-sel" id="toneSel" onchange="updatePrefs()">
+    <option value="adversarial">🗡 Full Adversarial (default)</option>
+    <option value="examiner">🎓 Academic Examiner</option>
+    <option value="investor">💼 Skeptical Investor</option>
+    <option value="judge">⚖️ Tribunal / Judge</option>
+    <option value="reviewer">🔬 Peer Reviewer</option>
+  </select>
+  <select class="pref-sel" id="depthSel" onchange="updatePrefs()">
+    <option value="deep">🔥 Deep (all 8 phases)</option>
+    <option value="quick">⚡ Quick Strike (3 phases)</option>
+  </select>
+</div>
+
+<!-- USAGE BAR -->
+<div class="usage-wrap">
+  <div class="usage-card">
+    <span class="usage-label" id="usageLabel">Free Runs</span>
+    <div class="usage-track"><div class="usage-fill" id="usageFill" style="width:0%"></div></div>
+    <span class="usage-num" id="usageNum">0 / 3</span>
+    <a class="usage-cta" onclick="openModal('upgrade')">Upgrade →</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="upload-zone" id="uploadZone" onclick="triggerFileInput()" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.rtf,.odt,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff,.csv,.json,.xml,.htm,.html,.md,.pages,.pptx,.xlsx" onchange="onFileChange(event)" onclick="event.stopPropagation()">
+    <div class="upload-icon" id="uploadIcon">📁</div>
+    <div class="upload-title" id="uploadTitle">Upload your document</div>
+    <div class="upload-sub" id="uploadSub">Drag & drop or click to browse</div>
+    <div class="upload-types">
+      <span class="utype">PDF</span><span class="utype">DOCX</span><span class="utype">TXT</span>
+      <span class="utype">PNG / JPG</span><span class="utype">PPTX</span><span class="utype">XLSX</span>
+      <span class="utype">HTML</span><span class="utype">MD</span><span class="utype">ODT</span>
+    </div>
+  </div>
+  <div id="fileChipWrap" style="display:none;margin-bottom:12px;text-align:center"></div>
+  <div class="or-div">or type / paste your content below</div>
+  <div class="icard">
+    <div class="icard-head">
+      <span class="icard-mode" id="iMode">OPPOSING: ANY DOCUMENT</span>
+      <span class="icard-chars" id="iChars">0 chars</span>
+    </div>
+    <textarea class="itxt" id="inp" maxlength="30000" oninput="onInp()"
+      placeholder="Paste your document, describe your situation, or summarise your submission.
+
+The more specific you are, the more surgical the attack. The Opposer finds exactly what your examiner, judge, or reviewer will use against you."></textarea>
+    <div class="icard-foot">
+      <span class="icard-hint">📎 Upload · paste · or both</span>
+      <button class="btn-go" id="goBtn" onclick="runIt()" disabled>
+        <span id="goLabel">Oppose This →</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="empty" id="emptyEl">
+    <div class="empty-icon">⚔️</div>
+    <div class="empty-title">Ready to find the weaknesses!</div>
+    <p class="empty-text">Choose a document type · set your location & preference · upload or paste · hit <strong>Oppose This</strong>.</p>
+  </div>
+  <div class="out-wrap" id="outWrap"></div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div class="modal-bg" id="modalBg" onclick="bgClose(event,'modalBg')">
+  <div class="modal">
+    <div class="mhead">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:2px;text-transform:uppercase">Unlock Full Access</span>
+      <button class="mclose" onclick="closeModal('modalBg')">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="mtitle">Full Opposition.<br><em>No Limits.</em> 🔥</div>
+      <p class="msub">All 8 phases. Every attack rated. Domain-aware critique using your location and document type. The adversary's closing. The survivability verdict. Cancel anytime.</p>
+      <div class="mplans" id="mplans">
+        <div class="mplan student-plan sel" onclick="pickPlan(this,'student','9.99')">
+          <div class="mpl">
+            <div class="mpl-name">Student <span class="mpl-tag blue">🎓 Academia</span></div>
+            <div class="mpl-desc">Thesis · Essays · Research Papers · Reports</div>
+            <div class="mpl-runs">20 reviews/month · .edu email</div>
+          </div>
+          <div class="mpr"><div class="mpr-n" style="color:var(--blue)">$9.99</div><div class="mpr-s">/mo USD</div></div>
+        </div>
+        <div class="mplan" onclick="pickPlan(this,'solo','29.99')">
+          <div class="mpl">
+            <div class="mpl-name">Solo</div>
+            <div class="mpl-desc">All document types · Full 8 phases</div>
+            <div class="mpl-runs">50 reviews/month</div>
+          </div>
+          <div class="mpr"><div class="mpr-n">$29.99</div><div class="mpr-s">/mo USD</div></div>
+        </div>
+        <div class="mplan" onclick="pickPlan(this,'pro','59.99')">
+          <div class="mpl">
+            <div class="mpl-name">Pro <span class="mpl-tag">Best Value</span></div>
+            <div class="mpl-desc">All types · Domain packs · Priority support</div>
+            <div class="mpl-runs">150 reviews/month</div>
+          </div>
+          <div class="mpr"><div class="mpr-n">$59.99</div><div class="mpr-s">/mo USD</div></div>
+        </div>
+        <div class="mplan" onclick="pickPlan(this,'team','129.99')">
+          <div class="mpl">
+            <div class="mpl-name">Team</div>
+            <div class="mpl-desc">Up to 5 users · All tools</div>
+            <div class="mpl-runs">300 reviews/month</div>
+          </div>
+          <div class="mpr"><div class="mpr-n">$129.99</div><div class="mpr-s">/mo USD</div></div>
+        </div>
+      </div>
+      <table class="ctable">
+        <tr><th>Feature</th><th>Student</th><th>Solo</th><th>Pro</th><th>Team</th></tr>
+        <tr><td>Full 8-phase review</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Location-aware critique</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Academic examiner mode</td><td class="yes">✓</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Domain skill packs</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Monthly reviews</td><td>20</td><td>50</td><td>150</td><td>300</td></tr>
+      </table>
+      <button class="mgumroad" id="stripeBtn" onclick="handleStripeCheckout(event)" style="background:#635bff;box-shadow:0 4px 20px rgba(99,91,255,0.35)">Subscribe — $9.99/month via Stripe →</button>
+      <p class="mnote" style="margin-top:10px">🔒 Stripe · Secure checkout · Cancel anytime · <a onclick="openModal('setup')">How does it work? →</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP / HOW IT WORKS MODAL -->
+<div class="modal-bg" id="setupBg" onclick="bgClose(event,'setupBg')">
+  <div class="modal setup-modal">
+    <div class="mhead">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:2px;text-transform:uppercase">Payment & Access — Step by Step</span>
+      <button class="mclose" onclick="closeModal('setupBg')">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="mtitle" style="font-size:22px">How Payment Works</div>
+      <p class="msub">Complete, honest breakdown. No surprises.</p>
+
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Click Subscribe above.</strong> You'll be taken to a Gumroad checkout page. Gumroad is a trusted global payment platform — they handle your card details securely. We never see your card number.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>Enter your email and pay.</strong> Choose the plan that fits. Pay with any major card or PayPal. Gumroad shows the price in your local currency automatically.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>Gumroad emails you a receipt instantly.</strong> The email contains your access link or licence key. Click it — you'll be redirected back here with your tier unlocked automatically using a token in the URL.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">4</div>
+        <div class="step-body"><strong>Your session is activated.</strong> The app reads the token, verifies it against our backend (Supabase), and upgrades your account. You'll see your tier badge change from FREE TRIAL to your plan name immediately.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">5</div>
+        <div class="step-body"><strong>Renewals are automatic.</strong> Gumroad charges your card on the same day each month. You'll get an email reminder 3 days before. If payment fails, Gumroad retries 3 times over 5 days then cancels — you get an email at each stage.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">6</div>
+        <div class="step-body"><strong>To cancel:</strong> Log in to <code>boboma.gumroad.com</code> → Library → find your Opposer subscription → Cancel. Or email us and we'll do it within 24 hours. No questions asked. Your access stays active until the end of the current billing period.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">7</div>
+        <div class="step-body"><strong>Students:</strong> The Student plan requires a <code>.edu</code>, <code>.ac.uk</code>, <code>.edu.au</code> or equivalent institutional email. If you don't have one, email us proof of enrolment and we'll manually activate you at the student rate.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">8</div>
+        <div class="step-body"><strong>Refunds:</strong> If you're not satisfied within 7 days of your first payment, email us for a full refund. No questions asked.</div>
+      </div>
+
+      <button class="btn-pw" style="max-width:100%;margin-top:8px" onclick="closeModal('setupBg');openModal('upgrade')">Choose a Plan →</button>
+    </div>
+  </div>
+</div>
+
+<!-- STRIPE SUCCESS MODAL -->
+<div class="modal-bg" id="successBg" onclick="bgClose(event,'successBg')">
+  <div class="modal" style="max-width:460px;text-align:center">
+    <div class="mhead"><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);letter-spacing:2px;text-transform:uppercase">Payment Successful</span><button class="mclose" onclick="closeModal('successBg')">✕</button></div>
+    <div class="mbody">
+      <div style="font-size:48px;margin-bottom:12px">⚔️</div>
+      <div class="mtitle" style="font-size:22px">You're in!</div>
+      <p class="msub">Your license key is below. Copy it and paste it in the key field to activate your account.</p>
+      <div style="background:#fafafa;border:2px solid var(--border2);border-radius:var(--r);padding:16px 20px;margin:20px 0;cursor:pointer" onclick="copyKey()" title="Click to copy">
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;margin-bottom:6px">License Key (click to copy)</div>
+        <div id="successKey" style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--red)">—</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted2);margin-bottom:16px">We also emailed this key to you.</p>
+      <button class="btn-pw" style="max-width:100%" onclick="activateFromSuccess()">Paste &amp; Activate →</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+/* ── CONFIG ── */
+const PROXY_URL   = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/oppose';
+const DIRECT_URL  = 'https://api.anthropic.com/v1/messages'; // fallback dev only
+const HAIKU       = 'claude-haiku-4-5-20251001';
+const SONNET      = 'claude-sonnet-4-6';
+const SITE_URL    = 'https://the-opposer.com';
+const CHECKOUT_URL  = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/create-checkout-session';
+const PORTAL_URL    = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/create-portal-session';
+const GUMROAD = {
+  student: 'https://boboma.gumroad.com/l/opposer-student?wanted=true&redirect_url=' + encodeURIComponent(SITE_URL + '/?tier=student&key={license_key}'),
+  solo:    'https://boboma.gumroad.com/l/opposer-solo?wanted=true&redirect_url='     + encodeURIComponent(SITE_URL + '/?tier=solo&key={license_key}'),
+  pro:     'https://boboma.gumroad.com/l/opposer-pro?wanted=true&redirect_url='      + encodeURIComponent(SITE_URL + '/?tier=pro&key={license_key}'),
+  team:    'https://boboma.gumroad.com/l/opposer-team?wanted=true&redirect_url='     + encodeURIComponent(SITE_URL + '/?tier=team&key={license_key}'),
+};
+/* Stripe plan keys map to create-checkout-session plans */
+const STRIPE_PLAN = { student:'solo', solo:'solo', pro:'pro', team:'team' };
+
+const TIERS = {
+  free:    {model:HAIKU,  cap:3,   label:'FREE TRIAL', pill:'tp-free'},
+  student: {model:SONNET, cap:20,  label:'STUDENT',    pill:'tp-student'},
+  solo:    {model:HAIKU,  cap:30,  label:'SOLO',       pill:'tp-solo'},
+  pro:     {model:SONNET, cap:80,  label:'PRO',        pill:'tp-pro'},
+  team:    {model:SONNET, cap:200, label:'TEAM',       pill:'tp-team'},
+};
+
+/* ── DOMAIN SKILL DEFINITIONS ──
+   Each key maps to a "skill creator" spec:
+   systemRole  = who the AI acts as
+   framework   = exact evaluation framework used
+   criteria    = what it judges against (discipline-specific)
+   blind_spots = common weak points for this doc type
+*/
+const DOMAIN_SKILLS = {
+  thesis:{
+    systemRole:'doctoral examiner and thesis committee member',
+    framework:'PhD/Masters examination standards: originality, methodological rigour, theoretical contribution, literature mastery, coherence of argument',
+    criteria:'research gap clarity · novelty of contribution · methodology soundness · literature currency and depth · argument coherence · academic conventions · potential viva questions',
+    blind_spots:'unsupported claims · methodology-conclusion mismatch · insufficient literature engagement · scope creep · definition failures · weak conclusion'
+  },
+  essay:{
+    systemRole:'senior academic marker applying institutional rubric',
+    framework:'Essay assessment rubric: argument, evidence, structure, critical thinking, citation accuracy',
+    criteria:'thesis clarity · argument logic · evidence quality · counter-argument engagement · structure and flow · citation format · word count discipline',
+    blind_spots:'unsupported assertions · poor paragraph structure · plagiarism risk phrases · weak introduction/conclusion · wrong citation style'
+  },
+  research:{
+    systemRole:'peer reviewer for a high-impact academic journal',
+    framework:'IMRAD structure + journal peer review standards: significance, methodology, reproducibility, clarity',
+    criteria:'research question clarity · literature gap · methodology reproducibility · results presentation · statistical validity · discussion strength · conclusion overreach',
+    blind_spots:'overstated conclusions · underpowered analysis · missing limitations section · citation gaps · reproducibility issues'
+  },
+  lit_review:{
+    systemRole:'academic supervisor evaluating literature review depth',
+    framework:'Systematic or narrative review standards: coverage, synthesis, currency, critical analysis',
+    criteria:'search strategy rigour · source currency · thematic synthesis vs summary · critical engagement · gap identification · citation completeness',
+    blind_spots:'description without critique · missing seminal works · outdated sources · no synthesis · poor structure'
+  },
+  proposal:{
+    systemRole:'research funding committee and ethics board reviewer',
+    framework:'Research proposal assessment: feasibility, significance, methodology, ethical compliance, budget justification',
+    criteria:'research question precision · methodology feasibility · timeline realism · budget justification · ethical considerations · preliminary work · expected contribution',
+    blind_spots:'vague objectives · unrealistic timeline · missing ethics section · no preliminary data · weak significance statement'
+  },
+  report:{
+    systemRole:'senior academic supervisor and industry technical reviewer',
+    framework:'Technical report standards: accuracy, methodology, data integrity, conclusion validity',
+    criteria:'methodology description · data presentation · result interpretation · limitation acknowledgement · conclusion support · reference quality',
+    blind_spots:'data without interpretation · missing error analysis · unsupported conclusions · poor data visualisation · missing methodology'
+  },
+  dissertation:{
+    systemRole:'doctoral examiner reading a dissertation chapter',
+    framework:'Chapter-level examination: argument coherence, contribution to thesis, scholarly rigour',
+    criteria:'chapter contribution to overall argument · internal logic · evidence quality · transition to next chapter · engagement with key theorists',
+    blind_spots:'chapter that stands alone without thesis contribution · weak theoretical framework · under-referenced claims'
+  },
+  claim:{
+    systemRole:'opposing legal counsel and tribunal adjudicator',
+    framework:'Civil litigation standards: elements of cause of action, burden of proof, limitation periods, jurisdiction, evidence admissibility',
+    criteria:'cause of action elements · standing · limitation period · evidence sufficiency · damages specificity · jurisdiction · pre-action obligations',
+    blind_spots:'missing limitation analysis · no quantum of damages · procedural non-compliance · standing issues · inadmissible evidence'
+  },
+  contract:{
+    systemRole:'contract lawyer acting for the opposing party',
+    framework:'Contract law: offer, acceptance, consideration, terms, breach, remedies, implied terms, statutory protections',
+    criteria:'ambiguous clauses · one-sided terms · missing protections · enforceability · boilerplate risks · dispute resolution · governing law',
+    blind_spots:'undefined terms · no force majeure · missing indemnity cap · unlimited liability clauses · jurisdiction ambiguity'
+  },
+  employment:{
+    systemRole:'employment tribunal judge and opposing HR counsel',
+    framework:'Employment law: unfair dismissal, discrimination, constructive dismissal, procedural fairness',
+    criteria:'procedural compliance · policy breaches · discrimination protected characteristics · documentation gaps · timeline accuracy',
+    blind_spots:'missing written warnings · no grievance procedure · inconsistent treatment evidence · timeline gaps'
+  },
+  insurance:{
+    systemRole:'insurance adjuster and claims denial specialist',
+    framework:'Insurance claims assessment: policy terms, exclusions, duty of disclosure, causation, quantum',
+    criteria:'policy exclusions · duty of disclosure · causation chain · documentation completeness · pre-existing conditions · quantum evidence',
+    blind_spots:'excluded perils · undisclosed material facts · insufficient receipts · causation gap · late notification'
+  },
+  immigration:{
+    systemRole:'visa officer and immigration tribunal adjudicator',
+    framework:'Immigration rules: eligibility criteria, documentation requirements, credibility assessment, country guidance',
+    criteria:'eligibility criteria met · documentation completeness · credibility of narrative · country guidance compliance · supporting evidence quality',
+    blind_spots:'inconsistent dates · missing financial evidence · unclear ties to home country · credibility gaps · policy non-compliance'
+  },
+  complaint:{
+    systemRole:'complaint review officer and ombudsman adjudicator',
+    framework:'Complaints handling standards: evidence, proportionality, procedural fairness, remedies',
+    criteria:'factual specificity · evidence quality · remedy proportionality · tone and professionalism · procedural compliance · escalation path',
+    blind_spots:'emotional language · no specific remedy request · missing timeline · unsubstantiated allegations'
+  },
+  pitch:{
+    systemRole:'skeptical VC investor and due diligence partner',
+    framework:'Investment assessment: market size, team, traction, unit economics, competitive moat, risk',
+    criteria:'TAM credibility · revenue model clarity · traction evidence · team credentials · competitive differentiation · financial projections · use of funds',
+    blind_spots:'hockey stick without basis · missing competition section · no unit economics · founder risk · market size inflation'
+  },
+  plan:{
+    systemRole:'bank credit analyst and business plan evaluator',
+    framework:'Business viability assessment: revenue model, market, financials, operations, risk',
+    criteria:'revenue model logic · market evidence · financial projection basis · operational plan · competitive analysis · risk mitigation',
+    blind_spots:'revenue without cost model · market size without source · unrealistic margins · no exit / repayment plan'
+  },
+  tender:{
+    systemRole:'procurement evaluator and contract award committee member',
+    framework:'Tender evaluation: compliance, technical merit, price, experience, risk',
+    criteria:'specification compliance · pricing competitiveness · experience evidence · delivery plan · risk identification · mandatory requirements',
+    blind_spots:'non-compliant format · unsubstantiated claims · missing mandatory attachments · price outlier without justification'
+  },
+  grant:{
+    systemRole:'grant panel reviewer and programme officer',
+    framework:'Grant assessment: eligibility, impact, feasibility, value for money, organisational capacity',
+    criteria:'eligibility · objectives clarity · impact measurement · methodology · budget justification · organisational capacity · evaluation plan',
+    blind_spots:'vague objectives · no measurable outcomes · budget without justification · missing match funding · eligibility gaps'
+  },
+  hr:{
+    systemRole:'employment tribunal and senior HR adjudicator',
+    framework:'HR/performance management standards: procedural fairness, documentation, consistency, discrimination risk',
+    criteria:'procedural compliance · documented warnings · consistency with precedent · legal compliance · SMART target setting · timeline accuracy',
+    blind_spots:'undocumented verbal warnings · inconsistent treatment · missing appeal rights · vague performance targets'
+  },
+  property:{
+    systemRole:'planning committee, objector counsel, and appeals inspector',
+    framework:'Planning law: material considerations, policy compliance, neighbour impact, heritage, environment',
+    criteria:'policy compliance · neighbour amenity impact · heritage impact · environmental assessment · traffic · precedent · planning history',
+    blind_spots:'policy non-compliance · missing impact assessments · neighbour objection grounds · heritage constraints · precedent risk'
+  },
+};
+
+const TRIG_MODES = {
+  thesis:'MASTERS / PHD THESIS',essay:'ESSAY / ASSIGNMENT',research:'RESEARCH PAPER',
+  lit_review:'LITERATURE REVIEW',proposal:'RESEARCH PROPOSAL',report:'LAB / FIELD REPORT',
+  dissertation:'DISSERTATION CHAPTER',claim:'LEGAL CLAIM',contract:'CONTRACT REVIEW',
+  employment:'EMPLOYMENT DISPUTE',insurance:'INSURANCE CLAIM',immigration:'VISA / IMMIGRATION',
+  complaint:'FORMAL COMPLAINT',pitch:'INVESTOR PITCH',plan:'BUSINESS PLAN',
+  tender:'TENDER / RFP',grant:'GRANT APPLICATION',hr:'HR / PERFORMANCE',property:'PROPERTY APPLICATION'
+};
+
+const TRIG_PH = {
+  thesis:'Paste your thesis chapter, abstract, or full thesis.\n\nInclude: your research question, methodology, key argument, and any examiner feedback received so far.',
+  essay:'Paste your essay or assignment.\n\nInclude: the question/prompt, your argument, and word count limit.',
+  research:'Paste your research paper or draft.\n\nInclude: journal target, research question, methodology summary.',
+  lit_review:'Paste your literature review.\n\nInclude: the topic, the databases searched, and the time range of sources included.',
+  proposal:'Paste your research proposal.\n\nInclude: funding body, research question, timeline, budget overview.',
+  report:'Paste your lab or field report.\n\nInclude: experiment/observation objective, methodology, and key findings.',
+  dissertation:'Paste the chapter.\n\nInclude: your overall thesis argument and where this chapter fits.',
+  claim:'Describe the claim: what happened, when, who is involved, what you are claiming, what evidence you have.',
+  contract:'Paste the contract text, or describe the key clauses and what you are concerned about.',
+  employment:'Describe the situation: what happened, timeline, your employment terms, and what outcome you seek.',
+  insurance:'Describe the claim: what happened, the policy type, what you are claiming, your documentation.',
+  immigration:'Describe your application: visa type, your situation, documents you have, any concerns.',
+  complaint:'Describe or paste the complaint: who it is against, what happened, what outcome you want.',
+  pitch:'Describe the business: problem, solution, market, revenue model, traction, and what you are asking for.',
+  plan:'Paste or describe: concept, market, revenue model, costs, and key assumptions.',
+  tender:'Paste your tender response or describe: the client, scope, pricing, and areas of uncertainty.',
+  grant:'Describe: the program, your project, eligibility basis, budget, and intended outcomes.',
+  hr:'Paste or describe the performance document, PIP, or HR correspondence.',
+  property:'Describe: what you are applying for, the site, and any known objections or constraints.'
+};
+
+const LOCATION_CONTEXT = {
+  global:'Apply internationally recognised standards and flag jurisdiction-specific risks the user should check locally.',
+  us:'Apply US federal and state law standards, APA/MLA/Chicago for academic, GAAP for financial, and US immigration rules.',
+  uk:'Apply English & Welsh law, OSCOLA/Harvard for academic, UK GAAP/IFRS for financial, UK Visas & Immigration rules.',
+  eu:'Apply EU directives and regulations, relevant national law, Bologna framework for academic, GDPR.',
+  ca:'Apply Canadian federal and provincial law, APA/MLA for academic, IFRS for financial, IRCC immigration rules.',
+  au:'Apply Australian federal and state law, APA/Harvard for academic, AASB for financial, Home Affairs immigration.',
+  nz:'Apply New Zealand law, APA for academic, NZIFRS for financial, Immigration New Zealand rules.',
+  in:'Apply Indian law, APA/MLA for academic, Ind-AS for financial, Indian immigration rules.',
+  sg:'Apply Singapore law, APA for academic, SFRS for financial, ICA immigration rules.',
+  other:'Apply the most relevant international standards and note where local law may vary.',
+};
+
+const TONE_CONTEXT = {
+  adversarial:'You are the most hostile possible critic. Find every flaw. No mercy. No softening.',
+  examiner:'You are a rigorous doctoral examiner or senior academic marker. Apply examination standards with precision.',
+  investor:'You are a skeptical VC partner who has seen 10,000 pitches. You default to no.',
+  judge:'You are a tribunal member or judge reading for procedural and substantive compliance.',
+  reviewer:'You are a peer reviewer for a top-tier journal. You are thorough, specific, and demand rigour.',
+};
+
+function monthKey(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1); }
+
+let tier      = localStorage.getItem('opp_tier') || 'free';
+let runsUsed  = parseInt(localStorage.getItem('opp_runs_'+monthKey()) || '0');
+let selPlan   = {id:'student', price:'9'};
+let curTrig   = '';
+let uploadedText  = '';
+let uploadedImage = null;
+let uploadedName  = '';
+
+function getTierCfg(){ return TIERS[tier] || TIERS.free; }
+function remaining(){ return Math.max(0, getTierCfg().cap - runsUsed); }
+function isFree(){ return tier==='free'; }
+
+/* Check URL token from Gumroad redirect */
+(function checkToken(){
+  const p = new URLSearchParams(window.location.search);
+  const t = p.get('tier'); const k = p.get('key');
+  if(t && TIERS[t] && k){
+    tier = t;
+    localStorage.setItem('opp_tier', tier);
+    localStorage.setItem('opp_key', k);
+    window.history.replaceState({},'',window.location.pathname);
+  }
+})();
+
+updateUI();
+
+function updateUI(){
+  const t   = getTierCfg();
+  const rem = remaining();
+  const pct = Math.min(100, (runsUsed/t.cap)*100);
+  const pill = document.getElementById('tierPill');
+  pill.textContent = t.label; pill.className='tier-pill '+t.pill;
+  const fill = document.getElementById('usageFill');
+  fill.style.width=pct+'%';
+  fill.className='usage-fill'+(pct>=100?' full':pct>=75?' warn':'');
+  document.getElementById('usageNum').textContent=runsUsed+' / '+t.cap;
+  document.getElementById('usageLabel').textContent=isFree()?'Free Runs':'Monthly Runs';
+  const banner=document.querySelector('.trial-chip');
+  if(!isFree()){
+    banner.innerHTML='✓ <strong>'+t.label+'</strong> — '+rem+' review'+(rem===1?'':'s')+' left this month.';
+  } else if(rem===0){
+    banner.innerHTML='🔒 Trial complete. <strong>Subscribe to continue.</strong>';
+    banner.style.background='linear-gradient(135deg,#fff0f0,#ffe8e8)';
+    banner.style.borderColor='rgba(255,61,61,0.4)';
+  }
+}
+
+function checkGoBtn(){
+  const hasText = document.getElementById('inp').value.trim().length>=25;
+  const hasFile = uploadedText.length>0 || uploadedImage!==null;
+  document.getElementById('goBtn').disabled = !hasText && !hasFile;
+}
+function onInp(){
+  const v=document.getElementById('inp').value;
+  document.getElementById('iChars').textContent=v.length.toLocaleString()+' chars';
+  checkGoBtn();
+}
+function setTrig(btn,type){
+  document.querySelectorAll('.trig-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  curTrig=type;
+  document.getElementById('iMode').textContent='OPPOSING: '+(TRIG_MODES[type]||'ANY DOCUMENT');
+  document.getElementById('inp').placeholder=TRIG_PH[type]||'Paste or describe your submission here.';
+}
+function updatePrefs(){ /* prefs read live at run time */ }
+
+/* ── FILE UPLOAD ── */
+function triggerFileInput(){ document.getElementById('fileInput').click(); }
+function onDragOver(e){ e.preventDefault(); document.getElementById('uploadZone').classList.add('drag'); }
+function onDragLeave(){ document.getElementById('uploadZone').classList.remove('drag'); }
+function onDrop(e){
+  e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag');
+  const file=e.dataTransfer.files[0]; if(file) processFile(file);
+}
+function onFileChange(e){ const file=e.target.files[0]; if(file) processFile(file); }
+
+function processFile(file){
+  uploadedText=''; uploadedImage=null; uploadedName=file.name;
+  setUploadState('loading',file.name);
+  const ext=file.name.split('.').pop().toLowerCase();
+  const imgTypes=['png','jpg','jpeg','webp','gif','bmp','tiff'];
+  if(imgTypes.includes(ext)||file.type.startsWith('image/')) readAsImage(file);
+  else if(ext==='pdf') readAsPDF(file);
+  else if(ext==='docx') readAsDOCX(file);
+  else readAsText(file);
+}
+function readAsText(file){
+  const r=new FileReader();
+  r.onload=e=>{ uploadedText=e.target.result.substring(0,25000); setUploadState('done',uploadedName); populateTextarea(); };
+  r.onerror=()=>setUploadState('error',uploadedName);
+  r.readAsText(file,'UTF-8');
+}
+function readAsImage(file){
+  const r=new FileReader();
+  r.onload=e=>{ const durl=e.target.result; uploadedImage={mediaType:file.type||'image/jpeg',base64:durl.split(',')[1]}; setUploadState('done',uploadedName,durl); checkGoBtn(); };
+  r.onerror=()=>setUploadState('error',uploadedName);
+  r.readAsDataURL(file);
+}
+async function readAsPDF(file){
+  try{
+    const ab=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+    let text='';
+    for(let i=1;i<=Math.min(pdf.numPages,40);i++){
+      const pg=await pdf.getPage(i);
+      const ct=await pg.getTextContent();
+      text+=ct.items.map(s=>s.str).join(' ')+'\n\n';
+    }
+    uploadedText=text.trim().substring(0,25000);
+    setUploadState('done',uploadedName); populateTextarea();
+  } catch(err){ readAsText(file); }
+}
+async function readAsDOCX(file){
+  try{
+    if(typeof mammoth==='undefined') await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+    const ab=await file.arrayBuffer();
+    const result=await mammoth.extractRawText({arrayBuffer:ab});
+    uploadedText=result.value.trim().substring(0,25000);
+    setUploadState('done',uploadedName); populateTextarea();
+  } catch(err){ readAsText(file); }
+}
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+function populateTextarea(){
+  const ta=document.getElementById('inp');
+  if(!ta.value.trim()){ ta.value=uploadedText; document.getElementById('iChars').textContent=ta.value.length.toLocaleString()+' chars'; }
+  checkGoBtn();
+}
+function setUploadState(state,name,previewURL){
+  const zone=document.getElementById('uploadZone');
+  const icon=document.getElementById('uploadIcon');
+  const title=document.getElementById('uploadTitle');
+  const sub=document.getElementById('uploadSub');
+  const cw=document.getElementById('fileChipWrap');
+  if(state==='loading'){ icon.textContent='⏳'; title.textContent='Reading '+name+'…'; sub.textContent='Extracting content'; zone.classList.remove('has-file'); cw.style.display='none'; return; }
+  if(state==='error'){ icon.textContent='❌'; title.textContent='Could not read file'; sub.textContent='Try a different format or paste text below'; zone.classList.remove('has-file'); cw.style.display='none'; return; }
+  if(state==='done'){
+    icon.textContent='✅'; title.textContent='File loaded!'; sub.textContent='Ready to oppose'; zone.classList.add('has-file');
+    let h=`<span class="file-chip"><span style="color:var(--green)">📎</span><span>${esc2(name)}</span><button class="file-chip-rm" onclick="clearFile()">✕</button></span>`;
+    if(previewURL) h+=`<br><img src="${previewURL}" class="img-preview" alt="preview">`;
+    cw.innerHTML=h; cw.style.display='block';
+  }
+}
+function clearFile(){
+  uploadedText=''; uploadedImage=null; uploadedName='';
+  document.getElementById('fileInput').value='';
+  document.getElementById('fileChipWrap').style.display='none';
+  const z=document.getElementById('uploadZone');
+  z.classList.remove('has-file');
+  document.getElementById('uploadIcon').textContent='📁';
+  document.getElementById('uploadTitle').textContent='Upload your document';
+  document.getElementById('uploadSub').textContent='Drag & drop or click to browse';
+  checkGoBtn();
+}
+
+/* ── CONFETTI ── */
+function burst(){
+  const c=['#ff3d3d','#ffc62b','#22c55e','#3b82f6','#ec4899','#8b5cf6','#06b6d4','#ff7a1a'];
+  for(let i=0;i<12;i++){
+    const el=document.createElement('div'); el.className='confetti-piece';
+    const sz=8+Math.random()*12;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${c[Math.floor(Math.random()*c.length)]};left:${20+Math.random()*60}%;top:${30+Math.random()*20}%;animation-delay:${Math.random()*0.3}s;animation-duration:${0.9+Math.random()*0.5}s;border-radius:${Math.random()>0.5?'50%':'3px'}`;
+    document.body.appendChild(el); setTimeout(()=>el.remove(),1500);
+  }
+}
+
+/* ── BUILD SKILL-AWARE SYSTEM PROMPT ── */
+function buildSystemPrompt(isTrial){
+  const skill   = DOMAIN_SKILLS[curTrig] || DOMAIN_SKILLS.essay;
+  const loc     = document.getElementById('locSel').value;
+  const tone    = document.getElementById('toneSel').value;
+  const depth   = document.getElementById('depthSel').value;
+  const locCtx  = LOCATION_CONTEXT[loc]  || LOCATION_CONTEXT.global;
+  const toneCtx = TONE_CONTEXT[tone]     || TONE_CONTEXT.adversarial;
+  const docLabel= TRIG_MODES[curTrig]    || 'DOCUMENT';
+
+  const skillBlock = `
+=== DOMAIN SKILL LOADED: ${docLabel} ===
+Role you play: ${skill.systemRole}
+Evaluation framework: ${skill.framework}
+Key criteria to assess: ${skill.criteria}
+Known blind spots for this document type: ${skill.blind_spots}
+Location context: ${locCtx}
+Tone directive: ${toneCtx}
+=== END SKILL ===`.trim();
+
+  if(isTrial){
+    return `You are THE OPPOSER — an adversarial AI that finds weaknesses in any submission before the real opponent does.
+
+${skillBlock}
+
+FREE TRIAL MODE — Deliver a partial but genuinely valuable and scary review:
+
+PHASE 1 — LOCK THE TARGET: identify the submission, your role as the adversary, what winning looks like for them, and the exact framework you are applying (cite specific rubrics/rules/acts by name).
+
+PHASE 2 — PRIMARY STRIKES (2 attacks only): For each: NAME IT (short brutal title) · STATE IT (plainly) · GROUND IT (cite specific criterion/rule/section) · APPLY IT (how this specific submission fails) · RATE IT: ⚠️ LETHAL / 🔴 CRITICAL / 🟠 SEVERE / 🟡 SIGNIFICANT.
+
+PHASE 4 — GREY ZONE: 1 grey zone in format: ⚠️ GREY ZONE 1 — [TITLE]
+
+Then output this exact line:
+===PAYWALL===`;
+  }
+
+  const phaseSet = depth==='quick'
+    ? `Run PHASE 1, PHASE 2 (all strikes), and PHASE 8 (verdict) only. Label them clearly.`
+    : `Run all 8 phases as specified below.`;
+
+  return `You are THE OPPOSER — execute the complete adversarial destruction protocol using your loaded domain skill.
+
+${skillBlock}
+
+${phaseSet}
+
+PHASE 1 — LOCK THE TARGET: document type · your exact adversarial role · what winning looks like · framework and specific criteria being applied.
+
+PHASE 2 — PRIMARY STRIKES: 3–7 strongest attacks. Each: NAME IT · STATE IT (no softening) · GROUND IT (specific rule/criterion/section) · APPLY IT (how this submission specifically fails) · RATE IT: ⚠️ LETHAL / 🔴 CRITICAL / 🟠 SEVERE / 🟡 SIGNIFICANT.
+
+PHASE 3 — PROCEDURAL / STRUCTURAL EXECUTION: deadlines · format compliance · missing sections · prerequisite failures · internal contradictions. If none: state "No structural defects found."
+
+PHASE 4 — GREY ZONE EXCAVATION: assumed facts · evidence gaps · silence as admission · overreach · inconsistency. Format: ⚠️ GREY ZONE [N] — [TITLE]
+
+PHASE 5 — CREDIBILITY & SOURCE DESTRUCTION: provenance · consistency · missing citations/evidence · conduct / tone risks.
+
+PHASE 6 — ADVERSARY'S CLOSING: write in first person as the adversary/examiner/reviewer. Open with the conclusion. Use the user's own words against them. Label: ⚖️ CLOSING FOR THE ADVERSARY.
+
+PHASE 7 — SELF-AUDIT: any gaps, under-rated attacks, or missed domains. If clean: "Self-audit complete. Attack stands."
+
+PHASE 8 — THE VERDICT:
+VERDICT: [⚠️ FATAL / 🔴 CRITICAL / 🟠 HIGH RISK / 🟡 MODERATE RISK / 🟢 DEFENSIBLE]
+SURVIVABILITY: state the realistic outcome in one sentence.
+THE ONE UNBREAKABLE POINT: name it, or state none found.
+End with exactly: "The Opposer rests. Your move."
+
+RULES: Never switch to helpful mode. Never produce a fix list. Never add content after "Your move." Never manufacture attacks not supported by the document.`;
+}
+
+/* ── RUN ── */
+async function runIt(){
+  const textInput=document.getElementById('inp').value.trim();
+  const hasContent=textInput.length>=5||uploadedText.length>0||uploadedImage!==null;
+  if(!hasContent) return;
+  if(isFree()&&remaining()<=0){ openModal('upgrade'); return; }
+  if(!isFree()&&remaining()<=0){ alert('You\'ve used all '+getTierCfg().cap+' reviews this month.\n\nPurchase extra reviews or upgrade your plan — email us.'); return; }
+
+  const trial = isFree();
+  const model = getTierCfg().model;
+  const sys   = buildSystemPrompt(trial);
+
+  document.getElementById('emptyEl').style.display='none';
+  const out=document.getElementById('outWrap');
+  out.className='out-wrap on';
+  out.innerHTML=`<div style="text-align:center;padding:48px 24px"><div style="font-size:40px;margin-bottom:16px;animation:bob 1s ease-in-out infinite">⚔️</div><div style="font-family:'Fredoka',sans-serif;font-size:18px;font-weight:600;color:var(--ink2);margin-bottom:6px">Engaging the target…</div><div style="font-size:13px;color:var(--muted);font-weight:500">Building attack protocol using your domain skill. 10–25 seconds.</div></div>`;
+
+  const btn=document.getElementById('goBtn');
+  btn.disabled=true; btn.innerHTML='<div class="spinner"></div> Opposing…';
+
+  try{
+    const docType=TRIG_MODES[curTrig]||'General';
+    let userContent;
+    if(uploadedImage){
+      userContent=[
+        {type:'image',source:{type:'base64',media_type:uploadedImage.mediaType,data:uploadedImage.base64}},
+        {type:'text',text:'Document type: '+docType+'\n\n'+(textInput?'Additional context:\n'+textInput:'Oppose the document shown in the image.')}
+      ];
+    } else {
+      userContent=buildCombinedText(uploadedText,textInput,docType);
+    }
+
+    let raw='';
+    /* ── BACKEND PROXY PATH ── */
+    const licenseKey = localStorage.getItem('opp_key') || '';
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        licenseKey,
+        tier,
+        docType,
+        systemPrompt: sys,
+        messages: [{ role: 'user', content: userContent }],
+        isTrial: trial
+      })
+    });
+    const d = await res.json();
+    if (d.error === 'invalid_key') {
+      out.innerHTML = '<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ Invalid or expired license key. <a href="#pricing" style="color:var(--red)">Renew your plan →</a></div>';
+      btn.disabled = false; btn.innerHTML = '<span id="goLabel">Oppose This →</span>'; return;
+    }
+    if (d.error === 'cap_reached') {
+      out.innerHTML = '<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ You\'ve used all ' + d.cap + ' reviews this month. Your cap resets on your next billing date. <a href="#pricing" style="color:var(--red)">Upgrade for more →</a></div>';
+      btn.disabled = false; btn.innerHTML = '<span id="goLabel">Oppose This →</span>'; return;
+    }
+    if (d.error) { throw new Error(d.error); }
+    raw = d.text || '';
+
+    runsUsed++;
+    localStorage.setItem('opp_runs_'+monthKey(),runsUsed);
+    updateUI(); burst();
+    renderResult(raw,trial);
+  } catch(e){
+    out.innerHTML='<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ Error: '+esc(e.message||'Connection failed')+' — please try again.</div>';
+  }
+  btn.disabled=false; btn.innerHTML='<span id="goLabel">Oppose This →</span>';
+}
+
+function buildCombinedText(fileText,typed,docType){
+  const parts=['Document type: '+docType];
+  if(fileText&&typed){ parts.push('Uploaded document:\n'+fileText); parts.push('Additional context:\n'+typed); }
+  else if(fileText){ parts.push('Content to oppose:\n\n'+fileText); }
+  else { parts.push('Content to oppose:\n\n'+typed); }
+  return parts.join('\n\n');
+}
+
+/* ── RENDER ── */
+const PHASES=[
+  {n:1,title:'Lock the Target',icon:'🎯'},
+  {n:2,title:'Primary Strikes',icon:'⚔️'},
+  {n:3,title:'Procedural / Structural Execution',icon:'📋'},
+  {n:4,title:'Grey Zone Excavation',icon:'⚠️'},
+  {n:5,title:'Credibility & Source Destruction',icon:'🔍'},
+  {n:6,title:"Adversary's Closing",icon:'🗣️'},
+  {n:7,title:'Self-Audit',icon:'🔎'},
+  {n:8,title:'The Verdict',icon:'⚖️'},
+];
+
+function renderResult(raw,isTrial){
+  const out=document.getElementById('outWrap');
+  if(isTrial&&raw.includes('===PAYWALL===')){
+    const [analysis]=raw.split('===PAYWALL===');
+    out.innerHTML=fmtAnalysis(analysis)+buildPaywall();
+  } else {
+    out.innerHTML=fmtAnalysis(raw);
+  }
+}
+
+function fmtAnalysis(text){
+  let sections=[],rem=text;
+  for(let i=0;i<PHASES.length;i++){
+    const re=new RegExp('PHASE\\s*'+(i+1)+'[\\s\\-—:]+','i');
+    const idx=rem.search(re);
+    if(idx>=0){
+      if(sections.length>0) sections[sections.length-1].body+=rem.substring(0,idx);
+      rem=rem.substring(idx);
+      const m=rem.match(re); rem=rem.substring(m[0].length);
+      sections.push({ph:PHASES[i],body:''});
+    }
+  }
+  if(sections.length>0) sections[sections.length-1].body=rem;
+  if(sections.length===0){
+    return `<div class="pcard open"><div class="pcard-head" onclick="tog(this)"><span class="pnum">ANALYSIS</span><span class="ptitle">⚔️ Adversarial Review</span><span class="pstatus ps-done">✓ Done</span><span class="pchev">▼</span></div><div class="pbody"><p>${esc(text).replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div></div>`;
+  }
+  return sections.map((s,i)=>{
+    const isOpen=i===0||s.ph.n===8;
+    return `<div class="pcard ${isOpen?'open':''}"><div class="pcard-head" onclick="tog(this)"><span class="pnum">PHASE ${s.ph.n}</span><span class="ptitle">${s.ph.icon} ${s.ph.title}</span><span class="pstatus ps-done">✓ Done</span><span class="pchev">▼</span></div><div class="pbody">${fmtBody(s.body,s.ph.n===8)}</div></div>`;
+  }).join('');
+}
+
+function fmtBody(text,isVerdict){
+  let h=esc(text.trim());
+  h=h.replace(/⚠️\s*LETHAL/g,'<span class="slabel lethal">⚠️ LETHAL</span>');
+  h=h.replace(/🔴\s*CRITICAL/g,'<span class="slabel critical">🔴 CRITICAL</span>');
+  h=h.replace(/🟠\s*SEVERE/g,'<span class="slabel severe">🟠 SEVERE</span>');
+  h=h.replace(/🟡\s*SIGNIFICANT/g,'<span class="slabel significant">🟡 SIGNIFICANT</span>');
+  if(isVerdict){
+    h=h.replace(/(VERDICT:\s*)(⚠️\s*FATAL)/g,'$1<div class="vrating vfatal">$2</div>');
+    h=h.replace(/(VERDICT:\s*)(🔴\s*CRITICAL)/g,'$1<div class="vrating vcritical">$2</div>');
+    h=h.replace(/(VERDICT:\s*)(🟠\s*HIGH RISK)/g,'$1<div class="vrating vhigh">$2</div>');
+    h=h.replace(/(VERDICT:\s*)(🟡\s*MODERATE RISK)/g,'$1<div class="vrating vmod">$2</div>');
+    h=h.replace(/(VERDICT:\s*)(🟢\s*DEFENSIBLE)/g,'$1<div class="vrating vdef">$2</div>');
+    h=h.replace(/(The Opposer rests\. Your move\.)/g,'<div class="your-move">$1</div>');
+  }
+  h=h.replace(/⚠️\s*GREY ZONE\s*(\d+)\s*[—\-–]\s*([^\n<]+)/g,'<div class="gz"><div class="gzlabel">⚠️ GREY ZONE $1</div><strong>$2</strong></div>');
+  h=h.replace(/⚖️\s*\[?CLOSING FOR THE ADVERSARY[^\]<\n]*/g,'<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px;font-weight:600">⚖️ CLOSING FOR THE ADVERSARY</div>');
+  h=h.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+  return '<p>'+h+'</p>';
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc2(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function tog(h){ h.parentElement.classList.toggle('open'); }
+
+function buildPaywall(){
+  const rem=remaining();
+  return `<div class="pw-card">
+    <div class="pw-blur">Phase 3 Structural Execution · Phase 5 Credibility Destruction · Phase 6 Adversary Closing · Phase 7 Self-Audit · Phase 8 Verdict with survivability rating…</div>
+    <div class="pw-lock">🔒</div>
+    <div class="pw-title">5 More Phases Running.<br><em>Subscribe to See Them.</em></div>
+    <p class="pw-sub">The structural kill, source destruction, adversary closing, self-audit, and final survivability verdict are all ready. They stop here on the free trial.</p>
+    <div class="pw-plans">
+      <div class="pwp" onclick="openModal('upgrade')"><div class="pwp-name" style="color:var(--blue)">🎓 Student</div><div class="pwp-price" style="color:var(--blue)">$9.99</div><div class="pwp-mo">/month USD</div><div class="pwp-runs"><strong>20</strong> reviews/month</div></div>
+      <div class="pwp rec" onclick="openModal('upgrade')"><div class="pwp-badge">Best Value</div><div class="pwp-name">Pro</div><div class="pwp-price">$39.99</div><div class="pwp-mo">/month USD</div><div class="pwp-runs"><strong>80</strong> reviews/month</div></div>
+      <div class="pwp" onclick="openModal('upgrade')"><div class="pwp-name">Solo</div><div class="pwp-price">$19.99</div><div class="pwp-mo">/month USD</div><div class="pwp-runs"><strong>30</strong> reviews/month</div></div>
+      <div class="pwp" onclick="openModal('upgrade')"><div class="pwp-name">Team</div><div class="pwp-price">$89.99</div><div class="pwp-mo">/month USD</div><div class="pwp-runs"><strong>200</strong> reviews · 5 users</div></div>
+    </div>
+    <button class="btn-pw" onclick="openModal('upgrade')">Get Full Access — from $9.99/month →</button>
+    <p class="pw-note">Cancel anytime · ${rem>0?rem+' free trial review'+(rem===1?'':'s')+' remaining':'Trial complete'} · <a onclick="openModal('setup')">How does payment work? →</a></p>
+  </div>`;
+}
+
+/* ── MODAL ── */
+function openModal(which){
+  if(which==='upgrade') document.getElementById('modalBg').classList.add('on');
+  if(which==='setup')  { closeModal('modalBg'); document.getElementById('setupBg').classList.add('on'); }
+}
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+function bgClose(e,id){ if(e.target===document.getElementById(id)) closeModal(id); }
+function pickPlan(el,id,price){
+  document.querySelectorAll('.mplan').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel'); selPlan={id,price};
+  document.getElementById('stripeBtn').textContent='Subscribe — $'+price+'/month via Stripe →';
+}
+function handleCheckout(e){
+  e.preventDefault();
+  const url=GUMROAD[selPlan.id]||'https://gumroad.com';
+  window.open(url,'_blank');
+}
+async function handleStripeCheckout(e){
+  e.preventDefault();
+  const btn=document.getElementById('stripeBtn');
+  btn.textContent='Redirecting…'; btn.disabled=true;
+  try {
+    const plan=STRIPE_PLAN[selPlan.id]||'solo';
+    const res=await fetch(CHECKOUT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({plan,successUrl:SITE_URL,cancelUrl:SITE_URL})
+    });
+    const data=await res.json();
+    if(data.url) window.location.href=data.url;
+    else throw new Error(data.error||'no url');
+  } catch(err){
+    alert('Checkout error: '+err.message);
+    btn.textContent='Pay with Stripe →'; btn.disabled=false;
+  }
+}
+
+/* ── STRIPE SUCCESS — show key on return from checkout ── */
+(function(){
+  const p = new URLSearchParams(location.search);
+  const sid = p.get('stripe_session');
+  if (!sid) return;
+  // Clean URL without reload
+  history.replaceState({}, '', location.pathname);
+  // Fetch license key from Supabase via stripe session
+  fetch('https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/get-license-key', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stripe_session_id: sid })
+  }).then(r => r.json()).then(d => {
+    if (d.license_key) {
+      document.getElementById('successKey').textContent = d.license_key;
+      document.getElementById('successBg').classList.add('on');
+    }
+  }).catch(() => {});
+})();
+
+let _successKey = '';
+function copyKey() {
+  const k = document.getElementById('successKey').textContent;
+  navigator.clipboard.writeText(k).catch(() => {});
+  _successKey = k;
+}
+function activateFromSuccess() {
+  const k = document.getElementById('successKey').textContent;
+  closeModal('successBg');
+  // Put key in license field if it exists, otherwise activate directly
+  const field = document.getElementById('keyInput');
+  if (field) { field.value = k; activateKey(); }
+  else { localStorage.setItem('opp_key', k); location.reload(); }
+}
+
+/* ── MANAGE SUBSCRIPTION (Stripe Customer Portal) ── */
+async function openManagePortal() {
+  const key = localStorage.getItem('opp_key') || '';
+  if (!key) return;
+  const btn = document.getElementById('manageBtn');
+  const orig = btn.textContent;
+  btn.textContent = 'Loading…'; btn.disabled = true;
+  try {
+    const res = await fetch(PORTAL_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey: key, returnUrl: SITE_URL })
+    });
+    const d = await res.json();
+    if (d.url) window.location.href = d.url;
+    else throw new Error(d.error || 'no portal url');
+  } catch(err) {
+    alert('Could not open portal: ' + err.message);
+    btn.textContent = orig; btn.disabled = false;
+  }
+}
+
+/* Show manage button only for paid Stripe users */
+(function(){
+  const key = localStorage.getItem('opp_key');
+  if (key) document.getElementById('manageBtn').style.display = 'inline-flex';
+})();
+</script>
+</body>
+</html>
