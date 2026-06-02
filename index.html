@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Opposer — Find Every Weakness First</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;0,800;0,900;1,800&family=DM+Mono:wght@400;500&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;0,800;0,900;1,800&family=DM+Mono:wght@400;500&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;0,800;0,900;1,800&family=DM+Mono:wght@400;500&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -266,6 +269,17 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
 /* ── TYPEWRITER CURSOR ── */
 .tw-cursor{display:inline-block;width:3px;height:0.85em;background:var(--red);vertical-align:middle;margin-left:3px;border-radius:1px;animation:blink-cur 0.85s step-end infinite}
 @keyframes blink-cur{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── CUSTOM CURSOR ── */
+body{cursor:none}
+a,button,label,[role="button"],[onclick],select,input,textarea,.pcard-head,.pwp,.mplan,.upload-zone,.trig-btn,.usage-cta,.student-banner{cursor:none!important}
+#cur-dot{position:fixed;width:10px;height:10px;background:var(--red);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width 0.18s,height 0.18s,background 0.18s,opacity 0.18s;box-shadow:0 0 10px rgba(255,45,45,0.7)}
+#cur-ring{position:fixed;width:36px;height:36px;border:2px solid rgba(255,45,45,0.5);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width 0.22s,height 0.22s,border-color 0.22s,opacity 0.2s}
+body.cur-hover #cur-dot{width:16px;height:16px;background:var(--red);box-shadow:0 0 18px rgba(255,45,45,0.9)}
+body.cur-hover #cur-ring{width:52px;height:52px;border-color:rgba(255,45,45,0.3)}
+body.cur-click #cur-dot{width:7px;height:7px;opacity:0.7}
+body.cur-click #cur-ring{width:28px;height:28px;border-color:rgba(255,120,60,0.8)}
+@media(hover:none),(pointer:coarse){#cur-dot,#cur-ring{display:none}body{cursor:auto}a,button,label,[role="button"],[onclick],select,input,textarea,.pcard-head,.pwp,.mplan,.upload-zone,.trig-btn,.usage-cta,.student-banner{cursor:auto!important}}
 
 /* ── HERO ENTRANCE SEQUENCE ── */
 .hero-chip{animation:floatIn 0.5s 0.1s ease both}
@@ -1592,5 +1606,49 @@ renderResult = function(raw, isTrial){
 };
 </script>
 <canvas id="fire-floor" data-fire></canvas>
+
+<!-- Custom cursor -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<script>
+/* ── CUSTOM CURSOR ── */
+(function(){
+  const dot  = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  if (!dot || !ring) return;
+
+  let mx = -200, my = -200;
+  let rx = -200, ry = -200;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left  = mx + 'px';
+    dot.style.top   = my + 'px';
+  }, { passive: true });
+
+  /* Ring trails with lerp */
+  (function lerp(){
+    rx += (mx - rx) * 0.14;
+    ry += (my - ry) * 0.14;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(lerp);
+  })();
+
+  const hoverTargets = 'a,button,label,[role="button"],[onclick],select,input,textarea,.pcard-head,.pwp,.mplan,.upload-zone,.trig-btn,.usage-cta,.student-banner';
+
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest(hoverTargets)) document.body.classList.add('cur-hover');
+  }, { passive: true });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest(hoverTargets)) document.body.classList.remove('cur-hover');
+  }, { passive: true });
+  document.addEventListener('mousedown', () => document.body.classList.add('cur-click'),    { passive: true });
+  document.addEventListener('mouseup',   () => document.body.classList.remove('cur-click'), { passive: true });
+  document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
+  document.addEventListener('mouseenter', () => { dot.style.opacity=''; ring.style.opacity=''; });
+})();
+</script>
 </body>
 </html>

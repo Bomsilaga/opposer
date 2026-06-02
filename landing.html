@@ -6,7 +6,9 @@
 <title>The Opposer — Decision Tools for People Who Can't Afford to Be Wrong</title>
 <meta name="description" content="Two adversarial AI tools that tear apart your submissions, pitches, contracts and ideas — before the opposing barrister, investor, or visa officer does.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -231,6 +233,16 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 32px
   .hero-orb-2{width:280px;height:280px}
   .hero-orb-3{display:none}
 }
+
+/* ── CUSTOM CURSOR ── */
+body{cursor:none}
+a,button,[role="button"],[onclick],.price-btn,.btn-primary,.btn-ghost{cursor:none!important}
+#cur-dot{position:fixed;width:10px;height:10px;background:#ff3d3d;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width 0.18s,height 0.18s,opacity 0.18s;box-shadow:0 0 10px rgba(255,61,61,0.7)}
+#cur-ring{position:fixed;width:36px;height:36px;border:2px solid rgba(255,61,61,0.45);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width 0.22s,height 0.22s,border-color 0.22s,opacity 0.2s}
+body.cur-hover #cur-dot{width:16px;height:16px;box-shadow:0 0 20px rgba(255,61,61,0.9)}
+body.cur-hover #cur-ring{width:52px;height:52px;border-color:rgba(255,61,61,0.25)}
+body.cur-click #cur-dot{width:7px;height:7px;opacity:0.7}
+@media(hover:none),(pointer:coarse){#cur-dot,#cur-ring{display:none}body{cursor:auto}a,button,[role="button"],[onclick],.price-btn,.btn-primary,.btn-ghost{cursor:auto!important}}
 </style>
 </head>
 <body>
@@ -764,6 +776,24 @@ async function goCheckout(plan, price) {
     btn.textContent = orig; btn.disabled = false;
   }
 }
+</script>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<script>
+(function(){
+  const dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+  if(!dot||!ring)return;
+  let mx=-200,my=-200,rx=-200,ry=-200;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';},{passive:true});
+  (function lerp(){rx+=(mx-rx)*0.14;ry+=(my-ry)*0.14;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(lerp);})();
+  const hov='a,button,[role="button"],[onclick],.price-btn,.btn-primary,.btn-ghost';
+  document.addEventListener('mouseover',e=>{if(e.target.closest(hov))document.body.classList.add('cur-hover');},{passive:true});
+  document.addEventListener('mouseout',e=>{if(e.target.closest(hov))document.body.classList.remove('cur-hover');},{passive:true});
+  document.addEventListener('mousedown',()=>document.body.classList.add('cur-click'),{passive:true});
+  document.addEventListener('mouseup',()=>document.body.classList.remove('cur-click'),{passive:true});
+  document.addEventListener('mouseleave',()=>{dot.style.opacity='0';ring.style.opacity='0';});
+  document.addEventListener('mouseenter',()=>{dot.style.opacity='';ring.style.opacity='';});
+})();
 </script>
 </body>
 </html>
