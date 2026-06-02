@@ -682,9 +682,21 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+/* pdf.js loaded on-demand when user selects a PDF — not blocking page load */
+const PDFJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let _pdfjsReady = null;
+function ensurePdfJs(){
+  if(_pdfjsReady) return _pdfjsReady;
+  _pdfjsReady = new Promise((res,rej)=>{
+    if(typeof pdfjsLib!=='undefined'){ pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_WORKER; return res(); }
+    const s=document.createElement('script'); s.src=PDFJS_CDN;
+    s.onload=()=>{ pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_WORKER; res(); };
+    s.onerror=rej; document.head.appendChild(s);
+  });
+  return _pdfjsReady;
+}
 
 /* ── CONFIG ── */
 const PROXY_URL   = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/oppose';
@@ -989,6 +1001,7 @@ function readAsImage(file){
 }
 async function readAsPDF(file){
   try{
+    await ensurePdfJs();
     const ab=await file.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:ab}).promise;
     let text='';
