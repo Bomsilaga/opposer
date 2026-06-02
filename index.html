@@ -61,16 +61,21 @@ h1.hero-h .word-before{background:var(--yellow);padding:0 12px;border-radius:8px
 @keyframes bob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(6deg)}}
 
 /* TRIGGER GROUPS */
-.trig-wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 24px 36px;width:100%}
-.trig-group{margin-bottom:18px}
-.trig-group-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.trig-group-label::after{content:'';flex:1;height:1px;background:var(--border)}
-.trigs{display:flex;flex-wrap:wrap;gap:8px}
-.trig-btn{background:#fff;border:2px solid var(--border);color:var(--ink2);padding:9px 16px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.06);white-space:nowrap}
-.trig-btn:hover{border-color:var(--red);color:var(--red);transform:translateY(-2px);box-shadow:0 4px 14px rgba(255,61,61,0.15)}
-.trig-btn.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 4px 14px rgba(255,61,61,0.3)}
-.trig-btn.student-btn:hover{border-color:var(--blue);color:var(--blue);box-shadow:0 4px 14px rgba(59,130,246,0.15)}
+.trig-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 36px;width:100%}
+.trig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.trig-group{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:16px 16px 14px;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
+.trig-group-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.trig-group-label .cat-icon{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.cat-icon-academic{background:rgba(59,130,246,0.12)}
+.cat-icon-legal{background:rgba(255,61,61,0.1)}
+.cat-icon-business{background:rgba(16,185,129,0.1)}
+.trigs{display:flex;flex-direction:column;gap:5px}
+.trig-btn{background:var(--bg);border:1.5px solid var(--border);color:var(--ink2);padding:8px 12px;border-radius:10px;font-family:'Nunito',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.16s;display:flex;align-items:center;gap:7px;text-align:left;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trig-btn:hover{border-color:var(--red);color:var(--red);background:#fff8f8;transform:translateX(2px)}
+.trig-btn.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 3px 10px rgba(255,61,61,0.25)}
+.trig-btn.student-btn:hover{border-color:var(--blue);color:var(--blue);background:#f0f6ff}
 .trig-btn.student-btn.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.trig-btn-icon{font-size:14px;flex-shrink:0;line-height:1}
 
 /* LOCATION + PREFERENCE ROW */
 .pref-row{position:relative;z-index:1;max-width:860px;margin:0 auto 20px;padding:0 24px;display:flex;gap:10px;flex-wrap:wrap}
@@ -236,6 +241,7 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
 @media(max-width:640px){
   .topbar{padding:0 16px}
   .trig-wrap,.usage-wrap,.pref-row,.main{padding-left:16px;padding-right:16px}
+  .trig-grid{grid-template-columns:1fr}
   h1.hero-h{font-size:38px}
   .pw-plans{grid-template-columns:repeat(2,1fr)}
   .mplans{grid-template-columns:1fr}
@@ -279,39 +285,57 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
 
 <!-- TRIGGER GROUPS -->
 <div class="trig-wrap">
-  <div class="trig-group">
-    <div class="trig-group-label">🎓 Academic & Research</div>
-    <div class="trigs">
-      <button class="trig-btn student-btn" onclick="setTrig(this,'thesis')">📚 Masters / PhD Thesis</button>
-      <button class="trig-btn student-btn" onclick="setTrig(this,'essay')">📝 Essay / Assignment</button>
-      <button class="trig-btn student-btn" onclick="setTrig(this,'research')">🔬 Research Paper</button>
-      <button class="trig-btn student-btn" onclick="setTrig(this,'lit_review')">📖 Literature Review</button>
-      <button class="trig-btn student-btn" onclick="setTrig(this,'proposal')">🗂 Research Proposal</button>
-      <button class="trig-btn student-btn" onclick="setTrig(this,'report')">📊 Lab / Field Report</button>
-      <button class="trig-btn student-btn" onclick="setTrig(this,'dissertation')">🎓 Dissertation Chapter</button>
+  <div class="trig-grid">
+
+    <!-- Academic -->
+    <div class="trig-group">
+      <div class="trig-group-label">
+        <div class="cat-icon cat-icon-academic">📚</div>
+        Academic &amp; Research
+      </div>
+      <div class="trigs">
+        <button class="trig-btn student-btn" onclick="setTrig(this,'thesis')"><span class="trig-btn-icon">📚</span>Masters / PhD Thesis</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'dissertation')"><span class="trig-btn-icon">🎓</span>Dissertation Chapter</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'essay')"><span class="trig-btn-icon">📝</span>Essay / Assignment</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'research')"><span class="trig-btn-icon">🔬</span>Research Paper</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'lit_review')"><span class="trig-btn-icon">📖</span>Literature Review</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'proposal')"><span class="trig-btn-icon">🗂</span>Research Proposal</button>
+        <button class="trig-btn student-btn" onclick="setTrig(this,'report')"><span class="trig-btn-icon">📊</span>Lab / Field Report</button>
+      </div>
     </div>
-  </div>
-  <div class="trig-group">
-    <div class="trig-group-label">⚖️ Legal & Claims</div>
-    <div class="trigs">
-      <button class="trig-btn" onclick="setTrig(this,'claim')">⚖️ Legal Claim</button>
-      <button class="trig-btn" onclick="setTrig(this,'contract')">📄 Contract</button>
-      <button class="trig-btn" onclick="setTrig(this,'employment')">👔 Employment Dispute</button>
-      <button class="trig-btn" onclick="setTrig(this,'insurance')">🏥 Insurance Claim</button>
-      <button class="trig-btn" onclick="setTrig(this,'immigration')">🛂 Visa / Immigration</button>
-      <button class="trig-btn" onclick="setTrig(this,'complaint')">📮 Formal Complaint</button>
+
+    <!-- Legal -->
+    <div class="trig-group">
+      <div class="trig-group-label">
+        <div class="cat-icon cat-icon-legal">⚖️</div>
+        Legal &amp; Claims
+      </div>
+      <div class="trigs">
+        <button class="trig-btn" onclick="setTrig(this,'claim')"><span class="trig-btn-icon">⚖️</span>Legal Claim</button>
+        <button class="trig-btn" onclick="setTrig(this,'contract')"><span class="trig-btn-icon">📄</span>Contract Review</button>
+        <button class="trig-btn" onclick="setTrig(this,'employment')"><span class="trig-btn-icon">👔</span>Employment Dispute</button>
+        <button class="trig-btn" onclick="setTrig(this,'insurance')"><span class="trig-btn-icon">🏥</span>Insurance Claim</button>
+        <button class="trig-btn" onclick="setTrig(this,'immigration')"><span class="trig-btn-icon">🛂</span>Visa / Immigration</button>
+        <button class="trig-btn" onclick="setTrig(this,'complaint')"><span class="trig-btn-icon">📮</span>Formal Complaint</button>
+      </div>
     </div>
-  </div>
-  <div class="trig-group">
-    <div class="trig-group-label">💼 Business & Finance</div>
-    <div class="trigs">
-      <button class="trig-btn" onclick="setTrig(this,'pitch')">🚀 Investor Pitch</button>
-      <button class="trig-btn" onclick="setTrig(this,'plan')">🗺️ Business Plan</button>
-      <button class="trig-btn" onclick="setTrig(this,'tender')">📋 Tender / RFP</button>
-      <button class="trig-btn" onclick="setTrig(this,'grant')">💰 Grant Application</button>
-      <button class="trig-btn" onclick="setTrig(this,'hr')">👥 HR / Performance</button>
-      <button class="trig-btn" onclick="setTrig(this,'property')">🏠 Property Application</button>
+
+    <!-- Business -->
+    <div class="trig-group">
+      <div class="trig-group-label">
+        <div class="cat-icon cat-icon-business">💼</div>
+        Business &amp; Finance
+      </div>
+      <div class="trigs">
+        <button class="trig-btn" onclick="setTrig(this,'pitch')"><span class="trig-btn-icon">🚀</span>Investor Pitch</button>
+        <button class="trig-btn" onclick="setTrig(this,'plan')"><span class="trig-btn-icon">🗺️</span>Business Plan</button>
+        <button class="trig-btn" onclick="setTrig(this,'tender')"><span class="trig-btn-icon">📋</span>Tender / RFP</button>
+        <button class="trig-btn" onclick="setTrig(this,'grant')"><span class="trig-btn-icon">💰</span>Grant Application</button>
+        <button class="trig-btn" onclick="setTrig(this,'hr')"><span class="trig-btn-icon">👥</span>HR / Performance</button>
+        <button class="trig-btn" onclick="setTrig(this,'property')"><span class="trig-btn-icon">🏠</span>Property Application</button>
+      </div>
     </div>
+
   </div>
 </div>
 
