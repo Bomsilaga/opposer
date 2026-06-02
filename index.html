@@ -1177,7 +1177,7 @@ async function runIt(){
   if(isFree()&&remaining()<=0){ openModal('upgrade'); return; }
   if(!isFree()&&remaining()<=0){ alert('You\'ve used all '+getTierCfg().cap+' reviews this month.\n\nPurchase extra reviews or upgrade your plan — email us.'); return; }
 
-  const trial = isFree();
+  const trial = false; /* Full analysis on all runs — paywall appears only when cap is exhausted */
   const model = getTierCfg().model;
   const sys   = buildSystemPrompt(trial);
 
