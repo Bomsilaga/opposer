@@ -411,29 +411,29 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
           </div>
           <div class="mpr"><div class="mpr-n" style="color:var(--blue)">$9.99</div><div class="mpr-s">/mo USD</div></div>
         </div>
-        <div class="mplan" onclick="pickPlan(this,'solo','19.99')">
+        <div class="mplan" onclick="pickPlan(this,'solo','29.99')">
           <div class="mpl">
             <div class="mpl-name">Solo</div>
             <div class="mpl-desc">All document types · Full 8 phases</div>
-            <div class="mpl-runs">30 reviews/month</div>
+            <div class="mpl-runs">50 reviews/month</div>
           </div>
-          <div class="mpr"><div class="mpr-n">$19.99</div><div class="mpr-s">/mo USD</div></div>
+          <div class="mpr"><div class="mpr-n">$29.99</div><div class="mpr-s">/mo USD</div></div>
         </div>
-        <div class="mplan" onclick="pickPlan(this,'pro','39.99')">
+        <div class="mplan" onclick="pickPlan(this,'pro','59.99')">
           <div class="mpl">
             <div class="mpl-name">Pro <span class="mpl-tag">Best Value</span></div>
             <div class="mpl-desc">All types · Domain packs · Priority support</div>
-            <div class="mpl-runs">80 reviews/month</div>
+            <div class="mpl-runs">150 reviews/month</div>
           </div>
-          <div class="mpr"><div class="mpr-n">$39.99</div><div class="mpr-s">/mo USD</div></div>
+          <div class="mpr"><div class="mpr-n">$59.99</div><div class="mpr-s">/mo USD</div></div>
         </div>
-        <div class="mplan" onclick="pickPlan(this,'team','89.99')">
+        <div class="mplan" onclick="pickPlan(this,'team','129.99')">
           <div class="mpl">
             <div class="mpl-name">Team</div>
             <div class="mpl-desc">Up to 5 users · All tools</div>
-            <div class="mpl-runs">200 reviews/month</div>
+            <div class="mpl-runs">300 reviews/month</div>
           </div>
-          <div class="mpr"><div class="mpr-n">$89.99</div><div class="mpr-s">/mo USD</div></div>
+          <div class="mpr"><div class="mpr-n">$129.99</div><div class="mpr-s">/mo USD</div></div>
         </div>
       </div>
       <table class="ctable">
@@ -442,11 +442,10 @@ The more specific you are, the more surgical the attack. The Opposer finds exact
         <tr><td>Location-aware critique</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
         <tr><td>Academic examiner mode</td><td class="yes">✓</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
         <tr><td>Domain skill packs</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-        <tr><td>Monthly reviews</td><td>20</td><td>30</td><td>80</td><td>200</td></tr>
+        <tr><td>Monthly reviews</td><td>20</td><td>50</td><td>150</td><td>300</td></tr>
       </table>
-      <button class="mgumroad" id="stripeBtn" onclick="handleStripeCheckout(event)" style="background:#635bff;box-shadow:0 4px 20px rgba(99,91,255,0.35);margin-bottom:8px">Pay with Stripe — $29/month →</button>
-      <a href="https://boboma.gumroad.com/l/opposer-student" target="_blank" class="mgumroad" id="gumroadBtn" onclick="handleCheckout(event)" style="background:#555;box-shadow:none;font-size:13px;padding:11px">Or pay via Gumroad — $9.99/month →</a>
-      <p class="mnote">Stripe or Gumroad · Secure checkout · Cancel anytime · <a onclick="openModal('setup')">How does payment work? →</a></p>
+      <button class="mgumroad" id="stripeBtn" onclick="handleStripeCheckout(event)" style="background:#635bff;box-shadow:0 4px 20px rgba(99,91,255,0.35)">Subscribe — $9.99/month via Stripe →</button>
+      <p class="mnote" style="margin-top:10px">🔒 Stripe · Secure checkout · Cancel anytime · <a onclick="openModal('setup')">How does it work? →</a></p>
     </div>
   </div>
 </div>
@@ -1133,8 +1132,7 @@ function bgClose(e,id){ if(e.target===document.getElementById(id)) closeModal(id
 function pickPlan(el,id,price){
   document.querySelectorAll('.mplan').forEach(p=>p.classList.remove('sel'));
   el.classList.add('sel'); selPlan={id,price};
-  document.getElementById('gumroadBtn').textContent='Subscribe — $'+price+'/month USD →';
-  document.getElementById('gumroadBtn').href=GUMROAD[id]||'#';
+  document.getElementById('stripeBtn').textContent='Subscribe — $'+price+'/month via Stripe →';
 }
 function handleCheckout(e){
   e.preventDefault();
