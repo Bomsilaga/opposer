@@ -65,8 +65,8 @@ h1.hero-h .word-before{background:rgba(255,45,45,0.15);padding:0 12px;border-rad
 @keyframes bob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(6deg)}}
 
 /* TRIGGER GROUPS */
-.trig-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 36px;width:100%}
-.trig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.trig-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 36px;width:100%;display:flex;flex-direction:column;align-items:center}
+.trig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%}
 .trig-group{background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px 16px 14px;box-shadow:0 2px 10px rgba(0,0,0,0.3);transition:border-top-color 0.18s}
 .trig-group:hover{border-top:1px solid rgba(255,45,45,0.4)}
 .trig-group-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:7px}
@@ -426,14 +426,14 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
 <!-- TRIGGER GROUPS -->
 <div class="trig-wrap" style="position:relative">
   <!-- Auto-detect banner -->
-  <div style="margin-bottom:14px">
+  <div style="margin-bottom:14px;width:100%">
     <button id="autoTrigBtn" class="trig-btn on" onclick="setTrig(this,'auto')" style="width:100%;background:rgba(255,45,45,0.15);border-color:rgba(255,45,45,0.6);color:#fff;padding:12px 16px;border-radius:12px;font-size:13.5px;justify-content:flex-start;gap:12px;box-shadow:0 0 18px rgba(255,45,45,0.2)">
       <span style="font-size:18px">⚔️</span>
       <span style="flex:1;text-align:left"><strong>Tribunal Auto-Detect</strong> — submit anything. The Opposer identifies and destroys.</span>
       <span style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(255,45,45,0.8);background:rgba(255,45,45,0.12);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,45,45,0.3)">DEFAULT</span>
     </button>
   </div>
-  <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.22);margin-bottom:10px;padding-left:2px">— or specify document type —</div>
+  <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.22);margin-bottom:10px;width:100%;text-align:center">— or specify document type —</div>
   <div class="trig-grid">
 
     <!-- Academic -->
