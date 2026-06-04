@@ -220,11 +220,23 @@ textarea.itxt::placeholder{color:var(--muted2);font-weight:500}
 .mpr-n{font-family:'Fredoka',sans-serif;font-size:24px;font-weight:700;color:var(--red);line-height:1}
 .mpr-s{font-size:10px;color:var(--muted2);font-weight:600}
 .ctable{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:12px}
-.ctable th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:8px 10px;text-align:left;border-bottom:2px solid rgba(255,255,255,0.07);font-weight:500}
-.ctable td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);font-weight:600}
-.ctable td:first-child{color:var(--ink2)}
-.ctable .yes{color:var(--green)}
-.ctable .no{color:var(--muted2)}
+.ctable th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:8px 10px;text-align:center;border-bottom:2px solid rgba(255,255,255,0.07);font-weight:500}
+.ctable th:first-child{text-align:left}
+.ctable td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);font-weight:600;text-align:center;vertical-align:middle}
+.ctable td:first-child{color:var(--ink2);text-align:left;font-weight:700}
+.ctable .yes{color:var(--green);font-size:14px}
+.ctable .no{color:rgba(255,255,255,0.18);font-size:14px}
+.ctable-group td{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.35)!important;font-size:10px!important;font-weight:800!important;letter-spacing:1.5px;text-transform:uppercase;padding:6px 10px!important;text-align:left!important;border-top:1px solid rgba(255,255,255,0.08)}
+.ctable-tribunal{background:rgba(255,45,45,0.06);border-top:1px solid rgba(255,45,45,0.2);border-bottom:1px solid rgba(255,45,45,0.2)}
+.ctable-tribunal td:first-child{color:#ff8888!important}
+.ctable-note{display:block;font-size:10px;font-weight:500;color:rgba(255,255,255,0.3);margin-top:2px;line-height:1.4}
+[data-theme="light"] .ctable th{color:rgba(0,0,0,0.4)}
+[data-theme="light"] .ctable td{color:rgba(0,0,0,0.5)}
+[data-theme="light"] .ctable td:first-child{color:#1a1a2e}
+[data-theme="light"] .ctable-group td{background:rgba(0,0,0,0.04);color:rgba(0,0,0,0.4)!important}
+[data-theme="light"] .ctable td{border-bottom-color:rgba(0,0,0,0.07)}
+[data-theme="light"] .ctable-note{color:rgba(0,0,0,0.35)}
+[data-theme="light"] .ctable .no{color:rgba(0,0,0,0.2)}
 .mgumroad{display:block;width:100%;background:var(--red);color:#fff;border:none;padding:15px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.18s;text-align:center;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 20px rgba(255,45,45,0.4)}
 .mgumroad:hover{background:var(--red-d);transform:translateY(-2px)}
 .mnote{font-size:10px;color:var(--muted2);text-align:center;line-height:1.6;font-weight:600}
@@ -376,7 +388,7 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
 [data-theme="light"] .mhead,.mbody,.mtitle,.msub{color:#0f0f1a!important}
 [data-theme="light"] .mplan{background:#f8f8ff!important;border-color:rgba(0,0,0,0.1)!important;color:#0f0f1a!important}
 [data-theme="light"] .mplan:hover,[data-theme="light"] .mplan.sel{border-color:rgba(255,45,45,0.5)!important}
-[data-theme="light"] .mpl-desc,.mpl-runs{color:rgba(0,0,0,0.55)!important}
+[data-theme="light"] .mpl-desc,[data-theme="light"] .mpl-runs{color:rgba(0,0,0,0.55)!important}
 [data-theme="light"] .hero-chip{color:#cc1a1a!important}
 [data-theme="light"] .hero-sub{color:rgba(0,0,0,0.6)!important}
 [data-theme="light"] .trial-chip{color:rgba(0,0,0,0.65)!important;border-color:rgba(0,0,0,0.12)!important;background:rgba(0,0,0,0.04)!important}
@@ -727,13 +739,36 @@ The Tribunal analyses everything. No context needed — just submit."></textarea
         </div>
       </div>
       <table class="ctable">
-        <tr><th>Feature</th><th>Student</th><th>Solo</th><th>Pro</th><th>Team</th></tr>
+        <tr><th>Feature</th><th>Student<br><span style="font-size:9px;font-weight:500;opacity:.6">$9.99</span></th><th>Solo<br><span style="font-size:9px;font-weight:500;opacity:.6">$29.99</span></th><th>Pro<br><span style="font-size:9px;font-weight:500;opacity:.6">$59.99</span></th><th>Team<br><span style="font-size:9px;font-weight:500;opacity:.6">$129.99</span></th></tr>
+
+        <!-- CORE -->
+        <tr class="ctable-group"><td colspan="5">⚙️ Core Features</td></tr>
         <tr><td>Full 8-phase review</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
         <tr><td>Location-aware critique</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Tribunal Auto-Detect mode</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+
+        <!-- DOCUMENT CATEGORIES -->
+        <tr class="ctable-group"><td colspan="5">📂 Document Categories</td></tr>
+        <tr><td>📚 Academic &amp; Research<br><span class="ctable-note">Thesis, Essays, Research Papers, Lit Reviews, Proposals</span></td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>⚖️ Legal &amp; Claims<br><span class="ctable-note">Court claims, Contracts, Insurance, Employment disputes</span></td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>🛂 Visa &amp; Immigration<br><span class="ctable-note">Visa applications, Sponsorships, Character submissions</span></td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>💼 Business &amp; Commercial<br><span class="ctable-note">Pitches, Business plans, Tenders, Bids, Grants</span></td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>👔 HR &amp; Employment<br><span class="ctable-note">Performance reviews, Terminations, Job applications</span></td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>🏠 Property &amp; Planning<br><span class="ctable-note">Development applications, Objections, Lease disputes</span></td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+
+        <!-- ADVANCED -->
+        <tr class="ctable-group"><td colspan="5">🔬 Advanced Features</td></tr>
         <tr><td>Academic examiner mode</td><td class="yes">✓</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-        <tr><td>Domain skill packs</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-        <tr style="background:rgba(255,45,45,0.06);font-weight:800"><td>⚖️ <strong>The Tribunal</strong><br><span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.45)">Multi-angle simultaneous attack</span></td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-        <tr><td>Monthly reviews</td><td>20</td><td>50</td><td>150</td><td>300</td></tr>
+        <tr><td>Domain skill packs<br><span class="ctable-note">Specialist attack libraries per jurisdiction</span></td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Priority support</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Multiple user seats</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓ 5 seats</td></tr>
+
+        <!-- TRIBUNAL -->
+        <tr class="ctable-tribunal"><td>⚖️ <strong>The Tribunal</strong><br><span class="ctable-note">5 advisors · Peer review · One verdict</span></td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+
+        <!-- USAGE -->
+        <tr class="ctable-group"><td colspan="5">📊 Monthly Usage</td></tr>
+        <tr><td>Reviews per month</td><td style="font-weight:800;color:#7ab8ff">20</td><td style="font-weight:800;color:#4dd4ea">50</td><td style="font-weight:800;color:#ff6666">150</td><td style="font-weight:800;color:#b89fff">300</td></tr>
       </table>
       <button class="mgumroad" id="stripeBtn" onclick="handleStripeCheckout(event)" style="background:#635bff;box-shadow:0 4px 20px rgba(99,91,255,0.35)">Subscribe — $9.99/month via Stripe →</button>
       <p class="mnote" style="margin-top:10px">🔒 Stripe · Secure checkout · Cancel anytime · <a onclick="openModal('setup')">How does it work? →</a></p>
