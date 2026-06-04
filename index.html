@@ -344,7 +344,30 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
   .icard-foot{flex-direction:column;align-items:stretch}
   .b1,.b2,.b3,.b4{display:none}
 }
+
+/* ── LIGHT THEME ── */
+[data-theme="light"]{
+  --bg:#f0f0f8;--bg2:#f8f8ff;--card:#ffffff;
+  --ink:#0f0f1a;--ink2:#2a2a3a;--muted:rgba(0,0,0,0.55);--muted2:rgba(0,0,0,0.38);
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+  --shadow:0 4px 24px rgba(0,0,0,0.12);--shadow-lg:0 8px 40px rgba(0,0,0,0.2);
+}
+[data-theme="light"] html,[data-theme="light"] body{background:#f0f0f8;color:#0f0f1a}
+[data-theme="light"] .topbar{background:rgba(240,240,248,0.95);border-bottom:1px solid rgba(0,0,0,0.1)}
+[data-theme="light"] .hero,.trig-group,[data-theme="light"] .trig-btn,[data-theme="light"] .icard,[data-theme="light"] .modal,[data-theme="light"] .setup-modal{background:#fff;color:#0f0f1a}
+[data-theme="light"] .logo-text{color:#0f0f1a}
+[data-theme="light"] .trig-group{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .trig-btn{background:rgba(0,0,0,0.03);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.75)}
+[data-theme="light"] .trig-btn:hover{border-color:rgba(255,45,45,0.5);color:#cc1a1a;background:rgba(255,45,45,0.05)}
+[data-theme="light"] .trig-btn.on{background:rgba(255,45,45,0.12);border-color:rgba(255,45,45,0.5);color:#cc1a1a}
+[data-theme="light"] .icard{background:#fff;border-color:rgba(0,0,0,0.1)}
+[data-theme="light"] #inp{background:#f8f8ff;color:#0f0f1a;border-color:rgba(0,0,0,0.15)}
+[data-theme="light"] .output-block{background:#fff;border-color:rgba(0,0,0,0.1);color:#1a1a2e}
+[data-theme="light"] #themeBtnLabelIdx{color:rgba(0,0,0,0.7)}
+[data-theme="light"] #themeBtn{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.2);color:rgba(0,0,0,0.75)}
+[data-theme="light"] body::before{background:radial-gradient(circle 600px at 5% 10%,rgba(255,45,45,0.04) 0%,transparent 60%),radial-gradient(circle 500px at 90% 80%,rgba(99,91,255,0.03) 0%,transparent 60%)}
 </style>
+<script>!function(){var t=localStorage.getItem('theme')||'dark';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light')}()</script>
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -389,6 +412,7 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
     <div class="logo-text">The <span>Opposer</span></div>
   </div>
   <div class="topbar-right">
+    <button id="themeBtn" onclick="cycleTheme()" title="Toggle theme" style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);padding:10px 16px;border-radius:20px;font-size:14px;cursor:pointer;transition:all 0.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.5px" onmouseover="this.style.borderColor='rgba(255,255,255,0.3)';this.style.color='#fff'" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='rgba(255,255,255,0.7)'">🌙 <span id="themeBtnLabel">Dark</span></button>
     <span class="tier-pill tp-free" id="tierPill">FREE TRIAL</span>
     <button class="btn-manage" id="manageBtn" onclick="openManagePortal()" style="display:none">Manage Plan</button>
     <button class="btn-up" onclick="openModal('upgrade')">Upgrade 🔥</button>
@@ -1696,6 +1720,38 @@ renderResult = function(raw, isTrial){
   document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
   document.addEventListener('mouseenter', () => { dot.style.opacity=''; ring.style.opacity=''; });
 })();
+
+// ── THEME TOGGLE ──────────────────────────────────────────────────────────
+const THEMES = ['dark','light','system'];
+const THEME_ICONS = { dark:'🌙', light:'☀️', system:'💻' };
+const THEME_LABELS = { dark:'Dark', light:'Light', system:'System' };
+
+function applyTheme(t) {
+  const isDark = t==='dark' || (t==='system' && window.matchMedia('(prefers-color-scheme:dark)').matches);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  const btn = document.getElementById('themeBtn');
+  const lbl = document.getElementById('themeBtnLabel');
+  if (btn) btn.firstChild.textContent = THEME_ICONS[t] + ' ';
+  if (lbl) lbl.textContent = THEME_LABELS[t];
+}
+
+function cycleTheme() {
+  const cur = localStorage.getItem('theme') || 'dark';
+  const next = THEMES[(THEMES.indexOf(cur)+1) % THEMES.length];
+  localStorage.setItem('theme', next);
+  applyTheme(next);
+}
+
+// Apply on load (also runs inline script below to prevent flash)
+(function(){
+  const t = localStorage.getItem('theme') || 'dark';
+  applyTheme(t);
+})();
+
+// System preference change
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', () => {
+  if ((localStorage.getItem('theme')||'dark') === 'system') applyTheme('system');
+});
 </script>
 </body>
 </html>

@@ -243,7 +243,31 @@ body.cur-hover #cur-dot{width:16px;height:16px;box-shadow:0 0 20px rgba(255,61,6
 body.cur-hover #cur-ring{width:52px;height:52px;border-color:rgba(255,61,61,0.25)}
 body.cur-click #cur-dot{width:7px;height:7px;opacity:0.7}
 @media(hover:none),(pointer:coarse){#cur-dot,#cur-ring{display:none}body{cursor:auto}a,button,[role="button"],[onclick],.price-btn,.btn-primary,.btn-ghost{cursor:auto!important}}
+
+/* ── THEME TOGGLE ── */
+.theme-btn{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-family:'Nunito',sans-serif}
+.theme-btn:hover{border-color:rgba(255,255,255,0.35);color:#fff}
+
+/* ── TRIBUNAL SECTION ── */
+.tribunal-section{background:linear-gradient(135deg,#09090f 0%,#0d0d18 60%,#0a080f 100%);border-top:1px solid rgba(255,45,45,0.15);border-bottom:1px solid rgba(255,45,45,0.15);padding:80px 32px}
+.tribunal-section .section-inner{max-width:1080px;margin:0 auto}
+.tribunal-header{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-bottom:48px}
+.tribunal-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,45,45,0.12);border:1.5px solid rgba(255,45,45,0.4);padding:6px 16px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#ff6666}
+.tribunal-title{font-size:clamp(32px,5vw,52px);font-weight:900;color:#fff;line-height:1.05}
+.tribunal-title em{font-style:normal;color:#ff4444}
+.tribunal-sub{font-size:16px;color:rgba(255,255,255,0.5);max-width:640px;line-height:1.75;font-weight:500}
+.tribunal-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:40px}
+.trib-feat{background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px 20px;transition:border-color 0.2s}
+.trib-feat:hover{border-color:rgba(255,45,45,0.35)}
+.trib-feat-icon{font-size:24px;margin-bottom:10px;display:block}
+.trib-feat-name{font-size:14px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-0.2px}
+.trib-feat-desc{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.65;font-weight:500}
+.trib-cta-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.trib-solo-note{font-size:13px;color:rgba(255,255,255,0.4);font-weight:600}
+.trib-solo-note strong{color:#4dd4ea}
+@media(max-width:768px){.tribunal-features{grid-template-columns:1fr}.tribunal-section{padding:56px 20px}.trib-cta-wrap{flex-direction:column;align-items:flex-start}}
 </style>
+<script>!function(){var t=localStorage.getItem('theme')||'dark';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light')}()</script>
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -256,7 +280,10 @@ body.cur-click #cur-dot{width:7px;height:7px;opacity:0.7}
       <a href="#pricing">Pricing</a>
       <a href="#use-cases">Who It's For</a>
     </div>
-    <a href="./index.html" class="nav-cta">Try Free →</a>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="theme-btn" id="themeBtn" onclick="cycleTheme()">🌙 <span id="themeBtnLabel">Dark</span></button>
+      <a href="./index.html" class="nav-cta">Try Free →</a>
+    </div>
   </div>
 </nav>
 
@@ -403,8 +430,67 @@ body.cur-click #cur-dot{width:7px;height:7px;opacity:0.7}
           <li>Ends with ONE verdict and ONE next step. No "it depends."</li>
           <li>Use on pricing, launches, hiring, expansion, exit decisions</li>
         </ul>
-        <a href="./index.html" class="product-cta" style="background:var(--violet)">Coming Soon →</a>
+        <a href="./index.html" class="product-cta" style="background:var(--violet)">Available on Solo & above →</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRIBUNAL DEEP DIVE -->
+<section class="tribunal-section">
+  <div class="section-inner">
+    <div class="tribunal-header">
+      <div class="tribunal-badge">⚖️ Included on Solo &amp; Above</div>
+      <h2 class="tribunal-title">The Tribunal —<br><em>Five Minds. One Verdict.</em></h2>
+      <p class="tribunal-sub">Most AI tools reflect your thinking back at you. The Tribunal is engineered to break that. Five advisors with irreconcilable thinking frames attack your question simultaneously, a panel of anonymous peer reviewers evaluate the quality of the reasoning, and a single synthesiser delivers one binding call — not a list, not "it depends", a call.</p>
+    </div>
+
+    <div class="tribunal-features">
+      <div class="trib-feat">
+        <span class="trib-feat-icon">🗡️</span>
+        <div class="trib-feat-name">The Contrarian</div>
+        <div class="trib-feat-desc">Hunts for fatal flaws first — not balanced feedback, just what is broken and why it will fail. Probes timing, assumptions, market conditions, execution realism, and revenue logic. Never opens with praise.</div>
+      </div>
+      <div class="trib-feat">
+        <span class="trib-feat-icon">🔬</span>
+        <div class="trib-feat-name">The First Principles Advisor</div>
+        <div class="trib-feat-desc">Ignores the surface question entirely. Strips the framing and asks what you are actually trying to solve. Surfaces the goal beneath the goal — the problem beneath the problem that everyone else assumed away.</div>
+      </div>
+      <div class="trib-feat">
+        <span class="trib-feat-icon">🌐</span>
+        <div class="trib-feat-name">The Expansionist</div>
+        <div class="trib-feat-desc">Hunts for the upside you are sitting on top of without realising — not the obvious upside, the adjacent move, the hidden leverage, the compounding angle you haven't considered. Grounded in your actual situation.</div>
+      </div>
+      <div class="trib-feat">
+        <span class="trib-feat-icon">👁️</span>
+        <div class="trib-feat-name">The Outsider</div>
+        <div class="trib-feat-desc">Receives zero personal context. Reads only the raw question — the words on the page. Has no investment in your framing and no history with your situation. Surfaces what is obvious to everyone except you.</div>
+      </div>
+      <div class="trib-feat">
+        <span class="trib-feat-icon">⚡</span>
+        <div class="trib-feat-name">The Executor</div>
+        <div class="trib-feat-desc">Skips analysis, skips theory. Only asks: what is the one thing that should happen in the next 24–48 hours? Not a roadmap — the very next action. Impatient, concrete, and completely intolerant of abstraction.</div>
+      </div>
+      <div class="trib-feat">
+        <span class="trib-feat-icon">🔍</span>
+        <div class="trib-feat-name">Peer Review Panel</div>
+        <div class="trib-feat-desc">Five anonymous reviewers evaluate the quality of the reasoning across all advisor responses — not the ideas, the thinking. They identify the strongest insight and the weakest argument. No advisor names. No bias.</div>
+      </div>
+      <div class="trib-feat">
+        <span class="trib-feat-icon">📍</span>
+        <div class="trib-feat-name">Domain-Aware Extended Advisors</div>
+        <div class="trib-feat-desc">For domain-specific questions, 1–2 specialist lenses are added automatically: Legal Analyst, Risk Manager, Strategist, Customer Advocate, Bull, Bear, Quant, Positioning Expert. Only when the question needs them.</div>
+      </div>
+      <div class="trib-feat">
+        <span class="trib-feat-icon">⚖️</span>
+        <div class="trib-feat-name">The Tribunal Verdict</div>
+        <div class="trib-feat-desc">One decisive verdict and one specific next step. Not a summary. Not a list of considerations. A call — calibrated across all advisor inputs and peer review. No single advisor dominates. "It depends" is not a verdict.</div>
+      </div>
+    </div>
+
+    <div class="trib-cta-wrap">
+      <a href="./index.html" style="background:var(--red);color:#fff;padding:14px 32px;border-radius:999px;font-size:15px;font-weight:800;text-decoration:none;box-shadow:0 4px 16px rgba(255,45,45,0.35);transition:all 0.18s" onmouseover="this.style.background='#cc1a1a'" onmouseout="this.style.background='var(--red)'">Try Free — 3 Reviews Included →</a>
+      <div class="trib-solo-note">The Tribunal is available on <strong>Solo ($29.99/mo)</strong>, Pro, and Team plans. Not included on Student or Free tiers.</div>
     </div>
   </div>
 </section>
@@ -795,6 +881,29 @@ async function goCheckout(plan, price) {
   document.addEventListener('mouseleave',()=>{dot.style.opacity='0';ring.style.opacity='0';});
   document.addEventListener('mouseenter',()=>{dot.style.opacity='';ring.style.opacity='';});
 })();
+</script>
+<script>
+const THEMES=['dark','light','system'];
+const THEME_ICONS={dark:'🌙',light:'☀️',system:'💻'};
+const THEME_LABELS={dark:'Dark',light:'Light',system:'System'};
+function applyTheme(t){
+  const isDark=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  const lbl=document.getElementById('themeBtnLabel');
+  const btn=document.getElementById('themeBtn');
+  if(lbl)lbl.textContent=THEME_LABELS[t];
+  if(btn)btn.childNodes[0].textContent=THEME_ICONS[t]+' ';
+}
+function cycleTheme(){
+  const cur=localStorage.getItem('theme')||'dark';
+  const next=THEMES[(THEMES.indexOf(cur)+1)%THEMES.length];
+  localStorage.setItem('theme',next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem('theme')||'dark');
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{
+  if((localStorage.getItem('theme')||'dark')==='system')applyTheme('system');
+});
 </script>
 </body>
 </html>
