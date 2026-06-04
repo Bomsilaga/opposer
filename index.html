@@ -382,8 +382,66 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
 [data-theme="light"] .trial-chip{color:rgba(0,0,0,0.65)!important;border-color:rgba(0,0,0,0.12)!important;background:rgba(0,0,0,0.04)!important}
 [data-theme="light"] .student-banner{color:rgba(30,60,120,0.85)!important}
 [data-theme="light"] #themeBtn{background:rgba(0,0,0,0.06)!important;border-color:rgba(0,0,0,0.2)!important;color:rgba(0,0,0,0.75)!important}
-[data-theme="light"] body::before{background:radial-gradient(circle 600px at 5% 10%,rgba(255,45,45,0.04) 0%,transparent 60%),radial-gradient(circle 500px at 90% 80%,rgba(99,91,255,0.03) 0%,transparent 60%)}
-[data-theme="light"] .bg-svg{opacity:0.3}
+/* Light mode background — crisp, branded, not flat white */
+[data-theme="light"] body{
+  background:linear-gradient(160deg,#f8f4ff 0%,#fff0f0 35%,#f0f4ff 70%,#fff8f0 100%)!important;
+  animation:light-bg-shift 12s ease-in-out infinite alternate;
+}
+@keyframes light-bg-shift{
+  0%{background:linear-gradient(160deg,#f8f4ff 0%,#fff0f0 35%,#f0f4ff 70%,#fff8f0 100%)}
+  100%{background:linear-gradient(160deg,#fff0f0 0%,#f0f4ff 35%,#fff8f0 70%,#f8f4ff 100%)}
+}
+[data-theme="light"] body::before{
+  background:
+    radial-gradient(circle 500px at 8% 15%,rgba(255,45,45,0.08) 0%,transparent 55%),
+    radial-gradient(circle 400px at 88% 75%,rgba(99,91,255,0.07) 0%,transparent 55%),
+    radial-gradient(circle 300px at 50% 50%,rgba(255,120,0,0.04) 0%,transparent 50%);
+}
+[data-theme="light"] .bg-svg{opacity:0.12}
+
+/* Hide fire particles in light mode — replace with floating orbs via JS */
+[data-theme="light"] canvas:not(#hero-canvas){display:none}
+
+/* Light mode card shadows and depth */
+[data-theme="light"] .trig-group{
+  box-shadow:0 4px 20px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.05)!important;
+  background:rgba(255,255,255,0.85)!important;
+  backdrop-filter:blur(8px);
+}
+[data-theme="light"] .icard{box-shadow:0 8px 32px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,0.06)!important}
+[data-theme="light"] .output-block{box-shadow:0 4px 16px rgba(0,0,0,0.06)!important}
+
+/* Light mode h1 hero */
+[data-theme="light"] h1.hero-h{color:#0f0f1a!important;text-shadow:none}
+[data-theme="light"] h1.hero-h .word-find{color:var(--red)!important}
+[data-theme="light"] h1.hero-h .word-before{background:rgba(255,45,45,0.1)!important;color:#cc1a1a!important}
+
+/* Light mode topbar logo */
+[data-theme="light"] .logo-icon{filter:drop-shadow(0 4px 12px rgba(255,45,45,0.3))!important}
+
+/* Light mode tier pill */
+[data-theme="light"] .tp-free{color:#c45a00!important;background:rgba(255,122,26,0.08)!important;border-color:rgba(255,122,26,0.25)!important}
+[data-theme="light"] .tp-solo{color:#0066aa!important;background:rgba(6,182,212,0.08)!important;border-color:rgba(6,182,212,0.25)!important}
+[data-theme="light"] .tp-pro{color:#cc1a1a!important;background:rgba(255,45,45,0.06)!important;border-color:rgba(255,45,45,0.25)!important}
+
+/* Light mode muted text throughout */
+[data-theme="light"] *:not(.trig-btn):not(.btn-up):not(.hero-chip):not(button):not(a){
+  --muted2-computed:rgba(0,0,0,0.35);
+}
+
+/* Light mode animate-in entries stay readable */
+[data-theme="light"] .hero-chip{background:rgba(255,45,45,0.08)!important;border-color:rgba(255,45,45,0.25)!important}
+
+/* Light mode usage/pref area */
+[data-theme="light"] .usage-wrap,.pref-row{color:#1a1a2e!important}
+
+/* Phase output labels */
+[data-theme="light"] .phase-label{color:#cc1a1a!important}
+[data-theme="light"] .severity-lethal{color:#b00000!important}
+[data-theme="light"] .severity-critical{color:#c44000!important}
+[data-theme="light"] .severity-severe{color:#b06000!important}
+[data-theme="light"] .severity-sig{color:#707000!important}
+[data-theme="light"] .icard-foot *{color:#1a1a2e!important}
 </style>
 <script>!function(){var t=localStorage.getItem('theme')||'dark';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light')}()</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -442,6 +500,13 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+  <!-- Social proof badge -->
+  <div style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(255,45,45,0.18),rgba(180,0,80,0.12));border:2px solid rgba(255,45,45,0.5);padding:9px 22px;border-radius:999px;margin-bottom:16px;animation:floatIn 0.5s 0s ease both;box-shadow:0 0 28px rgba(255,45,45,0.25)">
+    <span style="display:inline-flex;width:9px;height:9px;background:#ff2d2d;border-radius:50%;box-shadow:0 0 10px #ff2d2d;animation:pulse-dot 1.8s ease-in-out infinite;flex-shrink:0"></span>
+    <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1.5px;color:#fff;text-transform:uppercase">100,000+ Users</span>
+    <span style="width:1px;height:16px;background:rgba(255,255,255,0.2);flex-shrink:0"></span>
+    <span style="font-size:12px;font-weight:700;color:rgba(255,200,200,0.85)">Trusted Globally</span>
+  </div>
   <div class="hero-chip">Adversarial Review · <span id="tw-doc">Any Document</span><span class="tw-cursor"></span></div>
   <h1 class="hero-h">
     <span class="word-find">Find</span> Every Weakness<br>
