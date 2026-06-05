@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
       // Free trial — no key needed, just check by a session identifier
       // We use a lightweight check — trials are enforced client-side
       // Server just proxies the call with the free (Haiku) model
-      sub = { model: 'claude-haiku-4-5-20251001', run_cap: 3, runs_used_this_month: 0, tier: 'free' }
+      sub = { model: 'claude-haiku-4-5', run_cap: 3, runs_used_this_month: 0, tier: 'free' }
     } else {
       // Verify license key
       if (!licenseKey) {
@@ -74,6 +74,18 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Normalise model ID — map any retired/old IDs to current ones
+    const MODEL_MAP: Record<string, string> = {
+      'claude-3-5-sonnet-20241022': 'claude-sonnet-4-6',
+      'claude-3-5-sonnet-20240620': 'claude-sonnet-4-6',
+      'claude-3-opus-20240229':     'claude-sonnet-4-6',
+      'claude-3-sonnet-20240229':   'claude-sonnet-4-6',
+      'claude-3-haiku-20240307':    'claude-haiku-4-5',
+      'claude-3-5-haiku-20241022':  'claude-haiku-4-5',
+      'claude-haiku-4-5-20251001':  'claude-haiku-4-5',
+    }
+    const resolvedModel = MODEL_MAP[sub.model] ?? sub.model ?? 'claude-haiku-4-5'
+
     // Call Anthropic
     const anthropicRes = await fetch(ANTHROPIC_URL, {
       method: 'POST',
@@ -83,7 +95,7 @@ Deno.serve(async (req) => {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: sub.model,
+        model: resolvedModel,
         max_tokens: 4096,
         system: systemPrompt,
         messages,
@@ -112,7 +124,7 @@ Deno.serve(async (req) => {
       await supabase.from('run_log').insert({
         subscriber_id: sub.id,
         doc_type: docType,
-        model_used: sub.model,
+        model_used: resolvedModel,
         tokens_used: (result.usage?.input_tokens ?? 0) + (result.usage?.output_tokens ?? 0),
         is_trial: false
       })
