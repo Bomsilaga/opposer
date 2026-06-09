@@ -14,27 +14,45 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { licenseKey, docType, messages, systemPrompt, isTrial } = await req.json()
+    const { licenseKey, docType, messages, systemPrompt, isTrial, trialToken } = await req.json()
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
+    const cors = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+
     let sub: any = null
+    let trialUserId: string | null = null
 
     if (isTrial) {
-      // Free trial — no key needed, just check by a session identifier
-      // We use a lightweight check — trials are enforced client-side
-      // Server just proxies the call with the free (Haiku) model
-      sub = { model: 'claude-haiku-4-5', run_cap: 3, runs_used_this_month: 0, tier: 'free' }
+      // Require a registered trial token — prevents anonymous abuse
+      if (!trialToken) {
+        return new Response(JSON.stringify({ error: 'trial_token_required' }), { status: 401, headers: cors })
+      }
+
+      const { data: trialUser, error } = await supabase
+        .from('trial_users')
+        .select('id, runs_used')
+        .eq('token', trialToken)
+        .single()
+
+      if (error || !trialUser) {
+        return new Response(JSON.stringify({ error: 'invalid_trial' }), { status: 403, headers: cors })
+      }
+
+      if (trialUser.runs_used >= 3) {
+        return new Response(JSON.stringify({ error: 'trial_exhausted', cap: 3 }), { status: 429, headers: cors })
+      }
+
+      trialUserId = trialUser.id
+      sub = { model: 'claude-haiku-4-5', run_cap: 3, runs_used_this_month: trialUser.runs_used, tier: 'free' }
+
     } else {
       // Verify license key
       if (!licenseKey) {
-        return new Response(JSON.stringify({ error: 'no_key' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-        })
+        return new Response(JSON.stringify({ error: 'no_key' }), { status: 401, headers: cors })
       }
 
       const { data, error } = await supabase
@@ -45,10 +63,7 @@ Deno.serve(async (req) => {
         .single()
 
       if (error || !data) {
-        return new Response(JSON.stringify({ error: 'invalid_key' }), {
-          status: 403,
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-        })
+        return new Response(JSON.stringify({ error: 'invalid_key' }), { status: 403, headers: cors })
       }
 
       sub = data
@@ -57,7 +72,6 @@ Deno.serve(async (req) => {
       const now = new Date()
       const thisMonth = `${now.getFullYear()}-${now.getMonth() + 1}`
 
-      // Reset count if new billing month
       if (sub.billing_month !== thisMonth) {
         await supabase
           .from('subscribers')
@@ -69,7 +83,7 @@ Deno.serve(async (req) => {
       if (sub.runs_used_this_month >= sub.run_cap) {
         return new Response(JSON.stringify({ error: 'cap_reached', cap: sub.run_cap, tier: sub.tier }), {
           status: 429,
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+          headers: cors,
         })
       }
     }
@@ -107,17 +121,27 @@ Deno.serve(async (req) => {
     if (!anthropicRes.ok) {
       return new Response(JSON.stringify({ error: 'anthropic_error', detail: result }), {
         status: 502,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+        headers: cors,
       })
     }
 
-    // Increment run count and log (skip for trials)
-    if (!isTrial && sub.id) {
+    // Increment run count
+    if (isTrial && trialUserId) {
+      // Server-side trial tracking
+      await supabase
+        .from('trial_users')
+        .update({
+          runs_used: sub.runs_used_this_month + 1,
+          last_used: new Date().toISOString(),
+        })
+        .eq('id', trialUserId)
+    } else if (!isTrial && sub.id) {
+      // Paid subscriber tracking
       await supabase
         .from('subscribers')
         .update({
           runs_used_this_month: sub.runs_used_this_month + 1,
-          last_active: new Date().toISOString()
+          last_active: new Date().toISOString(),
         })
         .eq('id', sub.id)
 
@@ -126,22 +150,19 @@ Deno.serve(async (req) => {
         doc_type: docType,
         model_used: resolvedModel,
         tokens_used: (result.usage?.input_tokens ?? 0) + (result.usage?.output_tokens ?? 0),
-        is_trial: false
+        is_trial: false,
       })
     }
 
     return new Response(JSON.stringify({ text: result.content[0].text }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      headers: cors,
     })
 
   } catch (err) {
     console.error(err)
     return new Response(JSON.stringify({ error: 'server_error', detail: err.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
     })
   }
 })

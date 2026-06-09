@@ -454,6 +454,28 @@ h1.hero-h{animation:slideUp 0.55s 0.25s ease both}
 [data-theme="light"] .severity-severe{color:#b06000!important}
 [data-theme="light"] .severity-sig{color:#707000!important}
 [data-theme="light"] .icard-foot *{color:#1a1a2e!important}
+
+/* ── REGISTRATION MODAL ── */
+.reg-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);z-index:700;align-items:center;justify-content:center;padding:20px}
+.reg-modal-bg.on{display:flex}
+.reg-modal{background:#111118;border-radius:var(--r-xl);max-width:440px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.8);border:2px solid rgba(255,255,255,0.1);animation:popIn 0.25s ease both;padding:32px;position:relative;overflow:hidden}
+.reg-modal::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 0%,rgba(255,45,45,0.08),transparent 60%);pointer-events:none}
+.reg-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.reg-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:500}
+.reg-input{background:#0e0e16;border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;color:#e2e2ee;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;outline:none;transition:border-color 0.15s;width:100%}
+.reg-input:focus{border-color:rgba(255,45,45,0.6);box-shadow:0 0 0 3px rgba(255,45,45,0.08)}
+.reg-input::placeholder{color:rgba(255,255,255,0.2)}
+.btn-reg{display:block;width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:24px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.18s;box-shadow:0 4px 20px rgba(255,45,45,0.4);margin-bottom:12px}
+.btn-reg:hover:not(:disabled){background:var(--red-d);transform:translateY(-2px)}
+.btn-reg:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.reg-perks{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.reg-perk{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.55)}
+.reg-perk span:first-child{color:var(--green);flex-shrink:0}
+[data-theme="light"] .reg-modal{background:#fff;border-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .reg-input{background:#f8f8ff;border-color:rgba(0,0,0,0.12);color:#0f0f1a}
+[data-theme="light"] .reg-input::placeholder{color:rgba(0,0,0,0.25)}
+[data-theme="light"] .reg-label{color:rgba(0,0,0,0.4)}
+[data-theme="light"] .reg-perk{color:rgba(0,0,0,0.5)}
 </style>
 <script>!function(){var t=localStorage.getItem('theme')||'dark';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.setAttribute('data-theme',d?'dark':'light')}()</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -860,7 +882,8 @@ function ensurePdfJs(){
 }
 
 /* ── CONFIG ── */
-const PROXY_URL   = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/oppose';
+const PROXY_URL      = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/oppose';
+const TRIAL_AUTH_URL = 'https://mrhekpgvfcwfnzmipjis.supabase.co/functions/v1/trial-auth';
 const DIRECT_URL  = 'https://api.anthropic.com/v1/messages'; // fallback dev only
 const HAIKU       = 'claude-haiku-4-5-20251001';
 const SONNET      = 'claude-sonnet-4-6';
@@ -1318,7 +1341,12 @@ async function runIt(){
   const textInput=document.getElementById('inp').value.trim();
   const hasContent=textInput.length>=5||uploadedText.length>0||uploadedImage!==null;
   if(!hasContent) return;
-  if(isFree()&&remaining()<=0){ openModal('upgrade'); return; }
+
+  if(isFree()){
+    const trialTok=localStorage.getItem('opp_trial_token');
+    if(!trialTok){ _pendingRun=true; openRegModal(); return; }
+    if(remaining()<=0){ openModal('upgrade'); return; }
+  }
   if(!isFree()&&remaining()<=0){ alert('You\'ve used all '+getTierCfg().cap+' reviews this month.\n\nPurchase extra reviews or upgrade your plan — email us.'); return; }
 
   const trial = isFree(); /* Tells backend to skip key validation for free users */
@@ -1358,6 +1386,7 @@ async function runIt(){
     let raw='';
     /* ── BACKEND PROXY PATH ── */
     const licenseKey = localStorage.getItem('opp_key') || '';
+    const trialTok   = trial ? (localStorage.getItem('opp_trial_token') || '') : '';
     const res = await fetch(PROXY_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1367,10 +1396,20 @@ async function runIt(){
         docType,
         systemPrompt: sys,
         messages: [{ role: 'user', content: userContent }],
-        isTrial: trial
+        isTrial: trial,
+        trialToken: trialTok
       })
     });
     const d = await res.json();
+    if (d.error === 'trial_token_required' || d.error === 'invalid_trial') {
+      localStorage.removeItem('opp_trial_token');
+      btn.disabled=false; btn.innerHTML='<span id="goLabel">Oppose This →</span>';
+      _pendingRun=true; openRegModal(); return;
+    }
+    if (d.error === 'trial_exhausted') {
+      btn.disabled=false; btn.innerHTML='<span id="goLabel">Oppose This →</span>';
+      openModal('upgrade'); return;
+    }
     if (d.error === 'invalid_key') {
       out.innerHTML = '<div style="padding:24px;background:#fff0f0;border-radius:16px;color:var(--red);font-weight:700;font-size:14px">⚠️ Invalid or expired license key. <a href="#pricing" style="color:var(--red)">Renew your plan →</a></div>';
       btn.disabled = false; btn.innerHTML = '<span id="goLabel">Oppose This →</span>'; return;
@@ -1595,6 +1634,86 @@ async function openManagePortal() {
   if (key) document.getElementById('manageBtn').style.display = 'inline-flex';
 })();
 
+/* ── TRIAL REGISTRATION ── */
+let _pendingRun = false;
+
+function openRegModal(){
+  document.getElementById('regModalBg').classList.add('on');
+  setTimeout(()=>{ const el=document.getElementById('regEmail'); if(el) el.focus(); }, 120);
+}
+function closeRegModal(){
+  document.getElementById('regModalBg').classList.remove('on');
+  _pendingRun = false;
+}
+function showRegError(msg){
+  const el=document.getElementById('regError');
+  el.textContent=msg; el.style.display='block';
+}
+
+async function submitRegistration(){
+  const emailEl = document.getElementById('regEmail');
+  const email   = emailEl ? emailEl.value.trim() : '';
+  if(!email || !email.includes('@')){ showRegError('Please enter a valid email address.'); return; }
+
+  const btn = document.getElementById('regBtn');
+  btn.disabled=true; btn.textContent='Registering…';
+  document.getElementById('regError').style.display='none';
+
+  try {
+    const res = await fetch(TRIAL_AUTH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'register', email })
+    });
+    const data = await res.json();
+
+    if(data.error){
+      showRegError('Something went wrong. Please try again.');
+      return;
+    }
+
+    // Store token and runs — the server is now tracking this user
+    localStorage.setItem('opp_trial_token', data.token);
+    localStorage.setItem('opp_trial_email', email);
+    runsUsed = data.runs_used;
+    localStorage.setItem('opp_runs_'+monthKey(), runsUsed);
+
+    // Update tier pill hint
+    document.getElementById('regModalBg').classList.remove('on');
+    updateUI();
+
+    if(data.runs_remaining > 0 && _pendingRun){
+      _pendingRun = false;
+      runIt();
+    } else if(data.runs_remaining <= 0){
+      openModal('upgrade');
+    }
+  } catch(err){
+    showRegError('Connection failed — please check your internet and try again.');
+  } finally {
+    btn.disabled=false; btn.textContent='Get 3 Free Reviews →';
+  }
+}
+
+/* On load — verify existing trial token so runsUsed is accurate from the server */
+(async function initTrialState(){
+  const token = localStorage.getItem('opp_trial_token');
+  if(!token || tier!=='free') return;
+  try {
+    const res = await fetch(TRIAL_AUTH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verify', token })
+    });
+    const data = await res.json();
+    if(data.error){ localStorage.removeItem('opp_trial_token'); return; }
+    // Sync server-side count to local (prevents localStorage tampering)
+    runsUsed = data.runs_used;
+    localStorage.setItem('opp_runs_'+monthKey(), runsUsed);
+    updateUI();
+  } catch(e){ /* silent fail — don't block app load */ }
+})();
+
 /* ── MATRIX RAIN CANVAS ── */
 (function(){
   const canvas = document.getElementById('matrix-canvas');
@@ -1794,6 +1913,32 @@ renderResult = function(raw, isTrial){
   });
 };
 </script>
+<!-- REGISTRATION MODAL -->
+<div class="reg-modal-bg" id="regModalBg">
+  <div class="reg-modal">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Free Trial Access</div>
+        <div style="font-family:'Fredoka',sans-serif;font-size:28px;font-weight:700;color:#e2e2ee;line-height:1.1">Start Your <span style="color:var(--red)">Free Trial</span></div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:6px;font-weight:500;line-height:1.5">3 full adversarial reviews · No card required · Instant access</div>
+      </div>
+      <button onclick="closeRegModal()" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.5);font-size:14px;cursor:pointer;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;margin-left:12px">✕</button>
+    </div>
+    <div class="reg-perks">
+      <div class="reg-perk"><span>✓</span> Full 8-phase adversarial review on your first run</div>
+      <div class="reg-perk"><span>✓</span> Academic, legal, business — all document types</div>
+      <div class="reg-perk"><span>✓</span> No spam · unsubscribe any time</div>
+    </div>
+    <div class="reg-field">
+      <label class="reg-label" for="regEmail">Your Email Address</label>
+      <input class="reg-input" type="email" id="regEmail" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')submitRegistration()">
+    </div>
+    <button class="btn-reg" id="regBtn" onclick="submitRegistration()">Get 3 Free Reviews →</button>
+    <p style="font-size:11px;color:rgba(255,255,255,0.25);text-align:center;line-height:1.6;font-weight:500">Already registered? Enter your email to recover your trial access. By continuing you agree to our terms.</p>
+    <div id="regError" style="display:none;margin-top:12px;background:rgba(255,45,45,0.1);border:1px solid rgba(255,45,45,0.3);border-radius:10px;padding:10px 14px;font-size:12px;color:#ff6666;font-weight:600;line-height:1.5"></div>
+  </div>
+</div>
+
 <canvas id="fire-floor" data-fire></canvas>
 
 <!-- Custom cursor -->
